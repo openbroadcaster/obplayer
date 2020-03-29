@@ -34,13 +34,12 @@ from gi.repository import GObject, Gst
 from .base import ObGstStreamer
 
 import uuid
-import requests
 
 
 class ObIcecastStreamer (ObGstStreamer):
     def __init__(self, streamer_icecast_ip, streamer_icecast_port, streamer_icecast_password,
         streamer_icecast_mount, streamer_icecast_streamname, streamer_icecast_description,
-        streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate, stream_number):
+        streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate):
         self.icecast_ip = streamer_icecast_ip
         self.icecast_port = streamer_icecast_port
         self.icecast_password = streamer_icecast_password
@@ -50,10 +49,9 @@ class ObIcecastStreamer (ObGstStreamer):
         self.icecast_url = streamer_icecast_url
         self.icecast_public = streamer_icecast_public
         self.icecast_bitrate = streamer_icecast_bitrate
-        self.stream_number = stream_number
         ObGstStreamer.__init__(self, 'icecast_' + uuid.uuid4().hex)
 
-        if obplayer.Config.setting('streamer_{0}_icecast_mode'.format(self.stream_number)) == 'audio':
+        if obplayer.Config.setting('streamer_icecast_mode') == 'audio':
             self.make_audio_pipe()
         else:
             self.make_video_pipe()
@@ -85,6 +83,7 @@ class ObIcecastStreamer (ObGstStreamer):
             self.audiosrc = Gst.ElementFactory.make('fakesrc', 'audiosrc')
 
         elif audio_input == 'intersink':
+            print(self.name)
             obplayer.Player.add_inter_tap(self.name)
             self.audiosrc = Gst.ElementFactory.make('interaudiosrc')
             self.audiosrc.set_property('channel', self.name + ':audio')
@@ -151,10 +150,6 @@ class ObIcecastStreamer (ObGstStreamer):
         #self.elements.append(ObRtpOutput())
 
         self.build_pipeline(self.audiopipe)
-
-        # check for metadata updating being activated.
-        if obplayer.Config.setting('streamer_{0}_metadata_push_mode'.format(self.stream_number)) != 'none':
-            self.update_metadata()
 
     def make_video_pipe(self):
         obplayer.Player.add_inter_tap(self.name)
@@ -285,51 +280,6 @@ class ObIcecastStreamer (ObGstStreamer):
 
         self.audiopipe[-1].link(self.commonpipe[0])
         self.videopipe[-1].link(self.commonpipe[0])
-
-    def update_metadata(self):
-        # get metadata in most cases song title, and artist(s),
-        # and push to icecast, or a file.
-        current_track = ''
-        mode = obplayer.Config.setting('streamer_{0}_metadata_push_mode'.format(self.stream_number), True)
-        url = obplayer.Config.setting('sync_url', True) + '/modules/now_playing/now_playing.php?i=' + \
-        str(obplayer.Config.setting('sync_device_id', True)) + '&json=1'
-        # connect to the observer contorlling playout to get the current track info.
-        req = requests.get(url)
-        if req.status_code == 200:
-            data = req.json()
-            if current_track != data['media']['artist'] + ' - ' + data['media']['title']:
-                current_track = data['media']['artist'] + ' - ' + data['media']['title']
-        else:
-            obplayer.Log.log('couldn\'t connect to your observer, or your don\'t have playlog reporting to the server!', 'error')
-
-        # write track info into a file in the .openbroadcaster folder.
-        if mode == 'file-output':
-            file_path = obplayer.ObData.get_datadir() + '/' + 'metadata.txt'
-            with open(file_path, 'w') as file:
-                file.write(current_track)
-                obplayer.Log.log('Posted updated metadata to metadata text file.', 'debug')
-        else:
-            mountpoint = obplayer.Config.setting('streamer_{0}_icecast_mount'.format(self.stream_number), True)
-            # check if user added the / at the begning of the mountpoint,
-            # and add it if its missing.
-            if mountpoint.startswith('/') == False: mountpoint = '/' + mountpoint
-            #print(mountpoint)
-            server_ip = obplayer.Config.setting('streamer_{0}_icecast_ip'.format(self.stream_number), True)
-            server_port = obplayer.Config.setting('streamer_{0}_icecast_port'.format(self.stream_number), True)
-            admin_username = obplayer.Config.setting('streamer_{0}_admin_username'.format(self.stream_number), True)
-            admin_password = obplayer.Config.setting('streamer_{0}_admin_password'.format(self.stream_number), True)
-            icecast_api_url = 'http://{0}:{1}/admin/metadata?mount={2}&mode=updinfo&song={3}'.format(server_ip, server_port, mountpoint, current_track.replace(' ', '+'))
-            auth = requests.auth.HTTPBasicAuth(admin_username, admin_password)
-            # Post the track info to the icecast server.
-            req = requests.get(icecast_api_url, auth=auth)
-            if req.status_code == 200:
-                obplayer.Log.log('Posted updated metadata to icecast.', 'debug')
-            else:
-                # log message here.
-                print(req.status_code)
-                obplayer.Log.log('Couldn\'t post updated metadata to icecast! Got error code {0}.'.format(req.status_code), 'debug')
-
-        GObject.timeout_add(10000, self.update_metadata)
 
     def queue_data(self, data):
         with self.lock:

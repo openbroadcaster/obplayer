@@ -21,6 +21,7 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import obplayer
+import obplayer.alerts
 
 import time
 
@@ -54,6 +55,10 @@ class ObRemoteData (obplayer.ObData):
         if not self.table_exists('group_items'):
             obplayer.Log.log('liveassist group items table not found, creating', 'data')
             self.shows_group_items_create_table()
+
+        if not self.table_exists('alert_media'):
+            obplayer.Log.log('alert media table not found, creating', 'data')
+            self.alert_media_create_table()
 
         self.priority_broadcasts = False
 
@@ -93,6 +98,9 @@ class ObRemoteData (obplayer.ObData):
         self.execute('CREATE TABLE shows_media (id INTEGER PRIMARY KEY, local_show_id INTEGER, media_id INTEGER, show_id INTEGER, order_num INTEGER, filename TEXT, artist TEXT, title TEXT, offset NUMERIC, duration NUMERIC, media_type TEXT, file_hash TEXT, file_size INT, file_location TEXT, approved INT, archived INT)')
         self.execute('CREATE INDEX local_show_id_index on shows_media (local_show_id)')
 
+    def alert_media_create_table(self):
+        self.execute('CREATE TABLE alert_media (media_id INTEGER, filename TEXT, file_hash TEXT, file_size INT, language TEXT, event_name TEXT, media_type TEXT, PRIMARY KEY(media_id))')
+
     def priority_broadcasts_create_table(self):
         self.execute('CREATE TABLE priority_broadcasts (id INTEGER PRIMARY KEY, start_timestamp INTEGER, end_timestamp INTEGER, frequency INTEGER, filename TEXT, artist TEXT, title TEXT, duration NUMERIC, media_type TEXT, media_id INTEGER, file_hash TEXT, file_size INT, file_location TEXT, approved INT, archived INT)')
 
@@ -103,6 +111,24 @@ class ObRemoteData (obplayer.ObData):
     def shows_group_items_create_table(self):
         self.execute('CREATE TABLE group_items (id INTEGER PRIMARY KEY, group_id INTEGER, media_id INTEGER, order_num INTEGER, filename TEXT, artist TEXT, title TEXT, duration NUMERIC, media_type TEXT, file_hash TEXT, file_size INT, file_location TEXT, approved INT, archived INT)')
         self.execute('CREATE INDEX group_id_index on group_items (group_id)')
+
+    #
+    # Given media id, filename, file_hash, file_size, event_name,
+    # language and media_type, add entry to show database.  If entry exists, edit if required.
+    # Return false if edit not required.  Return lastrowid otherwise.
+    def alert_audio_addedit(self, media_id, filename, file_hash, file_size, event_name, media_type, language):
+        rows = self.execute("SELECT * from alert_media where media_id=?", (str(media_id),))
+        for row in rows:
+            # if update not required, return false.
+            if int(row[0]) == int(media_id) and str(row[4]) == str(language):
+                return False
+            else:
+                # if we have a match, but update is required, delete entry + associated media.
+                self.execute("DELETE from alert_media where media_id=? and language=?", (str(row[0]), str(language),))
+
+        # now add the alert media... (media not added here, but added by sync script)
+        self.execute("INSERT or REPLACE into alert_media VALUES (?, ?, ?, ?, ?, ?, ?)", (media_id, filename, file_hash, file_size, language, event_name, media_type))
+        return self.db.last_insert_rowid()
 
     #
     # Given show_id, name, description, datetime, and duration, add entry to show database.  If entry exists, edit if required.
@@ -260,6 +286,70 @@ class ObRemoteData (obplayer.ObData):
 
         return media_list
 
+    def get_media_info(self, media_id):
+        for media in self.media_required():
+            print(media)
+            if media['media_id'] == media_id:
+                return media
+        return None
+
+    def alert_media_required(self):
+        import json, requests, time
+        postfields = {}
+        postfields['id'] = obplayer.Config.setting('sync_device_id')
+        postfields['pw'] = obplayer.Config.setting('sync_device_password')
+
+        data_request = requests.post(obplayer.Config.setting('sync_url').replace('/remote.php', '/modules/alert_languages/remote.php'), data=postfields)
+        if data_request.status_code != 200:
+            return {}
+        data = json.loads(data_request.content.decode('utf-8'))
+        for language in obplayer.Config.setting('alerts_selected_indigenous_languages').split(','):
+            for media_item in data[2][language]['alerts']:
+                media_item['language'] = language
+                print(media_item)
+                self.alert_audio_addedit(media_item['media_id'], media_item['alert_name'].lower() + '.' + media_item['media_format'],
+                media_item['media_hash'], media_item['media_filesize'], media_item['alert_name'], media_item['media_type'], media_item['language'])
+        rows = self.execute("SELECT media_id,filename,file_hash,file_size,language,event_name,media_type from alert_media GROUP by media_id")
+
+        media_list = {}
+
+        for row in rows:
+            media_row = self.get_alert_media_from_row(row)
+            media_list[media_row['filename']] = media_row
+
+        return media_list
+
+    def language_lookup(self, code):
+        for item in os.listdir(obplayer.RemoteData.datadir + '/indigenous/'):
+            print(item)
+        #obplayer.Config.setting('alerts_selected_indigenous_languages')
+
+    def fetch_alert_media(self, media):
+        postfields = {}
+
+        postfields['id'] = obplayer.Config.setting('sync_device_id')
+        postfields['pw'] = obplayer.Config.setting('sync_device_password')
+        postfields['media_id'] = media['media_id']
+
+        data_request = requests.post(obplayer.Config.setting('sync_url') + "?action=media", data=postfields)
+
+        if data_request.status_code != 200:
+            obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
+        else:
+            data = data_request.content
+            try:
+                # build save path with language name.
+                save_path = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(obplayer.alert.ObAlert.lang_ref_to_language_name(media['language']))
+                with open(save_path + media['filename'], 'wb') as file:
+                    file.write(data)
+                # convert all non wav audio to wav
+                if media['filename'].endswith('wav') == False:
+                    # strip file ext from filename
+                    filename = media['filename'].replace('.ogg', '').replace('.mp3', '').replace('.OGG', '').replace('.MP3', '')
+                    self.convert_audio(save_path + media['filename'], media['media_format'], filename)
+            except FileNotFoundError as e:
+                obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
+
     @staticmethod
     def get_media_from_row(row):
         media_row = {}
@@ -271,6 +361,18 @@ class ObRemoteData (obplayer.ObData):
         media_row['approved'] = row[4]
         media_row['archived'] = row[5]
         media_row['media_type'] = row[7]
+        return media_row
+
+    @staticmethod
+    def get_alert_media_from_row(row):
+        media_row = {}
+        media_row['media_id'] = row[0]
+        media_row['filename'] = row[1]
+        media_row['file_hash'] = row[2]
+        media_row['file_size'] = row[3]
+        media_row['language'] = row[4]
+        media_row['event_name'] = row[5]
+        media_row['media_type'] = row[6]
         return media_row
 
     #
@@ -430,5 +532,3 @@ class ObRemoteData (obplayer.ObData):
 
             self.priority_broadcasts = broadcasts
             return broadcasts
-
-

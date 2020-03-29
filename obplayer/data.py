@@ -361,9 +361,6 @@ class ObConfigData (ObData):
             self.add_setting('streamer_' + i + '_icecast_description', '', 'text')
             self.add_setting('streamer_' + i + '_icecast_url', '', 'text')
             self.add_setting('streamer_' + i + '_icecast_public', '0', 'bool')
-            self.add_setting('streamer_' + i + '_admin_username', 'admin', 'text')
-            self.add_setting('streamer_' + i + '_admin_password', 'hackme', 'text')
-            self.add_setting('streamer_' + i + '_metadata_push_mode', 'none', 'text')
             self.add_setting('streamer_play_on_startup', '1', 'bool')
 
         self.add_setting('streamer_rtsp_enable', '0', 'bool')
@@ -458,7 +455,6 @@ class ObConfigData (ObData):
         self.add_setting('http_show_alerts', '1', 'bool')
         self.add_setting('http_show_location', '1', 'bool')
         self.add_setting('http_show_liveassist', '1', 'bool')
-        self.add_setting('update_at_3_am', '1', 'bool')
 
         self.add_setting('live_assist_enable', '0', 'bool')
         self.add_setting('live_assist_port', '23456', 'int')

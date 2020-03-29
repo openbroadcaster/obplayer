@@ -21,8 +21,6 @@ Responses
 
   pulse-control-disabled: PulseAudio controls are disabled
 
-  settings-imported-leadin-audio: successfully imported lead-in audio
+  settings-imported-leadin-audio: successfully imported leadin audio
 
-  settings-imported-leadin-audio-error: their was a error importing the lead-in audio.
-
-  icecast_config_modal_all_fields_blank: all fields are blank in the Icecast config dialog!
+  settings-imported-leadin-audio-error: their was a error importing the leadin audio.

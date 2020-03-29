@@ -31,7 +31,6 @@ import os.path
 import traceback
 import subprocess
 import re
-import xml.dom.minidom
 
 
 from obplayer.httpadmin import httpserver
@@ -131,10 +130,6 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.route('/strings', self.req_strings)
         self.route('/command/restart', self.req_restart)
         self.route('/command/fstoggle', self.req_fstoggle)
-        self.route('/command/update_check', self.req_update_check)
-        self.route('/command/update_upgrade_list', self.req_update_upgrade_list)
-        self.route('/command/update_upgrade', self.req_update_upgrade)
-        self.route('/command/icecast_config_modal_save', self.req_icecast_config_modal_save)
         self.route('/save', self.req_save, 'admin')
         self.route('/import_settings', self.req_import, 'admin')
         self.route('/export_settings', self.req_export, 'admin')
@@ -154,33 +149,6 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.route('/inter_station_ctrl/stop', self.req_stop_inter_station_ctrl, 'admin')
         self.route('/inter_station_ctrl/is_live', self.req_is_live_inter_station_ctrl, 'admin')
         self.route('/logs/alert_log', self.req_export_alert_log, 'admin')
-
-    def req_icecast_config_modal_save(self, request):
-        import uuid
-        admin_password = request.args['admin'][0]
-        source_password = request.args['source'][0]
-        relay_password = request.args['relay'][0]
-        print(admin_password, source_password, relay_password)
-        with open('/etc/icecast2/icecast.xml', 'r') as file:
-            data = file.read()
-
-        config = xml.dom.minidom.parseString(data)
-        # use a random string as the password if user didn't provide one, and the defualt is used.
-        if config.getElementsByTagName('admin-password')[0].firstChild.nodeValue == 'hackme' and admin_password == '':
-            admin_password = uuid.uuid4().hex
-            config.getElementsByTagName('admin-password')[0].firstChild.nodeValue = admin_password
-
-        if config.getElementsByTagName('source-password')[0].firstChild.nodeValue == 'hackme' and source_password == '':
-            source_password = uuid.uuid4().hex
-            config.getElementsByTagName('source-password')[0].firstChild.nodeValue = source_password
-
-        if config.getElementsByTagName('relay-password')[0].firstChild.nodeValue == 'hackme' and relay_password == '':
-            relay_password = uuid.uuid4().hex
-            config.getElementsByTagName('relay-password')[0].firstChild.nodeValue = relay_password
-
-        with open('/etc/icecast2/icecast.xml', 'w') as file:
-            file.write(config.toxml())
-        return {'admin': admin_password, 'source': source_password, '': relay_password}
 
     def req_status_info(self, request):
         proc = subprocess.Popen([ "uptime", "-p" ], stdout=subprocess.PIPE)
@@ -457,35 +425,6 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         res.send_content('text/plain', '\n'.join(output))
         #return '\n'.join(output)
         return res
-
-    def req_update_check(self, request):
-        output = []
-        import re
-        proc = subprocess.Popen(['sudo', 'apt', 'update'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, err = proc.communicate()
-        stdout = stdout.decode()
-        if re.search("(\d+ packages can be upgraded.)", stdout):
-            data = re.search("(\d+ packages can be upgraded.)", stdout)[0]
-        return {'update_data': data}
-
-    def req_update_upgrade_list(self, request):
-        import re
-        proc = subprocess.Popen(['apt', 'list', '--upgradeable'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, err = proc.communicate()
-        stdout = stdout.decode()
-        return {'update_data': stdout}
-
-    def req_update_upgrade(self, request):
-        from datetime import datetime
-        proc = subprocess.Popen(['apt', 'upgrade', '-y'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, err = proc.communicate()
-        stdout = stdout.decode()
-        if obplayer.Config.setting('update_at_3_am'):
-            os.system('shutdown -r 03:00')
-        else:
-            os.system('shutdown -r')
-        return {'update_data': stdout}
-
 
     @staticmethod
     def load_strings(lang, strings):

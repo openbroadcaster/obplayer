@@ -80,6 +80,7 @@ class ObLineinIcecastStreamer (ObGstStreamer):
             self.audiosrc = Gst.ElementFactory.make('fakesrc', 'audiosrc')
 
         elif audio_input == 'intersink':
+            print(self.name)
             obplayer.Player.add_inter_tap(self.name)
             self.audiosrc = Gst.ElementFactory.make('interaudiosrc')
             self.audiosrc.set_property('channel', self.name + ':audio')

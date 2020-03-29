@@ -28,9 +28,6 @@ Streamer Tab
   streamer_0_icecast_description: Icecast (One) Description
   streamer_0_icecast_url: Icecast (One) URL
   streamer_0_icecast_public: Publicly List Icecast (One) Stream
-  streamer_0_admin_username: Icecast admin username
-  streamer_0_admin_password: Icecast admin password
-  streamer_0_metadata_push_mode: The mode for sending now playing data to icecast.
 
   streamer_1_icecast_enable: Enable Icecast Streaming
   streamer_1_icecast_enable_tooltip: If enabled, an audio recorder will send audio to an icecast server via http.
@@ -44,9 +41,6 @@ Streamer Tab
   streamer_1_icecast_description: Icecast (Two) Description
   streamer_1_icecast_url: Icecast (Two) URL
   streamer_1_icecast_public: Publicly List Icecast (Two) Stream
-  streamer_1_admin_username: Icecast admin username
-  streamer_1_admin_password: Icecast admin password
-  streamer_1_metadata_push_mode: The mode for sending now playing data to icecast.
 
   streamer_play_on_startup: Play Streams on Startup
   streamer_play_on_startup_tooltip: Uncheck this when using the 'trigger icecast stream on alerts' feature on the alerts tab

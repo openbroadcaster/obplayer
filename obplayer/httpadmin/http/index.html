@@ -235,10 +235,6 @@
               <td>[<%= obplayer.Config.setting('location_longitude') %>, <%= obplayer.Config.setting('location_latitude') %>]</td>
             </tr>
             <% end %>
-      <tr>
-        <td data->Update At 3 AM</td>
-        <td><%= obplayer.Config.setting('update_at_3_am') %></td>
-      </tr>
   	</table>
 
           <% if obplayer.Config.setting('http_show_sync'): %>
@@ -881,11 +877,10 @@
             <label for="admin-experimental" data-t>Experimental Settings</label>
             <table class="settings">
               <tbody>
-                <!-- Disabled until ready for use. -->
-                <!-- <tr>
+                <tr>
                   <td data-t>show_indigenous_alert_settings</td>
                   <td><input type="checkbox" name="show_indigenous_alert_settings" value="1"<%= obplayer.HTTPAdmin.form_item_checked('show_indigenous_alert_settings') %>></td>
-                </tr> -->
+                </tr>
                 <tr>
                   <td data-t>show_alert_ledin_settings</td>
                   <td><input type="checkbox" name="show_alert_ledin_settings" value="1"<%= obplayer.HTTPAdmin.form_item_checked('show_alert_ledin_settings') %>></td>
@@ -902,13 +897,12 @@
                   <td data-t>show_sdr_streaming_logging_settings</td>
                   <td><input type="checkbox" name="show_sdr_streaming_logging_settings" value="1"<%= obplayer.HTTPAdmin.form_item_checked('show_sdr_streaming_logging_settings') %>></td>
                 </tr>
-                <!-- Disabled until ready for use. -->
-                <!-- <tr>
+                <tr>
                   <td data-t>newsfeed_override</td>
                   <td>
                     <input type="checkbox" name="newsfeed_override_enabled" value="<%= obplayer.HTTPAdmin.form_item_selected('newsfeed_override_enabled', '1') %>">
                   </td>
-                </tr> -->
+                </tr>
                 <tr>
                   <td><p>To ensure all Experimental features work, please make sure all dependencies are met.</p>
                   <a href="https://wiki.openbroadcaster.com/Experimental" target="_blank">More info </a>
@@ -918,51 +912,10 @@
             </table>
           </div>
 
-          <div class="modal" id="icecast_config_modal">
-            <div class="modal-content">
-              <table class="setting">
-                <tr>
-                  <td data-t>icecast_admin_password</td>
-                  <td>
-                    <input type="text" id="icecast_config_modal_admin_password" value="">
-                  </td>
-                </tr>
-                <tr>
-                  <td data-t>icecast_source_password</td>
-                  <td>
-                    <input type="text" id="icecast_config_modal_source_password" value="">
-                  </td>
-                </tr>
-                <tr>
-                  <td data-t>icecast_relay_password</td>
-                  <td>
-                    <input type="text" id="icecast_config_modal_relay_password" value="">
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <p>Any values set as default will be replaced with a random password.</p>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <button type="button" id="icecast_config_editor_save_btn">Save</button>
-                    <button type="button" id="icecast_config_editor_exit_btn">Exit</button>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
-
           <table class="settings">
             <tbody>
               <tr>
-                <td colspan="2">
-                  <button name="save" type="button" onclick="javascript: Site.save('admin');" data-tns="Common" data-t>Save</button>
-                </td>
-                <td colspan="2">
-                  <button type="button" id="icecast_config_editor_open_btn">Icecast confing editor</button>
-                </td>
+                <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('admin');" data-tns="Common" data-t>Save</button></td>
               </tr>
             </tbody>
           </table>
@@ -1030,38 +983,8 @@
                 <td><button id="update-check" type="button" data-t>Check</button></td>
                 <td><button id="update-player" type="button" data-t>Update</button></td>
               </tr>
-
-              <% if obplayer.Config.args.disable_updater == False: %>
-              <tr>
-                <td data-t>Update System OS</td>
-                <td><button id="os-update-check" type="button" data-t onclick="javascript: Site.updateStationOverrideBtn();">Check</button></td>
-                <td><button id="os-update-upgrade" type="button" data-t>OS Update</button></td>
-              </tr>
-              <tr>
-                <td data-t>update_at_3_am</td>
-                <td><input type="checkbox" id="update_at_3_am_checkbox" name="update_at_3_am" <%= obplayer.HTTPAdmin.form_item_checked('update_at_3_am') %>></td>
-              </tr>
-              <tr>
-                <td><div id="update-data"></div></td>
-              </tr>
-              <tr>
-                <td><p>Please note: updating only works on the offical OBPlayer units.</p></td>
-              </tr>
-              <% end %>
             </tbody>
           </table>
-
-          <div class="modal" id="update_modal">
-            <div class="modal-content">
-              <h1 class="warning-text" id="update-header-text">Warning!</h1>
-              <p id="update_more_info">When updating the system will restart.<br>continue?</p>
-              <textarea id="update-packages" rows="20" cols="20"></textarea>
-              <div class="button_box">
-                <button type="button" id="update_exit_btn" data-t>Exit (no update)</button>
-                <button type="button" id="update_continue_btn" data-t>Continue(update, and restart)</button>
-              </div>
-            </div>
-          </div>
 
           <table>
             <tbody>
@@ -1937,33 +1860,6 @@
                 <td data-t>streamer_play_on_startup</td>
                 <td><input type="checkbox" name="streamer_play_on_startup" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_play_on_startup') %> title="streamer_play_on_startup_tooltip" data-t></td>
               </tr>
-              <tr>
-                <td data-t>streamer_0_admin_username</td>
-                <td>
-                  <input type="text" name="streamer_0_admin_username" value="<%= obplayer.Config.setting('streamer_0_admin_username',True) %>">
-                </td>
-              </tr>
-              <tr>
-                <td data-t>streamer_0_admin_password</td>
-                <td>
-                  <input type="password" name="streamer_0_admin_password" value="<%= obplayer.Config.setting('streamer_0_admin_password',True) %>">
-                </td>
-              </tr>
-              <tr>
-                <td data-t>streamer_0_metadata_push_mode</td>
-                <td>
-                  <select name="streamer_0_metadata_push_mode">
-                    <option value="none">None</option>
-                    <option value="file-output">File ouput</option>
-                    <option value="icecast-api">Icecast API update</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <p>the icecast admin password is only needed for API mode.</p>
-                </td>
-              </tr>
             </tbody>
             </table>
               <div class="stl-settings">
@@ -2029,33 +1925,6 @@
                     <tr>
                       <td data-t>streamer_1_icecast_public</td>
                       <td><input type="checkbox" name="streamer_1_icecast_public" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_1_icecast_public') %>></td>
-                    </tr>
-                    <tr>
-                      <td data-t>streamer_1_admin_username</td>
-                      <td>
-                        <input type="text" name="streamer_1_admin_username" value="<%= obplayer.Config.setting('streamer_1_admin_username',True) %>">
-                      </td>
-                    </tr>
-                    <tr>
-                      <td data-t>streamer_1_admin_password</td>
-                      <td>
-                        <input type="password" name="streamer_1_admin_password" value="<%= obplayer.Config.setting('streamer_1_admin_password',True) %>">
-                      </td>
-                    </tr>
-                    <tr>
-                      <td data-t>streamer_1_metadata_push_mode</td>
-                      <td>
-                        <select name="streamer_1_metadata_push_mode">
-                          <option value="none">None</option>
-                          <option value="file-output">File ouput</option>
-                          <option value="icecast-api">Icecast API update</option>
-                        </select>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-                        <p>the icecast admin password is only needed for API mode.</p>
-                      </td>
                     </tr>
                   </tbody>
                 </table>

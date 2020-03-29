@@ -6,8 +6,8 @@ Alerts Tab
   alerts_enable: Enable Emergency Alerts
   alerts_location_type: Country to receive alerts for
   alerts_aws_voices_enable: Enable AWS Polly voices
-  alerts_play_leadin_enable: Enable Alert Lead-in Message
-  alerts_play_leadin_file: Alerts Lead-in file
+  alerts_play_leadin_enable: Enable Alert Leadin Message
+  alerts_play_leadin_file: Alerts Leadin file
   alerts_geocode: Location Geocode
   alerts_geocode_tooltip: A comma-separated list of partial geocodes.  The first part of an alert's geocode must match one of the partial geocodes in this list for the alert to be active.  See http://www.statcan.gc.ca/eng/subjects/standard/sgc/geography for a list of Canadian geocodes.
   alerts_broadcast_message_in_indigenous_languages: Broadcast alerts in indigenous language(s)

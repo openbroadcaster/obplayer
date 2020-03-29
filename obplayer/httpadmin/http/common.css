@@ -82,13 +82,6 @@ h2:first-child
   margin-bottom: 20px;
 }
 
-.warning-text {
-  color: #fc3d03;
-  font-weight: bold;
-  font-size: 42px;
-  text-align: center;
-}
-
 #notice
 {
   border: 1px solid #333;
@@ -403,16 +396,4 @@ input[type="range"] {
 
 .modal_close_btn:hover {
   cursor: pointer;
-}
-
-#update_modal > .modal-content {
-  border: 2px dotted #fc3d03;
-}
-
-#update_modal p {
-  font-size: 38px;
-}
-
-#update_modal textarea {
-  width: 100%;
 }

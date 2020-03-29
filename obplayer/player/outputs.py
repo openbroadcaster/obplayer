@@ -77,6 +77,12 @@ class ObAudioOutputBin (ObOutputBin):
         level.set_property('interval', int(0.5 * Gst.SECOND))
         self.elements.append(level)
 
+        #add volume sink
+        self.volume = Gst.ElementFactory.make('volume', 'volumesink')
+        self.volume.set_property('volume', obplayer.Config.setting('audio_output_volume'))
+
+        self.elements.append(self.volume)
+
         self.tee = Gst.ElementFactory.make('tee', 'audio-out-interlink-tee')
         self.elements.append(self.tee)
         self.elements.append(Gst.ElementFactory.make('queue2', 'audio-out-post-tee-queue'))
@@ -446,5 +452,3 @@ class ObVideoOverlayBin (ObOutputBin):
 
     def overlay_draw(self, overlay, context, arg1, arg2):
         self.overlay.draw_overlay(context, self.overlay_caps.width, self.overlay_caps.height)
-
-

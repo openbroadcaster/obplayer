@@ -21,6 +21,7 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import obplayer
+import obplayer.alerts
 
 import pycurl
 
@@ -36,6 +37,7 @@ import json
 import calendar
 import threading
 import traceback
+import requests
 
 
 MIN_SERVER_VERSION = '4.1.1-20150507'
@@ -194,6 +196,57 @@ class SyncMediaThread (obplayer.ObThread):
     def stop(self):
         obplayer.ObThread.stop(self)
         obplayer.Sync.quit = True
+
+
+class Sync_Alert_Media_Thread(obplayer.ObThread):
+    def __init__(self):
+        obplayer.ObThread.__init__(self)
+        self.daemon = True
+        # Download indigenous alert data from server.
+
+    def run(self):
+        self.running = True
+        while self.running:
+            obplayer.Sync.sync_alert_media()
+            # Sleeping for sync_freq time
+            time.sleep(obplayer.Config.setting('sync_freq'))
+
+    def convert_audio(self, file_path, file_type, filename):
+        process = subprocess.Popen(['sox', file_path + '.' + file_type, '-t', 'wav', file_path + '.wav'])
+        process.wait()
+        if process.poll() != 0:
+            obplayer.Log.log('Could not convert file {0} to wav format! Make sure sox is installed.'.format(file_path + file_type), 'error')
+
+    def fetch_alert_media(self, media):
+        postfields = {}
+
+        postfields['id'] = obplayer.Config.setting('sync_device_id')
+        postfields['pw'] = obplayer.Config.setting('sync_device_password')
+        postfields['media_id'] = media['media_id']
+
+        data_request = requests.post(obplayer.Config.setting('sync_url') + "?action=media", data=postfields)
+
+        if data_request.status_code != 200:
+            obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
+        else:
+            data = data_request.content
+            try:
+                # build save path with language name.
+                print(obplayer.alert.ObAlert.lang_ref_to_language_name(media['language']))
+                save_path = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(obplayer.alert.ObAlert.lang_ref_to_language_name(media['language']))
+                with open(save_path + media['filename'], 'wb') as file:
+                    file.write(data)
+                # convert all non wav audio to wav
+                if media['filename'].endswith('.wav') == False:
+                    # strip file ext from filename
+                    filename = media['filename'].replace('.ogg', '').replace('.mp3', '').replace('.OGG', '').replace('.MP3', '')
+                    self.convert_audio(save_path + media['filename'], media['media_format'], filename)
+            except FileNotFoundError as e:
+                obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
+
+    def stop(self):
+        self.running = False
+        obplayer.ObThread.stop(self)
 
 
 class ObSync:
@@ -583,16 +636,59 @@ class ObSync:
         if delete_unused_media == True:
             self.remove_unused_media(obplayer.Config.setting('remote_media'), media_required)
 
+    def fetch_alert_media(self, media):
+        postfields = {}
+
+        postfields['id'] = obplayer.Config.setting('sync_device_id')
+        postfields['pw'] = obplayer.Config.setting('sync_device_password')
+        postfields['media_id'] = media['media_id']
+
+        data_request = requests.post(obplayer.Config.setting('sync_url') + "?action=media", data=postfields)
+
+        if data_request.status_code != 200:
+            obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
+        else:
+            data = data_request.content
+            try:
+                # build save path with language name.
+                save_path = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(obplayer.alerts.ObAlert.lang_ref_to_language_name(media['language']))
+                with open(save_path + media['filename'], 'wb') as file:
+                    file.write(data)
+                # convert all non wav audio to wav
+                if media['filename'].endswith('wav') == False:
+                    # strip file ext from filename
+                    filename = media['filename'].replace('.ogg', '').replace('.mp3', '').replace('.OGG', '').replace('.MP3', '')
+                    self.convert_audio(save_path + media['filename'], media['media_format'], filename)
+            except FileNotFoundError as e:
+                obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
+
+    def sync_alert_media(self, delete_unused_media=True):
+        media_required = obplayer.RemoteData.alert_media_required()
+
+        for media_row in media_required:
+
+            media = media_required[media_row]
+
+            if self.check_media(media, True, media['language']) == False:
+                self.sync_media_file = media['media_id']
+                self.fetch_alert_media(media)
+                self.sync_media_file = False
+
+        if delete_unused_media == True:
+            self.remove_unused_media(obplayer.Config.setting('remote_media'), media_required)
+
     #
     #
     # uses media['file_location'], media['file_size'], media['filename'] to see if available media is the correct filesize.
     #
-    def check_media(self, media):
+    def check_media(self, media, alert_mode=False, alert_language=None):
 
         if media['media_type'] not in [ 'audio', 'video', 'image' ]:
             return True
-
-        media_fullpath = obplayer.Config.setting('remote_media') + '/' + media['file_location'][0] + '/' + media['file_location'][1] + '/' + media['filename']
+        if alert_mode and alert_language != None:
+            media_fullpath = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(alert_language) + media['filename']
+        else:
+            media_fullpath = obplayer.Config.setting('remote_media') + '/' + media['file_location'][0] + '/' + media['file_location'][1] + '/' + media['filename']
 
         # TODO provide file hash check (slow) as an option.
 
