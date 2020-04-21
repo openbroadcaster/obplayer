@@ -10,4 +10,4 @@ Openbroadcaster - Player Installation Instructions
 
 5. Restart the player
 
-More info at http://wiki.openbroadcaster.com/
+More info at https://wiki.openbroadcaster.com/
