@@ -51,6 +51,7 @@ class ObMainApp:
         parser.add_argument('-d', '--debug', action='store_true', help='print log messages to stdout', default=False)
         parser.add_argument('-c', '--configdir', nargs=1, help='specifies an alternate data directory', default=[ '~/.openbroadcaster' ])
         parser.add_argument('--disable-http', action='store_true', help='disables the http admin', default=False)
+        parser.add_argument('--disable-updater', action='store_true', help='disables the OS updater', default=False)
 
         self.args = parser.parse_args()
         obplayer.ObData.set_datadir(self.args.configdir[0])
@@ -95,7 +96,7 @@ class ObMainApp:
                 self.load_module('rtpin')
             if obplayer.Config.setting('audio_in_enable'):
                 self.load_module('linein')
-            if obplayer.Config.setting('scheduler_enable'):
+            if obplayer.Config.setting('maintenance_enable'):
                 self.load_module('scheduler')
             if obplayer.Config.setting('live_assist_enable'):
                 self.load_module('liveassist')

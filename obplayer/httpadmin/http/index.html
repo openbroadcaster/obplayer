@@ -87,6 +87,18 @@
         </div>
       </div>
 
+      <% if obplayer.Config.setting('http_admin_tos_ui_agreed', True) == False: %>
+        <div class="modal" id="tos_modal" style="display: block;">
+          <div class="modal-content">
+            <h3>Terms Of Service agreement</h3>
+              <textarea class="tos_textarea" readonly rows="20">
+                <%= obplayer.Config.setting('http_admin_tos_ui_current_tos_text') %>
+              </textarea>
+            <button type="button" id="tos_agree_btn">Agree</button>
+            <button type="button" id="tos_disagree_btn">Disagree & exit</button>
+          </div>
+        </div>
+      <% end %>
 
       <div id="content">
 
@@ -240,8 +252,8 @@
           <% if obplayer.Config.setting('http_show_sync'): %>
   	<table data-tns="Sync Tab">
   	  <tr class="padding">
-  	    <td data-t>scheduler_enable</td>
-  	    <td><%= obplayer.Config.setting('scheduler_enable') %></td>
+  	    <td data-t>maintenance_enable</td>
+  	    <td><%= obplayer.Config.setting('maintenance_enable') %></td>
   	  </tr>
           </table>
 
@@ -912,11 +924,50 @@
             </table>
           </div>
 
+          <div class="modal" id="icecast_config_modal">
+            <div class="modal-content">
+              <table class="setting">
+                <tr>
+                  <td data-t>icecast_admin_password</td>
+                  <td>
+                    <input type="text" id="icecast_config_modal_admin_password" value="">
+                  </td>
+                </tr>
+                <tr>
+                  <td data-t>icecast_source_password</td>
+                  <td>
+                    <input type="text" id="icecast_config_modal_source_password" value="">
+                  </td>
+                </tr>
+                <tr>
+                  <td data-t>icecast_relay_password</td>
+                  <td>
+                    <input type="text" id="icecast_config_modal_relay_password" value="">
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <p>Any values set as default will be replaced with a random password.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <button type="button" id="icecast_config_editor_save_btn">Save</button>
+                    <button type="button" id="icecast_config_editor_exit_btn">Exit</button>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
           <table class="settings">
             <tbody>
               <tr>
                 <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('admin');" data-tns="Common" data-t>Save</button></td>
               </tr>
+              <td colspan="2">
+                <button type="button" id="icecast_config_editor_open_btn">Icecast confing editor</button>
+              </td>
             </tbody>
           </table>
 
@@ -983,8 +1034,37 @@
                 <td><button id="update-check" type="button" data-t>Check</button></td>
                 <td><button id="update-player" type="button" data-t>Update</button></td>
               </tr>
+              <% if obplayer.Config.args.disable_updater == False: %>
+              <tr>
+                <td data-t>Update System OS</td>
+                <td><button id="os-update-check" type="button" data-t onclick="javascript: Site.updateStationOverrideBtn();">Check</button></td>
+                <td><button id="os-update-upgrade" type="button" data-t>OS Update</button></td>
+              </tr>
+              <tr>
+                <td data-t>update_at_3_am</td>
+                <td><input type="checkbox" id="update_at_3_am_checkbox" name="update_at_3_am" <%= obplayer.HTTPAdmin.form_item_checked('update_at_3_am') %>></td>
+              </tr>
+              <tr>
+                <td><div id="update-data"></div></td>
+              </tr>
+              <tr>
+                <td><p>Please note: updating only works on the offical OBPlayer units.</p></td>
+              </tr>
+              <% end %>
             </tbody>
           </table>
+
+          <div class="modal" id="update_modal">
+            <div class="modal-content">
+              <h1 class="warning-text" id="update-header-text">Warning!</h1>
+              <p id="update_more_info">When updating the system will restart.<br>continue?</p>
+              <textarea id="update-packages" rows="20" cols="20"></textarea>
+              <div class="button_box">
+                <button type="button" id="update_exit_btn" data-t>Exit (no update)</button>
+                <button type="button" id="update_continue_btn" data-t>Continue(update, and restart)</button>
+              </div>
+            </div>
+          </div>
 
           <table>
             <tbody>
@@ -1007,8 +1087,8 @@
           <table class="settings">
             <tbody>
               <tr>
-                <td data-t>scheduler_enable</td>
-                <td><input type="checkbox" name="scheduler_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('scheduler_enable') %> title="scheduler_enable_tooltip" data-t></td>
+                <td data-t>maintenance_enable</td>
+                <td><input type="checkbox" name="maintenance_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('maintenance_enable') %> title="maintenance_enable_tooltip" data-t></td>
               </tr>
 
               <tr>
@@ -1085,11 +1165,11 @@
 
           <br/>
 
-          <% if obplayer.Config.setting('scheduler_enable'): %>
+          <% if obplayer.Config.setting('maintenance_enable'): %>
           <table>
             <tbody>
               <tr>
-                <td data-t>Enable/Disable Scheduler</td>
+                <td data-t>Enable/Disable Maintenance Mode</td>
                 <td><button id="toggle-scheduler" type="button" data-t>Toggle</button></td>
                 <td id="toggle-scheduler-status"><%= '(refresh dashboard)' if not hasattr(obplayer, 'Scheduler') else 'Enabled' if obplayer.Scheduler.ctrl.enabled else 'Disabled'  %></td>
               </tr>
@@ -1799,6 +1879,9 @@
                 <td><select name="streamer_0_icecast_mode">
                     <option value="audio"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','audio') %>>Audio Only</option>
                     <option value="video320x200"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','video320x200') %>>Video - 320x200</option>
+                    <option value="video640x480"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','video640x480') %>>Video - 640x480</option>
+                    <option value="video1280x720"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','video1280x720') %>>Video - 1280x720</option>
+                    <option value="video1920x1080"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','video1920x1080') %>>Video - 1920x1080</option>
                   </select></td>
               </tr>
               <tr>
@@ -1859,6 +1942,10 @@
               <tr>
                 <td data-t>streamer_play_on_startup</td>
                 <td><input type="checkbox" name="streamer_play_on_startup" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_play_on_startup') %> title="streamer_play_on_startup_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>streamer_0_title_streaming_enable</td>
+                <td><input type="checkbox" name="streamer_0_title_streaming_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_0_title_streaming_enable') %> title="streamer_0_title_streaming_enable_tooltip" data-t></td>
               </tr>
             </tbody>
             </table>
@@ -1925,6 +2012,10 @@
                     <tr>
                       <td data-t>streamer_1_icecast_public</td>
                       <td><input type="checkbox" name="streamer_1_icecast_public" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_1_icecast_public') %>></td>
+                    </tr>
+                    <tr>
+                      <td data-t>streamer_1_title_streaming_enable</td>
+                      <td><input type="checkbox" name="streamer_1_title_streaming_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_1_title_streaming_enable') %> title="streamer_1_title_streaming_enable_tooltip" data-t></td>
                     </tr>
                   </tbody>
                 </table>
@@ -12230,7 +12321,8 @@
                     <option value="mb-sw2"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-sw2') %>>mb-sw2</option>
                     <% if obplayer.Config.setting('alerts_aws_voices_enable'): %>
                     <option value="aws-Joanna"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','aws-Joanna') %>>AWS Polly - Joanna</option>
-                    <option value="aws-Matthew"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','aws-Joanna') %>>AWS Polly - Matthew</option>
+                    <option value="aws-Joey"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','aws-Joey') %>>AWS Polly - Joey</option>
+                    <option value="aws-Matthew"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','aws-Matthew') %>>AWS Polly - Matthew</option>
                     <option value="aws-Chantal"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','aws-Chantal') %>>AWS Polly - Chantal</option>
                     <% end %>
                   </select>
@@ -12368,12 +12460,12 @@
               <tr>
                 <td data-t>Test Alerts</td>
                 <td><select id="test_alert_select" name="test_alert">
-                    <option value="obplayer/alerts/data/testalerts/1example_CAPCP_No_Attachment.xml" data-t>Simple Test</option>
+                    <option value="obplayer/alerts/data/testalerts/1example_CAPCP_No_Attachment.xml" data-t>Audio - Primary</option>
+                    <option value="obplayer/alerts/data/testalerts/2019-01-01T00_04_07_02Iurn3oid32.49.0.1.124.0322195743.2019_001.xml" data-t>Audio - Bilingual - External Media</option>
                     <option value="obplayer/alerts/data/testalerts/4example_CAPCP_with_External_Large_Audio_File.xml" data-t>External Audio Test</option>
                     <option value="obplayer/alerts/data/testalerts/2example_CAPCP_with_Embedded_Large_Audio_File.xml" data-t>Embedded Audio Test</option>
-                    <option value="obplayer/alerts/data/testalerts/2016_03_01T07_54_04_04_00IC0B0D06C_882E_1195_7170_24D9BF99FAD9.xml" data-t>Embedded Audio and Image Test</option>
-                    <option value="obplayer/alerts/data/testalerts/2019-01-01T00_04_07_02Iurn3oid32.49.0.1.124.0322195743.2019_001.xml" data-t>Multiple info blocks(en and fr)</option>
-                    <option value="obplayer/alerts/data/testalerts/NWS-IDP-PROD-3296165-2882593.xml" data-t>NWS Test Alert</option>
+                    <option value="obplayer/alerts/data/testalerts/2016_03_01T07_54_04_04_00IC0B0D06C_882E_1195_7170_24D9BF99FAD9.xml" data-t>Bilingual - Embedded Media</option>
+                    <option value="obplayer/alerts/data/testalerts/NWS-IDP-PROD-3296165-2882593.xml" data-t>NWS - Test Alerts</option>
                   </select></td>
               </tr>
               <tr>

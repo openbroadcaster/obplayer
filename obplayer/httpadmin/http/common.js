@@ -117,6 +117,18 @@ $(document).ready(function() {
         placeholder: ''
       });
     }});
+    // Handle the TOS modal actions.
+    $('#tos_agree_btn').on('click', (e) => {
+      $('#tos_modal').hide();
+      $.post('/command/tos_agreed', {}, function(data, status) {
+          // No action needed here.
+          console.log(status);
+        });
+      });
+    $('#tos_disagree_btn').on('click', (e) => {
+      $('#tos_modal').hide();
+      window.location.href = "https://openbroadcaster.com";
+    });
 });
 
 Site.injectAlert = function()
@@ -665,6 +677,46 @@ $(document).ready(function()
       }
     });
   });
+
+  // Check for button click to open icecast config dialog.
+  $('#icecast_config_editor_open_btn').click(function (e) {
+    $('#icecast_config_modal').show();
+  })
+
+  // Check for button click to save the icecast config settings.
+  $('#icecast_config_editor_save_btn').click(function (e) {
+    const admin_password = $('#icecast_config_modal_admin_password');
+    const source_password = $('#icecast_config_modal_source_password');
+    const relay_password = $('#icecast_config_modal_relay_password');
+    const icecast_admin_password = $('#icecast_config_modal_admin_password').val();
+    const icecast_source_password = $('#icecast_config_modal_source_password').val();
+    const icecast_relay_password = $('#icecast_config_modal_relay_password').val();
+
+    if (icecast_admin_password == '' && icecast_source_password == ''
+    && icecast_relay_password == '') {
+      $('#icecast_config_modal').hide();
+      $('#error').text(Site.t('Responses', 'icecast_config_modal_all_fields_blank')).show();
+    } else {
+      const post_data = {
+        'admin': icecast_admin_password,
+        'source': icecast_source_password,
+        'relay': icecast_relay_password
+      };
+      $.post('/command/icecast_config_modal_save', post_data, function (response) {
+        let admin = response.admin;
+        let source = response.source;
+        let relay = response.relay;
+        admin_password.val(admin);
+        source_password.val(source);
+        relay_password.val(relay);
+      })
+    }
+  })
+
+  // Check for button click to close the icecast config settings dialog.
+  $('#icecast_config_editor_exit_btn').click(function (e) {
+    $('#icecast_config_modal').hide();
+  })
 
   $('#update-player').click(function (event)
   {

@@ -34,12 +34,13 @@ from gi.repository import GObject, Gst
 from .base import ObGstStreamer
 
 import uuid
+from .metadata_updater import MetadataUpdater
 
 
 class ObIcecastStreamer (ObGstStreamer):
     def __init__(self, streamer_icecast_ip, streamer_icecast_port, streamer_icecast_password,
         streamer_icecast_mount, streamer_icecast_streamname, streamer_icecast_description,
-        streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate):
+        streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate, enable_title_streaming=False):
         self.icecast_ip = streamer_icecast_ip
         self.icecast_port = streamer_icecast_port
         self.icecast_password = streamer_icecast_password
@@ -49,12 +50,18 @@ class ObIcecastStreamer (ObGstStreamer):
         self.icecast_url = streamer_icecast_url
         self.icecast_public = streamer_icecast_public
         self.icecast_bitrate = streamer_icecast_bitrate
+        self._metadata_updater_thread = None
+        self.mode = obplayer.Config.setting('streamer_0_icecast_mode')
         ObGstStreamer.__init__(self, 'icecast_' + uuid.uuid4().hex)
 
-        if obplayer.Config.setting('streamer_icecast_mode') == 'audio':
+        if obplayer.Config.setting('streamer_0_icecast_mode') == 'audio':
+            if enable_title_streaming:
+                self._metadata_updater_thread = MetadataUpdater(host=self.icecast_ip, port=self.icecast_port, username='source',
+                                                                password=self.icecast_password, mount=self.icecast_mount)
             self.make_audio_pipe()
         else:
-            self.make_video_pipe()
+            self.make_video_pipe(obplayer.Config.setting('streamer_0_icecast_mode'))
+            title_streaming = False
 
     def make_audio_pipe(self):
         self.audiopipe = [ ]
@@ -151,7 +158,17 @@ class ObIcecastStreamer (ObGstStreamer):
 
         self.build_pipeline(self.audiopipe)
 
-    def make_video_pipe(self):
+    def make_video_pipe(self, res):
+        if res == 'video320x200':
+            video_res = '320x200'
+        elif res == 'video640x480':
+            video_res = '640x480'
+        elif res == 'video1280x720':
+            video_res = '1280x720'
+        elif res == 'video1920x1080':
+            video_res = '1920x1080'
+        else:
+            video_res = '0x0'
         obplayer.Player.add_inter_tap(self.name)
 
         self.audiopipe = [ ]
@@ -237,7 +254,7 @@ class ObIcecastStreamer (ObGstStreamer):
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=384,height=288,framerate=15/1"))
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=100,height=75,framerate=15/1"))
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=384,height=288,framerate=15/1"))
-        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=320,height=200,framerate=24/1,pixel-aspect-ratio=1/1"))
+        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate=24/1,pixel-aspect-ratio=1/1". format(video_res.split('x')[0], video_res.split('x')[1])))
         self.videopipe.append(caps)
 
         #self.videopipe.append(Gst.ElementFactory.make("vp8enc"))
@@ -319,6 +336,14 @@ class ObIcecastStreamer (ObGstStreamer):
                 print("now outputting buffers")
         return True
 
+    def start_title_streaming(self):
+        if self._metadata_updater_thread != None:
+            self._metadata_updater_thread.start()
+
+    def stop_title_streaming(self):
+        if self._metadata_updater_thread != None:
+            self._metadata_updater_thread.running = False
+            self._metadata_updater_thread = None
 
 class ObRtpOutput (Gst.Bin):
     def __init__(self):

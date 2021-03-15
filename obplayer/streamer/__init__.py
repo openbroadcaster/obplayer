@@ -42,17 +42,33 @@ def init():
         obplayer.Streamer_stream_1 = ObIcecastStreamer(obplayer.Config.setting('streamer_0_icecast_ip'), int(obplayer.Config.setting('streamer_0_icecast_port')),
                 obplayer.Config.setting('streamer_0_icecast_password'), obplayer.Config.setting('streamer_0_icecast_mount'),
                 obplayer.Config.setting('streamer_0_icecast_streamname'), obplayer.Config.setting('streamer_0_icecast_description'),
-                obplayer.Config.setting('streamer_0_icecast_url'), obplayer.Config.setting('streamer_0_icecast_public'), obplayer.Config.setting('streamer_0_icecast_bitrate'))
+                obplayer.Config.setting('streamer_0_icecast_url'), obplayer.Config.setting('streamer_0_icecast_public'), obplayer.Config.setting('streamer_0_icecast_bitrate'),
+                obplayer.Config.setting('streamer_0_title_streaming_enable'))
         # Start stream two
         obplayer.Streamer_stream_2 = ObIcecastStreamer(obplayer.Config.setting('streamer_1_icecast_ip'), int(obplayer.Config.setting('streamer_1_icecast_port')),
                     obplayer.Config.setting('streamer_1_icecast_password'), obplayer.Config.setting('streamer_1_icecast_mount'),
                     obplayer.Config.setting('streamer_1_icecast_streamname'), obplayer.Config.setting('streamer_1_icecast_description'),
-                    obplayer.Config.setting('streamer_1_icecast_url'), obplayer.Config.setting('streamer_1_icecast_public'), obplayer.Config.setting('streamer_1_icecast_bitrate'))
+                    obplayer.Config.setting('streamer_1_icecast_url'), obplayer.Config.setting('streamer_1_icecast_public'), obplayer.Config.setting('streamer_1_icecast_bitrate'),
+                    obplayer.Config.setting('streamer_0_title_streaming_enable'))
         if obplayer.Config.setting('streamer_play_on_startup'):
             if obplayer.Config.setting('streamer_0_icecast_enable'):
                 obplayer.Streamer_stream_1.start()
+                # Title streaming is for mp3 only.
+                if obplayer.Streamer_stream_1.mode == 'audio':
+                    obplayer.Streamer_stream_1.start_title_streaming()
+            else:
+                if obplayer.Streamer_stream_1.mode == 'audio':
+                    obplayer.Streamer_stream_1.stop_title_streaming()
             if obplayer.Config.setting('streamer_1_icecast_enable'):
                 obplayer.Streamer_stream_2.start()
+                obplayer.Streamer_stream_2.start_title_streaming()
+                # Title streaming is for mp3 only.
+                if obplayer.Streamer_stream_2.mode == 'audio':
+                    obplayer.Streamer_stream_2.start_title_streaming()
+            else:
+                if obplayer.Streamer_stream_2.mode == 'audio':
+                    obplayer.Streamer_stream_2.stop_title_streaming()
+
     GObject.timeout_add(1000, delaystart)
 
     obplayer.RTSPStreamer = None
@@ -72,8 +88,10 @@ def init():
 
 def quit():
     if obplayer.Streamer_stream_1:
+        obplayer.Streamer_stream_1.stop_title_streaming()
         obplayer.Streamer_stream_1.quit()
     if obplayer.Streamer_stream_2:
+        obplayer.Streamer_stream_2.stop_title_streaming()
         obplayer.Streamer_stream_2.quit()
     if obplayer.RTSPStreamer:
         obplayer.RTSPStreamer.quit()

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
-  <identifier>16697689-8EA6-8A02-830B-C8906833161C</identifier>
-  <sender>PelmorexTest</sender>
-  <sent>2014-07-08T10:17:22-05:00</sent>
+  <identifier>9FAA-0448-3D66-F0B6-3B1D-1B46</identifier>
+  <sender>obplayer@localhost</sender>
+  <sent>2021-02-18T17:13:00-05:00</sent>
   <status>Actual</status>
   <msgType>Alert</msgType>
   <scope>Public</scope>
@@ -11,17 +11,17 @@
   <info>
     <language>en-CA</language>
     <category>Met</category>
-    <event>Tornado</event>
+    <event>testMessage</event>
     <urgency>Immediate</urgency>
     <severity>Extreme</severity>
     <certainty>Observed</certainty>
     <eventCode>
       <valueName>profile:CAP-CP:Event:0.4</valueName>
-      <value>tornado</value>
+      <value>testMessage</value>
     </eventCode>
-    <senderName>Pelmorex Test</senderName>
-    <headline>2- Sample Alert Message with Embedded Large Audio File</headline>
-    <description>This example contains an Alert Message with NAAD System Signature and an embedded attachment (in base64) of an audio file in MP3 format.</description>
+    <senderName>OB self test</senderName>
+    <headline>Sample Alert Message with Embedded Large Audio File</headline>
+    <description>This is only a test. This example contains an Alert Message with NAAD System Signature and an embedded attachment (in base64) of an audio file in MP3 format.</description>
     <parameter>
       <valueName>layer:SOREM:1.0:Broadcast_Immediately</valueName>
       <value>Yes</value>
@@ -35,7 +35,7 @@
       <digest>700b1bfc8c93db2ea03cf2ba9949218b0e98339d</digest>
     </resource>
     <area>
-      <areaDesc>Crane river Manitoba</areaDesc>
+      <areaDesc>Tsiigehtchic, Northwest Territories</areaDesc>
       <polygon>51.502849,-99.263657 51.498802,-99.26395 51.497321,-99.266635 51.49194,-99.264386 51.490075,-99.266247 51.479374,-99.262484 51.473999,-99.265706 51.474256,-99.204523 51.503636,-99.204828 51.503875,-99.193096 51.532352,-99.192697 51.535124,-99.19768 51.537876,-99.19726 51.553234,-99.202605 51.549832,-99.209311 51.548486,-99.207949 51.543869,-99.209961 51.545245,-99.215015 51.551858,-99.217815 51.551656,-99.215103 51.55781,-99.218074 51.576399,-99.220862 51.571719,-99.223234 51.559342,-99.225395 51.552488,-99.236193 51.538291,-99.244281 51.529917,-99.245778 51.528724,-99.256742 51.523192,-99.261972 51.516722,-99.263953 51.510717,-99.263414 51.507501,-99.265974 51.504579,-99.265929 51.502849,-99.263657</polygon>
       <geocode>
         <valueName>profile:CAP-CP:Location:0.3</valueName>

@@ -283,7 +283,7 @@ class ObSync:
         curl.setopt(pycurl.POSTFIELDS, enc_postfields)
 
         curl.setopt(pycurl.LOW_SPEED_LIMIT, 10)
-        curl.setopt(pycurl.LOW_SPEED_TIME, 60)
+        curl.setopt(pycurl.LOW_SPEED_TIME, 300)
 
         curl.setopt(pycurl.NOPROGRESS, 0)
         curl.setopt(pycurl.PROGRESSFUNCTION, self.curl_progress)
@@ -813,7 +813,7 @@ class ObSync:
         # some options so that it'll abort the transfer if the speed is too low (i.e., network problem)
         # low speed abort set to 0.01Kbytes/s for 60 seconds).
         curl.setopt(pycurl.LOW_SPEED_LIMIT, 10)
-        curl.setopt(pycurl.LOW_SPEED_TIME, 60)
+        curl.setopt(pycurl.LOW_SPEED_TIME, 300)
 
         curl.setopt(pycurl.NOPROGRESS, 0)
         curl.setopt(pycurl.PROGRESSFUNCTION, self.curl_progress)

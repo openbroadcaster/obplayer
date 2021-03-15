@@ -130,6 +130,7 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.route('/strings', self.req_strings)
         self.route('/command/restart', self.req_restart)
         self.route('/command/fstoggle', self.req_fstoggle)
+        self.route('/command/tos_agreed', self.req_tos_agreed)
         self.route('/save', self.req_save, 'admin')
         self.route('/import_settings', self.req_import, 'admin')
         self.route('/export_settings', self.req_export, 'admin')
@@ -171,6 +172,12 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         logs['alerts'] = obplayer.Log.format_logs('alerts')
         data['logs'] = logs
         return data
+
+    def req_tos_agreed(self, request):
+        res = httpserver.Response()
+        obplayer.Config.save_settings({'http_admin_tos_ui_agreed': '1'})
+        res.send_content('text/plain', '')
+        return res
 
     def req_geocodes_list(self, request):
         data = obplayer.Config.setting('alerts_geocode', True)
@@ -336,7 +343,8 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
     def req_export(self, request):
         settings = ''
         for (name, value) in sorted(obplayer.Config.list_settings(hidepasswords=True).items()):
-            settings += "{0}:{1}\n".format(name, value if type(value) != bool else int(value))
+            if name != "http_admin_tos_ui_current_tos_text":
+                settings += "{0}:{1}\n".format(name, value if type(value) != bool else int(value))
 
         res = httpserver.Response()
         res.add_header('Content-Disposition', 'attachment; filename=obsettings.txt')

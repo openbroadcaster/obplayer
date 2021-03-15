@@ -33,3 +33,8 @@ Admin Tab
   Current Version: Current Version
   Latest Version: Latest Version
   Already up to date: Already up to date
+  update_at_3_am: Restart, and update OS at 3 am
+
+  icecast_admin_password: Icecast Admin Password
+  icecast_source_password: Icecast Source Password
+  icecast_relay_password: Icecast Relay Password

@@ -25,7 +25,7 @@ import obplayer
 import time
 import threading
 import re
-import cgi
+import html
 
 MAX_BACKLOG = 2000
 
@@ -53,7 +53,7 @@ class ObLog:
         log_data = self.get_log()
         #log_data = cgi.escape(log_data)
         for line in log_data:
-            line = cgi.escape(line)
+            line = html.escape(line)
             if log_level == 'normal':
                 if re.search('\[error\]', line):
                     output.append('<span style="color: {0}">{1}</span>'.format('#880000;', line))

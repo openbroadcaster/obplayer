@@ -37,7 +37,7 @@ import socket
 
 import traceback
 
-import cgi
+import html
 import requests
 import subprocess
 
@@ -344,7 +344,7 @@ class ObAlert (object):
                 #'overlay_text' : message_text,
                 'uri' : obplayer.Player.file_uri(location, filename),
                 'duration' : self.media_info[language]['audio']['duration'],
-                'alert_type': alert_type
+                #'alert_type': self.alert_type
             }
             self.media_info[language]['audio']['overlay_text'] = None
 
@@ -445,7 +445,7 @@ class ObAlert (object):
             try:
                 response = polly_client.synthesize_speech(VoiceId=voice,
                                 OutputFormat='pcm',
-                                Text = "<speak><break time=\"2s\" /> " + message_text + " <break time=\"2s\" /> " + message_text + " <break time=\"3s\" /></speak>",
+                                Text = "<speak><prosody volume=\"+3dB\"><break time=\"1s\" /> " + message_text + "</prosody></speak>",
                                 TextType = "ssml")
 
                 audio_data = response['AudioStream'].read()
@@ -458,19 +458,19 @@ class ObAlert (object):
                     file.writeframes(audio_data)
             except Exception as e:
                 # if aws errors use espeak
-                obplayer.Log.log('AWS error such as network outage, or invaild aws ids/keys in use. error: {0}\nUsing local tts as backup audio.', 'error').format(e)
+                obplayer.Log.log('AWS error such as network outage, or invaild aws ids/keys in use. error: {0}\nUsing local tts as backup audio.', 'error'.format(e))
                 voice = 'en'
                 proc = subprocess.Popen([ 'espeak', '-m', '-v', voice, '-s', '140', '--stdout' ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
-                message_text = cgi.escape(message_text).encode('utf-8')
-                (stdout, stderr) = proc.communicate(b"...<break time=\"2s\" /> " + message_text + b" <break time=\"2s\" /> " + message_text + b" <break time=\"3s\" /> ")
+                message_text = html.escape(message_text).encode('utf-8')
+                (stdout, stderr) = proc.communicate(b"...<break time=\"1s\" /> " + message_text)
                 proc.wait()
 
                 with open(path, 'wb') as f:
                     f.write(stdout)
         else:
             proc = subprocess.Popen([ 'espeak', '-m', '-v', voice, '-s', '140', '--stdout' ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
-            message_text = cgi.escape(message_text).encode('utf-8')
-            (stdout, stderr) = proc.communicate(b"...<break time=\"2s\" /> " + message_text + b" <break time=\"2s\" /> " + message_text + b" <break time=\"3s\" /> ")
+            message_text = html.escape(message_text).encode('utf-8')
+            (stdout, stderr) = proc.communicate(b"...<break time=\"1s\" /> " + message_text)
             proc.wait()
 
             with open(path, 'wb') as f:

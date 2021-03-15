@@ -20,7 +20,7 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __future__ import absolute_import 
+from __future__ import absolute_import
 
 from obplayer.liveassist.liveassist import *
 
@@ -36,8 +36,8 @@ class LiveAssistThread (obplayer.ObThread):
             obplayer.LiveAssist.shutdown()
 
 def init():
-    if not obplayer.Config.setting('scheduler_enable'):
-        obplayer.Log.log("error starting liveassist.  The scheduler must be enabled in order to use the liveassist interface, but it is currently disabled in the settings", 'error')
+    if not obplayer.Config.setting('maintenance_enable'):
+        obplayer.Log.log("error starting liveassist.  The scheduler must be enabled (Disable maintenance mode) in order to use the liveassist interface, but it is currently disabled in the settings", 'error')
         return
 
     if obplayer.Config.setting('live_assist_enable'):
@@ -45,4 +45,3 @@ def init():
 
 def quit():
     pass
-

@@ -349,8 +349,10 @@ class ObConfigData (ObData):
             i = str(i)
             if i != "1":
                 self.add_setting('streamer_' + i + '_icecast_enable', '1', 'bool')
+                self.add_setting('streamer_' + i + '_title_streaming_enable', '1', 'bool')
             else:
                 self.add_setting('streamer_' + i + '_icecast_enable', '0', 'bool')
+                self.add_setting('streamer_' + i + '_title_streaming_enable', '1', 'bool')
             self.add_setting('streamer_' + i + '_icecast_mode', 'audio', 'text')
             self.add_setting('streamer_' + i + '_icecast_bitrate', '0', 'int')
             self.add_setting('streamer_' + i + '_icecast_ip', '127.0.0.1', 'text')
@@ -387,7 +389,7 @@ class ObConfigData (ObData):
         self.add_setting('station_override_monitored_streams', 'http://localhost:8000/local', 'text')
         self.add_setting('station_override_enabled', '0', 'bool')
 
-        self.add_setting('scheduler_enable', '0', 'bool')
+        self.add_setting('maintenance_enable', '0', 'bool')
         self.add_setting('sync_device_id', '1', 'int')
         self.add_setting('sync_device_password', '', 'text')
         self.add_setting('sync_url', '', 'text')
@@ -449,13 +451,17 @@ class ObConfigData (ObData):
         self.add_setting('http_admin_sslca', '', 'text')
         self.add_setting('http_admin_title', 'OpenBroadcaster Player Dashboard', 'text')
         self.add_setting('http_admin_language', 'en', 'text')
+        self.add_setting('http_admin_tos_ui_agreed', '0', 'bool')
+        with open('default_tos.txt', 'r') as file:
+            tos_text = file.read()
+            self.add_setting('http_admin_tos_ui_current_tos_text', tos_text, 'text')
 
         self.add_setting('http_show_sync', '1', 'bool')
         self.add_setting('http_show_streaming', '1', 'bool')
         self.add_setting('http_show_alerts', '1', 'bool')
         self.add_setting('http_show_location', '1', 'bool')
         self.add_setting('http_show_liveassist', '1', 'bool')
-
+        self.add_setting('update_at_3_am', '1', 'bool')
         self.add_setting('live_assist_enable', '0', 'bool')
         self.add_setting('live_assist_port', '23456', 'int')
         self.add_setting('live_assist_mic_enable', '0', 'bool')
