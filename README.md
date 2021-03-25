@@ -25,7 +25,7 @@ OBPlayer can be run in a variety of configurations:
 + Coming Soon Support For IPAWS CAP Profile Version 1.0
 
 OpenBroadcaster Player
-http://www.openbroadcaster.com/
+https://openbroadcaster.com/
 
 Copyright 2012-2018 OpenBroadcaster, Inc.
 
