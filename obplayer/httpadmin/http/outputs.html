@@ -1,0 +1,312 @@
+<div id="content-outputs" data-tns="Outputs Tab">
+    <div class="row mt-2">
+        <div class="col-md-2">
+            <button class="btn btn-primary save_btn">Save</button>
+        </div>
+    </div>
+    <h4 class="mt-2">Audio Output Settings</h4>
+    <div class="settings">
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_mode') %></label>
+                <select class="form-control" id="audio_out_mode_select" name="audio_out_mode">
+                    <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','auto') %> data-t>Auto Detect</option>
+                    <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','alsa') %> data-t>ALSA</option>
+                    <option value="esd"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','esd') %> data-t>Esound</option>
+                    <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','jack') %> data-t>JACK</option>
+                    <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','oss') %> data-t>OSS</option>
+                    <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','pulse') %> data-t>Pulse Audio</option>
+                    <!-- <option value="shout2send"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','shout2send') %> data-t>Shoutcast</option> -->
+                    <!-- <option value="intersink"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','intersink') %> data-t>Direct Streaming</option> -->
+                    <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','test') %> data-t>No Output</option>
+                  </select>
+            </div>
+        </div>
+        <% if obplayer.Config.setting('audio_out_mode') == 'pulse': %>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_output_volume') %></label>
+                <input class="form-control" type="range" name="audio_output_volume" value="<%= obplayer.Config.setting('audio_output_volume',True) %>" min="0.0" max="1.0" step="0.1">
+            </div>
+        </div>
+        <% end %>
+        <div class="row mt-2" id="audio_out_alsa_device_row" style="display: none;">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_alsa_device') %></label>
+                <input class="form-control" type="text" name="audio_out_alsa_device" value="<%= obplayer.Config.setting('audio_out_alsa_device',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2" id="audio_out_jack_name_row" style="display: none;">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_jack_name') %></label>
+                <input class="form-control" type="text" name="audio_out_jack_name" value="<%= obplayer.Config.setting('audio_out_jack_name',True) %>">
+            </div>
+        </div>
+        <!-- TODO: Check if this is still used. As far as I can tell it's being used now. -->
+        <!-- <div class="row mt-2" id="audio_out_shout2send_ip_row" style="display: none;">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_shout2send_ip') %></label>
+                <input class="form-control" type="text" name="audio_out_shout2send_ip" value="<%= obplayer.Config.setting('audio_out_shout2send_ip',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2" id="audio_out_shout2send_port_row" style="display: none;">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_shout2send_port') %></label>
+                <input class="form-control" type="text" name="audio_out_shout2send_port" value="<%= obplayer.Config.setting('audio_out_shout2send_port',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2" id="audio_out_shout2send_mount_row" style="display: none;">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_shout2send_mount') %></label>
+                <input class="form-control" type="text" name="audio_out_shout2send_mount" value="<%= obplayer.Config.setting('audio_out_shout2send_mount',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2" id="audio_out_shout2send_password_row" style="display: none;">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_shout2send_password') %></label>
+                <input class="form-control" type="password" name="audio_out_shout2send_password" value="<%= obplayer.Config.setting('audio_out_shout2send_password',True) %>">
+            </div>
+        </div> -->
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_visualization') %></label>
+                <input class="mx-4" type="checkbox" name="audio_out_visualization" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_out_visualization') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'gst_init_callback') %></label>
+                <input class="form-control" type="text" name="gst_init_callback" value="<%= obplayer.Config.setting('gst_init_callback',False) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_enable') %></label>
+                <input class="mx-4" type="checkbox" id="audiolog_enable" name="audiolog_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audiolog_enable') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_samplerate') %></label>
+                <select class="form-control" name="audiolog_samplerate" id="audiolog_samplerate">
+                    <option value="" selected hidden>Please select a samplerate...</option>
+                    <option value="22050" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_samplerate', '22050') %>>22050 (FM Radio)</option>
+                    <option value="44100" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_samplerate', '44100') %>>44.100 (CD)</option>
+                    <option value="48000" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_samplerate', '48000') %>>48000 (Video)</option>
+                  </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-4 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_enable_upload') %></label>
+                <input class="mx-4" type="checkbox" name="audiolog_enable_upload" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audiolog_enable_upload') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_channels') %></label>
+                <select class="form-control" name="audiolog_channels" id="audiolog_channels">
+                    <option value="" selected hidden>Please select a channel count...</option>
+                    <option value="1" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_channels', '1') %>>1ch (Mono)</option>
+                    <option value="2" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_channels', '2') %>>2ch (Stereo)</option>
+                  </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_upload_appkey') %></label>
+                <input class="form-control" type="password" name="audiolog_upload_appkey" value="<%= obplayer.Config.setting('audiolog_upload_appkey',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_quality') %></label>
+                <input type="range" name="audiolog_quality" id="audiolog_quality"  step="0.1" min="0.1" max="0.9" value="<%= obplayer.Config.setting('audiolog_quality',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2" id="audiolog_purge_files_row">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_purge_files') %></label>
+                <input class="mx-4" type="checkbox" name="audiolog_purge_files" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audiolog_purge_files') %> title="<%= obplayer.Translate.t('Outputs Tab', 'audiolog_purge_files_tooltip') %>">
+            </div>
+        </div>
+
+<% if hasattr(obplayer, 'pulse') and obplayer.pulse.is_loaded() and obplayer.Config.setting('audio_out_mode') == 'pulse': %>
+<% py.include("obplayer/pulse/views/sinks.pyhtml") %>
+<% end %>
+
+<% if obplayer.Config.setting('show_station_remote_override_settings') == False: %>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <h4 title="<%= obplayer.Translate.t('Outputs Tab', 'station_override_tooltip') %>">Override settings</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Outputs Tab', 'station_override_enabled') %></label>
+            </div>
+            <div class="col-md-1 col-sm-12">
+                <input type="checkbox" name="station_override_enabled" value="1" <%= obplayer.HTTPAdmin.form_item_checked('station_override_enabled') %>>
+            </div>
+        </div>
+        <% if obplayer.Config.setting('station_override_enabled'): %>
+        <div class="settings">
+            <div class="row mt-2">
+                <div class="col-md-2 col-sm-12">
+                    <label><%= obplayer.Translate.t('Outputs Tab', 'station_override') %></label>
+                </div>
+                <div class="col-md-1 col-sm-12">
+                    <button class="btn btn-primary" type="button" name="button" class="audio-override-btn">Start</button>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-2 col-sm-12">
+                    <label><%= obplayer.Translate.t('Outputs Tab', 'station_override_monitored_streams') %></label>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <input class="form-control" type="text" name="station_override_monitored_streams" value="<%= obplayer.Config.setting('station_override_monitored_streams',True) %>">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-2 col-sm-12">
+                    <label><%= obplayer.Translate.t('Outputs Tab', 'station_override_server_ip') %></label>
+                </div>
+                <div class="col-md-2 col-sm-12">
+                    <input class="form-control" type="text" name="station_override_server_ip" value="<%= obplayer.Config.setting('station_override_server_ip',True) %>">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-2 col-sm-12">
+                    <label><%= obplayer.Translate.t('Outputs Tab', 'station_override_server_port') %></label>
+                </div>
+                <div class="col-md-1 col-sm-12">
+                    <input class="form-control" type="text" name="station_override_server_port" value="<%= obplayer.Config.setting('station_override_server_port',True) %>">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-2 col-sm-12">
+                    <label><%= obplayer.Translate.t('Outputs Tab', 'station_override_server_password') %></label>
+                </div>
+                <div class="col-md-2 col-sm-12">
+                    <input class="form-control" type="password" name="station_override_server_password" value="<%= obplayer.Config.setting('station_override_server_password',True) %>">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-2 col-sm-12">
+                    <label><%= obplayer.Translate.t('Outputs Tab', 'station_override_server_mountpoint') %></label>
+                </div>
+                <div class="col-md-2 col-sm-12">
+                    <input class="form-control" type="text" name="station_override_server_mountpoint" value="<%= obplayer.Config.setting('station_override_server_mountpoint',True) %>">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-2 col-sm-12">
+                    <label><%= obplayer.Translate.t('Outputs Tab', 'station_override_server_bitrate') %></label>
+                </div>
+                <div class="col-md-2 col-sm-12">
+                    <select class="form-control" name="station_override_server_bitrate">
+                        <option value="0"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','0') %>>Variable</option>
+                        <option value="8"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','8') %>>8 kbps</option>
+                        <option value="16"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','16') %>>16 kbps</option>
+                        <option value="24"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','24') %>>24 kbps</option>
+                        <option value="32"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','32') %>>32 kbps</option>
+                        <option value="40"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','40') %>>40 kbps</option>
+                        <option value="48"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','48') %>>48 kbps</option>
+                        <option value="56"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','56') %>>56 kbps</option>
+                        <option value="64"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','64') %>>64 kbps</option>
+                        <option value="80"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','80') %>>80 kbps</option>
+                        <option value="96"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','96') %>>96 kbps</option>
+                        <option value="112"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','112') %>>112 kbps</option>
+                        <option value="128"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','128') %>>128 kbps</option>
+                        <option value="160"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','160') %>>160 kbps</option>
+                        <option value="192"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','192') %>>192 kbps</option>
+                        <option value="224"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','224') %>>224 kbps</option>
+                        <option value="256"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','256') %>>256 kbps</option>
+                        <option value="320"<%= obplayer.HTTPAdmin.form_item_selected('station_override_server_bitrate','320') %>>320 kbps</option>
+                      </select>
+                </div>
+            </div>
+        </div>
+        <% end %>
+
+<div class="row mt-2">
+    <div class="col-md-3 col-sm-12">
+        <label><%= obplayer.Translate.t('Outputs Tab', 'video_out_enable') %></label>
+        <input class="mx-4" type="checkbox" name="video_out_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('video_out_enable') %>>
+    </div>
+</div>
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <label><%= obplayer.Translate.t('Outputs Tab', 'video_out_mode') %></label>
+            <select class="form-control" id="video_out_mode_select" name="video_out_mode">
+                <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','auto') %>>Auto Detect</option>
+                <option value="x11"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','x11') %>>X11</option>
+                <option value="xvideo"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','xvideo') %>>XVideo</option>
+                <option value="opengl"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','opengl') %>>OpenGL</option>
+                <option value="egl"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','egl') %>>EGL/GLES</option>
+                <option value="wayland"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','wayland') %>>Wayland</option>
+                <option value="ascii"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','ascii') %>>Coloured ASCII</option>
+                <!-- <option value="intersink"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','intersink') %>>Direct Streaming</option> -->
+                <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','test') %>>No Output</option>
+              </select>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <label><%= obplayer.Translate.t('Outputs Tab', 'video_out_resolution') %></label>
+            <select class="form-control" name="video_out_resolution">
+                <option value="default"<%= obplayer.HTTPAdmin.form_item_selected('video_out_resolution','default') %> data-t>default</option>
+                <% if hasattr(obplayer, 'xrandr'): %>
+                <% for mode in obplayer.xrandr.get_modes(): %>
+                <option value="<%= mode %>"<%= obplayer.HTTPAdmin.form_item_selected('video_out_resolution',mode) %>><%= mode %></option>
+                <% end %>
+                <% end %>
+              </select>
+        </div>
+    </div>
+
+
+<h4 class="mt-2">Video Overlay Settings</h4>
+
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <label><%= obplayer.Translate.t('Outputs Tab', 'overlay_enable') %></label>
+            <input class="mx-4" type="checkbox" name="overlay_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('overlay_enable') %>>
+        </div>
+    </div>
+
+<h4 class="mt-2">LED Sign Settings</h4>
+
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <label><%= obplayer.Translate.t('Outputs Tab', 'led_sign_enable') %></label>
+            <input class="mx-4" type="checkbox" name="led_sign_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('led_sign_enable') %>>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <label><%= obplayer.Translate.t('Outputs Tab', 'led_sign_serial_file') %></label>
+            <input class="form-control" type="text" name="led_sign_serial_file" value="<%= obplayer.Config.setting('led_sign_serial_file',True) %>" title="<%= obplayer.Translate.t('Outputs Tab', 'led_sign_serial_file_tooltip') %>">
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <label><%= obplayer.Translate.t('Outputs Tab', 'led_sign_timedisplay') %></label>
+            <input class="mx-4" type="checkbox" name="led_sign_timedisplay" value="1"<%= obplayer.HTTPAdmin.form_item_checked('led_sign_timedisplay') %>>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <label><%= obplayer.Translate.t('Outputs Tab', 'led_sign_init_message') %></label>
+            <input class="form-control" type="text" name="led_sign_init_message" value="<%= obplayer.Config.setting('led_sign_init_message',True) %>" title="<%= obplayer.Translate.t('Outputs Tab', 'led_sign_init_message_tooltip') %>" data-t>
+        </div>
+    </div>
+
+
+<div class="row mt-2">
+    <div class="col-md-3 col-sm-12">
+        <button class="mt-2 btn btn-primary save_btn" id="save_btn" name="save" type="button" data-tns="Common" data-t>Save</button>
+        <div class="row mt-2">
+        </div>
+    </div>
+</div>

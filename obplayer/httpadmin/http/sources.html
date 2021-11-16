@@ -1,0 +1,198 @@
+<div id="content-sources">
+    <div class="settings">
+        <div class="row mt-2">
+            <div class="col-md-2">
+                <button class="btn btn-primary save_btn">Save</button>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <h4>Fallback Player Settings</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'fallback_enable') %></label>
+                <input class="mx-4" type="checkbox" name="fallback_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('fallback_enable') %> title="<%= obplayer.Translate.t('Sources Tab', 'fallback_enable_tooltip') %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-5 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'fallback_media') %></label>
+                <input class="form-control" type="text" name="fallback_media" value="<%= obplayer.Config.setting('fallback_media',True) %>">
+            </div>
+        </div>
+        <h4 class="mt-2">AoIP Input Settings</h4>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'aoip_in_enable') %></label>
+                <input class="mx-4" type="checkbox" name="aoip_in_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('aoip_in_enable') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'aoip_in_uri') %></label>
+                <input class="form-control" type="text" name="aoip_in_uri" value="<%= obplayer.Config.setting('aoip_in_uri', True) %>" title="<%= obplayer.Translate.t('Sources Tab', 'aoip_in_uri_tooltip') %>">
+            </div>
+        </div>
+        <h4 class="mt-2">RTP/Livewire Audio Input Settings</h4>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_enable') %></label>
+                <input class="mx-4" type="checkbox" name="rtp_in_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('rtp_in_enable') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_port') %></label>
+                <input class="form-control" type="text" name="rtp_in_port" value="<%= obplayer.Config.setting('rtp_in_port', True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_address') %></label>
+                <input class="form-control" type="text" name="rtp_in_address" value="<%= obplayer.Config.setting('rtp_in_address', True) %>" title="<%= obplayer.Translate.t('Sources Tab', 'rtp_in_address_tooltip') %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_encoding') %></label>
+                <select class="form-control" id="rtp_in_encoding_select" name="rtp_in_encoding">
+                    <option value="OPUS"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_encoding','OPUS') %>>Opus</option>
+                    <!-- <option value="MPA"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_encoding','MPA') %>>MP3</option> -->
+                    <option value="L16"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_encoding','L16') %>>16-bit PCM</option>
+                    <option value="L24"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_encoding','L24') %>>24-bit PCM (Livewire)</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_clock_rate') %></label>
+                <select class="form-control" id="rtp_in_clock_rate_select" name="rtp_in_clock_rate">
+                    <option value="48000"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_clock_rate','48000') %>>48000 Hz</option>
+                    <option value="44100"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_clock_rate','44100') %>>44100 Hz</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_enable_rtcp') %></label>
+                <input class="mx-4" type="checkbox" name="rtp_in_enable_rtcp" value="1"<%= obplayer.HTTPAdmin.form_item_checked('rtp_in_enable_rtcp') %> title="<%= obplayer.Translate.t('Sources Tab', 'rtp_in_enable_rtcp_tooltip') %>">
+            </div>
+        </div>
+        <h4 class="mt-2">Audio Input Settings</h4>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_enable') %></label>
+                <input class="mx-4" type="checkbox" name="audio_in_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_in_enable') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_mode') %></label>
+                <select class="form-control" id="audio_in_mode_select" name="audio_in_mode" data-tns="Gstreamer Modes">
+                    <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','auto') %>>Auto Detect</option>
+                    <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','alsa') %>>ALSA</option>
+                    <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','jack') %>>JACK</option>
+                    <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','oss') %>>OSS</option>
+                    <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','pulse') %>>Pulse Audio</option>
+                    <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','test') %>>No Input</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-2" id="audio_in_alsa_device_row" style="display: none;">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_alsa_device') %></label>
+                <input class="form-control" type="text" name="audio_in_alsa_device" value="<%= obplayer.Config.setting('audio_in_alsa_device',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2" id="audio_in_jack_name_row" style="display: none;">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_jack_name') %></label>
+                <input class="form-control" type="text" name="audio_in_alsa_device" value="<%= obplayer.Config.setting('audio_in_alsa_device',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_disable_on_silence') %></label>
+                <input class="mx-4" type="checkbox" name="audio_in_disable_on_silence" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_in_disable_on_silence') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_prioritize_above_scheduler') %></label>
+                <input class="mx-4" type="checkbox" name="audio_in_prioritize_above_scheduler" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_in_prioritize_above_scheduler') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_threshold') %></label>
+                <input class="form-control" type="text" name="audio_in_threshold" value="<%= obplayer.Config.setting('audio_in_threshold',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_enable_time') %></label>
+                <input class="form-control" type="text" name="audio_in_enable_time" value="<%= obplayer.Config.setting('audio_in_enable_time',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_disable_time') %></label>
+                <input class="form-control" type="text" name="audio_in_disable_time" value="<%= obplayer.Config.setting('audio_in_disable_time',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'audio_in_log') %></label>
+                <input class="mx-4" type="checkbox" name="audio_in_log" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_in_log') %>>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <% if hasattr(obplayer, 'pulse') and obplayer.pulse.is_loaded() and obplayer.Config.setting('audio_in_mode') == 'pulse': %>
+            <% py.include("obplayer/pulse/views/sources.pyhtml") %>
+            <% end %>
+        </div>
+    </div>
+    <h4 class="mt-2">Image Display Settings</h4>
+    <div class="settings">
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'images_transitions_enable') %></label>
+                <input class="mx-4" type="checkbox" name="images_transitions_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('images_transitions_enable') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'images_width') %></label>
+                <input class="form-control" type="text" name="images_width" value="<%= obplayer.Config.setting('images_width', True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'images_height') %></label>
+                <input class="form-control" type="text" name="images_height" value="<%= obplayer.Config.setting('images_height', True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'images_framerate') %></label>
+                <input class="form-control" type="text" name="images_framerate" value="<%= obplayer.Config.setting('images_framerate', True) %>">
+            </div>
+        </div>
+        <h4 class="mt-2">Test Signal Settings</h4>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Sources Tab', 'testsignal_enable') %></label>
+                <input class="mx-4" type="checkbox" name="testsignal_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('testsignal_enable') %>>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+            <button class="btn btn-primary" class="save_btn">Save</button>
+        </div>
+    </div>
+</div>

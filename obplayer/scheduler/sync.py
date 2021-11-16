@@ -21,7 +21,6 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import obplayer
-import obplayer.alerts
 
 import pycurl
 
@@ -96,12 +95,7 @@ def xml_get_media_item(node):
     media_item['file_location'] = xml_get_tag_value(node, 'location')
     media_item['approved'] = xml_get_tag_value(node, 'approved')
     media_item['archived'] = xml_get_tag_value(node, 'archived')
-    media_item['thumbnail'] = xml_get_tag_value(node, 'thumbnail', 0)
 
-    if media_item['thumbnail'] == 0:
-        media_item['thumbnail'] = False
-    else:
-        media_item['thumbnail'] = True
     return media_item
 
 
@@ -207,12 +201,13 @@ class Sync_Alert_Media_Thread(obplayer.ObThread):
     def __init__(self):
         obplayer.ObThread.__init__(self)
         self.daemon = True
-        # Download indigenous alert data from server.
+        # Download first nations alert data from server.
 
     def run(self):
         self.running = True
         while self.running:
-            obplayer.Sync.sync_alert_media()
+            #print('TESTING...')
+            obplayer.Sync.sync_media()
             # Sleeping for sync_freq time
             time.sleep(obplayer.Config.setting('sync_freq'))
 
@@ -228,6 +223,8 @@ class Sync_Alert_Media_Thread(obplayer.ObThread):
         postfields['id'] = obplayer.Config.setting('sync_device_id')
         postfields['pw'] = obplayer.Config.setting('sync_device_password')
         postfields['media_id'] = media['media_id']
+        print(media)
+        time.sleep(20)
 
         data_request = requests.post(obplayer.Config.setting('sync_url') + "?action=media", data=postfields)
 
@@ -237,19 +234,18 @@ class Sync_Alert_Media_Thread(obplayer.ObThread):
             data = data_request.content
             try:
                 # build save path with language name.
-                print(obplayer.alert.ObAlert.lang_ref_to_language_name(media['language']))
-                save_path = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(obplayer.alert.ObAlert.lang_ref_to_language_name(media['language']))
+                save_path = obplayer.RemoteData.datadir + '/first_nations/{0}/'.format(media['name'])
                 with open(save_path + media['filename'], 'wb') as file:
                     file.write(data)
                 # convert all non wav audio to wav
-                if media['filename'].endswith('.wav') == False:
+                if media['media_format'] != 'wav':
                     # strip file ext from filename
                     filename = media['filename'].replace('.ogg', '').replace('.mp3', '').replace('.OGG', '').replace('.MP3', '')
                     self.convert_audio(save_path + media['filename'], media['media_format'], filename)
             except FileNotFoundError as e:
-                obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
+                print('FileNotFoundError')
 
-    def stop(self):
+    def quit(self):
         self.running = False
         obplayer.ObThread.stop(self)
 
@@ -288,7 +284,7 @@ class ObSync:
         curl.setopt(pycurl.POSTFIELDS, enc_postfields)
 
         curl.setopt(pycurl.LOW_SPEED_LIMIT, 10)
-        curl.setopt(pycurl.LOW_SPEED_TIME, 300)
+        curl.setopt(pycurl.LOW_SPEED_TIME, 60 * 5)
 
         curl.setopt(pycurl.NOPROGRESS, 0)
         curl.setopt(pycurl.PROGRESSFUNCTION, self.curl_progress)
@@ -322,13 +318,10 @@ class ObSync:
     def check_min_version(self, version):
         cv = re.split('[.-]', version)
         mv = re.split('[.-]', MIN_SERVER_VERSION)
-        for i in range(0, len(mv)):
-            try:
-                if int(cv[i]) < int(mv[i]):
-                    return False
-            except:
-                return False
-        return True
+        if int(''.join(cv)) < int(''.join(mv)):
+             return False
+        else:
+            return True
 
     #
     # Perform synchronization.
@@ -637,88 +630,34 @@ class ObSync:
                 self.sync_media_file = media['media_id']
                 self.fetch_media(media)
                 self.sync_media_file = False
-                # print(obplayer.RemoteData.datadir + "/thumbnails/" + media['thumbnail'][0] + "/" + media['thumbnail'][1])
-                # if os.path.isfile(obplayer.RemoteData.datadir + "/thumbnails/" + media['thumbnail'][0] + "/" + media['thumbnail'][1]):
-                #     print(obplayer.RemoteData.datadir + "/thumbnails/" + media['thumbnail'][0] + "/" + media['thumbnail'][1])
-                #     self.fetch_media_thumbnail(media)
 
         if delete_unused_media == True:
             self.remove_unused_media(obplayer.Config.setting('remote_media'), media_required)
 
-    def fetch_media_thumbnail(self, media):
-        postfields = {}
-
-        postfields['id'] = obplayer.Config.setting('sync_device_id')
-        postfields['pw'] = obplayer.Config.setting('sync_device_password')
-        postfields['media_id'] = media['media_id']
-
-        data_request = requests.post(obplayer.Config.setting('sync_url') + "?action=media", data=postfields)
-
-        if data_request.status_code != 200:
-            obplayer.Log.log('unable to download thumbnail media id: {0} at this time'.format(media['media_id']), 'error')
-        else:
-            data = data_request.content
-            try:
-                # build save path with language name.
-                print(obplayer.alert.ObAlert.lang_ref_to_language_name(media['language']))
-                save_path = obplayer.RemoteData.datadir + '/thumbnail/{0}/{1}/'.format(media['thumbnail'][0], media['thumbnail'][1], media['language'])
-                with open(save_path + media['filename'], 'wb') as file:
-                    file.write(data)
-            except FileNotFoundError as e:
-                obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
-
-
-    def fetch_alert_media(self, media):
-        postfields = {}
-
-        postfields['id'] = obplayer.Config.setting('sync_device_id')
-        postfields['pw'] = obplayer.Config.setting('sync_device_password')
-        postfields['media_id'] = media['media_id']
-
-        data_request = requests.post(obplayer.Config.setting('sync_url') + "?action=media", data=postfields)
-
-        if data_request.status_code != 200:
-            obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
-        else:
-            data = data_request.content
-            try:
-                # build save path with language name.
-                save_path = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(obplayer.alerts.ObAlert.lang_ref_to_language_name(media['language']))
-                with open(save_path + media['filename'], 'wb') as file:
-                    file.write(data)
-                # convert all non wav audio to wav
-                if media['filename'].endswith('wav') == False:
-                    # strip file ext from filename
-                    filename = media['filename'].replace('.ogg', '').replace('.mp3', '').replace('.OGG', '').replace('.MP3', '')
-                    self.convert_audio(save_path + media['filename'], media['media_format'], filename)
-            except FileNotFoundError as e:
-                obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
-
-    def sync_alert_media(self, delete_unused_media=True):
+    def sync_alert_media(self):
         media_required = obplayer.RemoteData.alert_media_required()
+
+        print(media_required)
 
         for media_row in media_required:
 
             media = media_required[media_row]
 
-            if self.check_media(media, True, media['language']) == False:
+            if self.check_media(media, True) == False:
                 self.sync_media_file = media['media_id']
                 self.fetch_alert_media(media)
                 self.sync_media_file = False
-
-        if delete_unused_media == True:
-            self.remove_unused_media(obplayer.Config.setting('remote_media'), media_required)
 
     #
     #
     # uses media['file_location'], media['file_size'], media['filename'] to see if available media is the correct filesize.
     #
-    def check_media(self, media, alert_mode=False, alert_language=None):
+    def check_media(self, media, alert_mode=False):
 
         if media['media_type'] not in [ 'audio', 'video', 'image' ]:
             return True
-        if alert_mode and alert_language != None:
-            media_fullpath = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(alert_language) + media['filename']
+        if alert_mode:
+            media_fullpath = obplayer.RemoteData.datadir + '/first_nations/demo/' + media['filename']
         else:
             media_fullpath = obplayer.Config.setting('remote_media') + '/' + media['file_location'][0] + '/' + media['file_location'][1] + '/' + media['filename']
 
@@ -845,7 +784,7 @@ class ObSync:
         # some options so that it'll abort the transfer if the speed is too low (i.e., network problem)
         # low speed abort set to 0.01Kbytes/s for 60 seconds).
         curl.setopt(pycurl.LOW_SPEED_LIMIT, 10)
-        curl.setopt(pycurl.LOW_SPEED_TIME, 300)
+        curl.setopt(pycurl.LOW_SPEED_TIME, 60)
 
         curl.setopt(pycurl.NOPROGRESS, 0)
         curl.setopt(pycurl.PROGRESSFUNCTION, self.curl_progress)

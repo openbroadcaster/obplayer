@@ -17,8 +17,8 @@ LA.station_override = function() {
       $.post('/inter_station_ctrl/stop', {}, function (response, status) {
         if (status == 'success') {
           btn.text('Start');
-          btn.removeClass('override-stop');
-          btn.addClass('override-start');
+          btn.removeClass('override-start');
+          btn.addClass('override-stop');
         } else {
           alert('Linein override failed to run!');
         }
@@ -26,40 +26,14 @@ LA.station_override = function() {
   }
 }
 
-LA.update_station_count = function() {
-  let live_stations = $('#live_stations');
-  $.post('/command/station_count', {}, (response, status) => {
-    if (status == 'success') {
-      live_stations.html(response);
-    } else {
-      live_stations.html('error...');
-    }
-  });
-}
-
-LA.updateStationOverrideBtn = function() {
-  const btn = $('.override-btn');
-  $.post('/inter_station_ctrl/is_live', {}, function (response, status) {
-    if (response == 'True') {
-      btn.text('Stop');
-      btn.removeClass('override-start');
-      btn.addClass('override-stop');
-    } else {
-      btn.text('Start');
-      btn.removeClass('override-stop');
-      btn.addClass('override-start');
-    }
-  });
-}
-
 LA.windowResize = function()
 {
-  $('#main-playlist').resizable({
-    handles: 'e',
-    minWidth: 300,
-    maxWidth: $(window).width()-5 - ( $('#main-mixer').is(':visible') ? $('#main-mixer').width() : 0 ),
-    resize: LA.mainResize
-  });
+  // $('#main-playlist').resizable({
+  //   handles: 'e',
+  //   minWidth: 300,
+  //   maxWidth: $(window).width()-5 - ( $('#main-mixer').is(':visible') ? $('#main-mixer').width() : 0 ),
+  //   resize: LA.mainResize
+  // });
 
   LA.mainResize();
 }
@@ -86,16 +60,8 @@ LA.sliderChangeStop = function(event, ui)
     LA.changeGroupTrack(LA.currentGroupNumber,LA.currentTrackNumber,$('#control-track_position').slider('value'));
 }
 
-LA.setServer = function() {
-  $.post('/info/server_url', null, (res) => {
-    LA.server_url = res;
-  }, 'json');
-}
-
 LA.init = function()
 {
-
-  LA.setServer();
 
   LA.updateShow();
   LA.updateStatus();
@@ -114,22 +80,6 @@ LA.init = function()
   setInterval(function ()
   {
     $.post('/info/levels', null, LA.updateVuMeter, 'json').fail(LA.showNotConnected);
-  }, 1000);
-
-  // setup station count interval
-  setInterval(function() {
-    // check if the override system is enabled.
-    if ($('#live_stations').length > 0) {
-      LA.update_station_count();
-    }
-  }, 1000);
-
-  // setup station override status interval
-  setInterval(function() {
-    // check if the override system is enabled.
-    if ($('.override-btn').length > 0) {
-      LA.updateStationOverrideBtn();
-    }
   }, 1000);
 
 }
@@ -167,7 +117,7 @@ LA.updateShow = function()
       var count = 0;
       $(response).each(function(index,track)
       {
-        $('#main-playlist-tracks').append('<div class="track" id="track-'+count+'" ></div>');
+        $('#main-playlist-tracks').append('<div class="track" id="track-'+count+'"></div>');
 
         var $track = $('#track-'+count);
 
@@ -175,8 +125,7 @@ LA.updateShow = function()
           $track.text('Breakpoint');
         else
         {
-          $track.append('<img src="' + LA.server_url + 'thumbnail.php?id=' + track.track_id + '" alt="">');
-          $track.append('<div>' + track.artist + ' - ' +track.title + '<div>');
+          $track.text(track.artist+' - '+track.title);
           $track.append('<span class="duration">'+LA.friendlyDuration(track.duration)+'</span>');
           $track.attr('data-artist',track.artist);
           $track.attr('data-title',track.title);
@@ -203,11 +152,12 @@ LA.updateShow = function()
 
       var group_count = 0;
 
-      $('#main-buttons > div').css('min-width',response.length*240+'px');
+      //$('#main-buttons > div').css('min-width',response.length*240+'px');
 
       $(response).each(function(index,group)
       {
-        $('#main-buttons').append('<ul class="column" id="group-'+group_count+'"></ul>');     
+
+        $('#main-buttons > div').append('<ul class="column" id="group-'+group_count+'"></ul>');
 
         var $group = $('#group-'+group_count);
 
@@ -218,11 +168,9 @@ LA.updateShow = function()
 
         $.each(group.items, function(index,track)
         {
-          if (track.artist != "System") {
-            $group.append('<li class="button" id="group-'+group_count+'-item-'+track_count+'"><img src="' + LA.server_url + 'thumbnail.php?id=' + track.media_id + '" alt=""><span></span></li>');
-          } else {
-            $group.append('<li class="button" id="group-'+group_count+'-item-'+track_count+'"><span></span></li>');
-          }
+
+          $group.append('<li class="button" id="group-'+group_count+'-item-'+track_count+'"><span></span></li>');
+
           var $track = $('#group-'+group_count+'-item-'+track_count);
           $track.find('span').html(track.artist+' - '+track.title+'<br>'+LA.friendlyDuration(track.duration));
           $track.attr('data-type',track.media_type);
@@ -244,7 +192,7 @@ LA.updateShow = function()
       });
 
       $('#main-buttons > div').show();
-      $('#main-buttons').width(Math.round($(window).width()/2));
+      //$('#main-buttons').width(Math.round($(window).width()/2));
 
       LA.windowResize();
 
@@ -602,7 +550,7 @@ LA.toggleMixer = function()
   if ($('#main-mixer').is(':hidden')) {
     $('#main-mixer-toggle').html('&raquo;');
     $('#main-mixer').show();
-    $('#main-buttons').css('right', $('#main-mixer').width());
+    //$('#main-buttons').css('right', $('#main-mixer').width());
     if (($(window).width() - $('#main-playlist').width()) < $('#main-mixer').width())
       $('#main-playlist').width( $(window).width() - $('#main-mixer').width() - 48 );
     LA.mainResize();
@@ -610,7 +558,7 @@ LA.toggleMixer = function()
   else {
     $('#main-mixer-toggle').html('&laquo;');
     $('#main-mixer').hide();
-    $('#main-buttons').css('right', 0);
+    //$('#main-buttons').css('right', 0);
     LA.mainResize();
   }
 }

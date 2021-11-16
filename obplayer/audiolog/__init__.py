@@ -33,9 +33,11 @@ def init():
         obplayer.LogUploader = LogUploader()
         obplayer.LogUploader.start()
 
+
 def quit():
     # stop the audio logger.
     if hasattr(obplayer, 'AudioLog'):
         obplayer.AudioLog.stop()
     if hasattr(obplayer, 'LogUploader'):
         obplayer.LogUploader.stop()
+

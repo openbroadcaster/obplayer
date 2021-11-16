@@ -1,0 +1,85 @@
+
+Streamer Tab
+
+  Streaming: Streaming
+
+  streamer_enable: Enable Streaming
+  streamer_enable_tooltip: Enables the streaming module.
+
+  streamer_audio_in_mode: Audio Input Mode
+  streamer_audio_in_mode_tooltip: The type of audio input to use.  If using pulseaudio, make sure to select the "Monitor of ..." source for this input in the "Pulse Audio Volume Control" utility.
+
+  streamer_audio_in_alsa_device: ALSA Device Name
+  streamer_audio_in_jack_name: Jack Port Name
+
+
+  Icecast Streaming: Icecast Streaming
+
+  streamer_0_icecast_enable: Enable Icecast Streaming
+  streamer_0_icecast_enable_tooltip: If enabled, an audio recorder will send audio to an icecast server via http.
+
+  streamer_0_icecast_mode: Icecast (One) Output Mode
+  streamer_0_icecast_bitrate: Icecast (One) Output Bitrate
+  streamer_0_icecast_ip: Icecast (One) IP
+  streamer_0_icecast_port: Icecast (One) Port
+  streamer_0_icecast_mount: Icecast (One) Mountpoint
+  streamer_0_icecast_username: Icecast (One) Username
+  streamer_0_icecast_password: Icecast (One) Password
+  streamer_0_icecast_streamname: Icecast (One) Stream Name
+  streamer_0_icecast_description: Icecast (One) Description
+  streamer_0_icecast_url: Icecast (One) URL
+  streamer_0_icecast_public: Publicly List Icecast (One) Stream
+  streamer_0_title_streaming_enable: Enable title streaming
+  streamer_1_icecast_enable: Enable Icecast Streaming
+  streamer_1_icecast_enable_tooltip: If enabled, an audio recorder will send audio to an icecast server via http.
+  streamer_1_icecast_mode: Icecast (Two) Output Mode
+  streamer_1_icecast_bitrate: Icecast (Two) Output Bitrate
+  streamer_1_icecast_ip: Icecast (Two) IP
+  streamer_1_icecast_port: Icecast (Two) Port
+  streamer_1_icecast_mount: Icecast (Two) Mountpoint
+  streamer_1_icecast_username: Icecast (Two) Password
+  streamer_1_icecast_password: Icecast (Two) Password
+  streamer_1_icecast_streamname: Icecast (Two) Stream Name
+  streamer_1_icecast_description: Icecast (Two) Description
+  streamer_1_icecast_url: Icecast (Two) URL
+  streamer_1_icecast_public: Publicly List Icecast (Two) Stream
+  streamer_1_title_streaming_enable: Enable title streaming
+  streamer_play_on_startup: Play Stream on Startup
+  streamer_play_on_startup_tooltip: Uncheck this when using the 'trigger icecast stream on alerts' feature on the alerts tab
+
+
+  RTSP Server: RTSP Server
+
+  streamer_rtsp_enable: Enable RTSP Server
+  streamer_rtsp_enable_tooltip: Enable RTSP server which streams the audio output via RTSP/Multicast RTP.  Required for output to Livewire/Ravenna devices.
+
+  streamer_rtsp_port: RTSP Server Port
+  streamer_rtsp_clock_rate: Audio Output Clock Rate
+
+  streamer_rtsp_allow_discovery: Allow RTSP Service Discovery
+  streamer_rtsp_allow_discovery_tooltip: Publish the RTSP Server via Avahi (mDNS-SD).  Required for automatic discovery by Livewire/Ravenna devices.
+
+
+  RTP/Livewire Streaming: RTP/Livewire Streaming
+
+  streamer_rtp_enable: Enable RTP Streaming
+  streamer_rtp_enable_tooltip: Enable RTP streaming to the ip address specified
+  streamer_rtp_port: RTP Output Port
+  streamer_rtp_address: Multicast Address
+  streamer_rtp_address_tooltip: The multicast or unicast IP address to send audio data to.  Use 239.192.0.# for Livewire Multicast
+  streamer_rtp_encoding: Audio Encoding Format
+  streamer_rtp_encoding_tooltip: Audio encoding format to use.  Opus requires a clock-rate of 48000Hz.
+  streamer_rtp_clock_rate: Audio Clock Rate
+  streamer_rtp_enable_rtcp: Use RTCP?
+  streamer_rtp_enable_rtcp_tooltip: If enabled, this will send RTCP synchronization packets on the next port number. (ie. if output port is set to 5004, RTCP will send on port 5005).
+
+
+  YouTube Streaming: YouTube Streaming
+
+  streamer_youtube_enable: Enable YouTube Live Streaming
+  streamer_youtube_enable_tooltip: Enable YouTube Live Streamer.  The audio/video output of the player will be sent to YouTube to be streamed lived.
+
+  streamer_youtube_key: YouTube Streaming Key
+
+  streamer_youtube_mode: YouTube Output Mode
+

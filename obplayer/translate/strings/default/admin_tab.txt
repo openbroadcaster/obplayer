@@ -1,0 +1,40 @@
+
+Admin Tab
+
+  Admin: Admin
+
+  http_show_sync: Show Sync Tab
+  http_show_streaming: Show Streaming Tab
+  http_show_alerts: Show Alerts Tab
+  http_show_location: Show Location Tab
+  http_show_liveassist: Show LiveAssist Tab
+
+  show_indigenous_alert_settings: Show Indigenous Alert settings
+  show_alert_ledin_settings: Show Alert Lead-in settings
+  show_station_remote_override_settings: Show Station Remote Override settings
+  show_ssl_settings: Show SSL settings
+  show_sdr_streaming_logging_settings: Show SDR streaming/logging settings
+
+  aws_access_key_id: AWS access key ID
+  aws_secret_access_key: AWS secret access key
+  aws_region_name: AWS region name
+
+  newsfeed_override: enable News feed override (file drop playback)
+
+  delete_and_reset: Delete data.db and Restart
+  Reset To Defaults and Restart: Reset To Defaults and Restart
+  Import Settings: Import Settings
+  Import: Import
+  Export Settings: Export Settings
+  Export: Export
+  Update Player: Update Player
+  Update: Update
+  Check: Check
+  Current Version: Current Version
+  Latest Version: Latest Version
+  Already up to date: Already up to date
+  update_at_3_am: Restart, and update OS at 3 am
+
+  icecast_admin_password: Icecast Admin Password
+  icecast_source_password: Icecast Source Password
+  icecast_relay_password: Icecast Relay Password

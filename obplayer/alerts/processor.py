@@ -274,9 +274,6 @@ class ObAlertProcessor (object):
         self.alert_queue = [ ]
         self.dispatch_lock = threading.Lock()
 
-        #if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
-        #    for language in obplayer.Config.setting('alerts_selected_indigenous_languages').split(','):
-        #        print(language)
         #self.streaming_hosts = [ "streaming1.naad-adna.pelmorex.com:8080", "streaming2.naad-adna.pelmorex.com:8080" ]
         #self.archive_hosts = [ "capcp1.naad-adna.pelmorex.com", "capcp2.naad-adna.pelmorex.com" ]
         self.streaming_hosts = [ obplayer.Config.setting('alerts_naad_stream1'), obplayer.Config.setting('alerts_naad_stream2') ]
@@ -342,12 +339,6 @@ class ObAlertProcessor (object):
         if identifier in self.alerts_active:
             self.mark_expired(self.alerts_active[identifier])
 
-    def replay_alert(self, identifier):
-        obplayer.Log.log('replaying alert ' + identifier + '...', 'alerts')
-        if identifier in self.alerts_active:
-            alert = self.alerts_active[identifier]
-            self.dispatch(alert)
-
     def inject_alert(self, filename):
         obplayer.Log.log("injecting test alert from file " + filename, 'alerts')
         with open(filename, 'rb') as f:
@@ -368,7 +359,7 @@ class ObAlertProcessor (object):
                 return False
 
     def get_alerts(self):
-        alerts = { 'active' : [ ], 'expired' : [ ], 'last_heartbeat' : self.last_heartbeat, 'next_play' : self.next_alert_check }
+        alerts = { 'status': True, 'active' : [ ], 'expired' : [ ], 'last_heartbeat' : self.last_heartbeat, 'next_play' : self.next_alert_check }
         with self.lock:
             for (name, alert_list) in [ ('active', self.alerts_active), ('expired', self.alerts_expired) ]:
                 for alert in self.sort_by_importance(alert_list.values()):
@@ -459,8 +450,7 @@ class ObAlertProcessor (object):
             url = "%s/%s/%s.xml" % (host, urldate, filename)
             try:
                 obplayer.Log.log("fetching alert %s using url %s" % (identifier, url), 'debug')
-                headers = { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36' }
-                r = requests.get(url, headers=headers)
+                r = requests.get(url)
 
                 if r.status_code == 200:
                     #r.encoding = 'utf-8'
@@ -570,6 +560,8 @@ class ObAlertProcessor (object):
                             self.trigger_alert_cycle_init()
 
                             for alert in self.sort_by_importance(self.alerts_active.values()):
+                                #print(alert)
+                                #obplayer.Log.log('')
                                 #alert_media = alert.get_media_info(self.language_primary, self.voice_primary, self.language_secondary, self.voice_secondary)
                                 if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
                                     alert_media = alert.get_media_info(self.language_primary, self.voice_primary, self.language_secondary, self.voice_secondary, True)
@@ -583,35 +575,53 @@ class ObAlertProcessor (object):
                                         obplayer.Log.log("playing alert: {0}".format(alert.identifier), 'alerts')
                                         obplayer.alert_counter.Alert_Counter().add_alert(alert.identifier, alert.alert_type)
                                         obplayer.Log.log("playing alert media: {0}".format(alert_media), 'alerts')
+                                #print(alert_media)
+                                #time.sleep(20)
+                                    #alert.times_played += 1
                                 start_time = self.ctrl.get_requests_endtime()
-                                alert.times_played += 1
-                                obplayer.Log.log("changed number of plays for alert: {0} to {1}".format(alert.identifier, alert.times_played), 'alerts', alert)
-                                if os.path.isfile(obplayer.Config.setting('alerts_alert_start_audio')) and obplayer.Config.setting('alerts_play_leadin_enable') == True:
-                                    if os.access(obplayer.Config.setting('alerts_alert_start_audio'), os.F_OK) == True:
+                                if alert.times_played <= 1:
+                                    alert.times_played += 1
+                                    obplayer.Log.log("changed number of plays for alert: {0} to {1}".format(alert.identifier, alert.times_played), 'alerts', alert)
+                                    if os.path.isfile(obplayer.Config.setting('alerts_alert_start_audio')) and obplayer.Config.setting('alerts_play_leadin_enable') == True:
                                         d = GstPbutils.Discoverer()
                                         mediainfo = d.discover_uri(obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')))
                                         #print('leadin message duration ' + str(mediainfo.get_duration() / float(Gst.SECOND)))
-                                        if (mediainfo.get_duration() / float(Gst.SECOND)) > 10.0:
+                                        if mediainfo.get_duration() / float(Gst.SECOND) > 10.0:
                                             obplayer.Log.log('alert start message is longer then 10 seconds! max allowed is 10 seconds. only playing the first 10 seconds.', 'alerts')
-                                            self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=10, artist=None, title='ledin message', overlay_text=None)
+                                            self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=10, artist=mediainfo['audio']['artist'], title='ledin message', overlay_text=mediainfo['audio']['overlay_text'])
                                         else:
-                                            self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=mediainfo.get_duration() / float(Gst.SECOND), artist=None, title='ledin message', overlay_text=None)
-                                self.ctrl.add_request(media_type='break', title="alert tone delay", duration=1.0)
-                                # Play US/EAS attn tone
-                                if obplayer.Config.setting('alerts_location_type') == 'US':
-                                    self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri("obplayer/alerts/data", "attention-signal.ogg"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
-                                # Play CA/Alert Ready attn tone
-                                else:
-                                    self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri("obplayer/alerts/data", "canadian-attention-signal.mp3"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
-                                for mediainfo in alert_media:
-                                    self.ctrl.add_request(**mediainfo['audio'])
-                                    if 'visual' in mediainfo:
-                                       self.ctrl.add_request(start_time=start_time, **mediainfo['visual'])
+                                            self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=mediainfo.get_duration() / float(Gst.SECOND), artist=mediainfo['audio']['artist'], title='ledin message', overlay_text=mediainfo['audio']['overlay_text'])
+                                    self.ctrl.add_request(media_type='break', title="alert tone delay", duration=1.0)
+                                    # Play US/EAS attn tone
+                                    if obplayer.Config.setting('alerts_location_type') == 'US':
+                                        self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri("obplayer/alerts/data", "attention-signal.ogg"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
+                                    # Play CA/Alert Ready attn tone
+                                    else:
+                                        self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri("obplayer/alerts/data", "canadian-attention-signal.mp3"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
+                                    for mediainfo in alert_media:
+                                        self.ctrl.add_request(**mediainfo['audio'])
+                                        if 'visual' in mediainfo:
+                                           self.ctrl.add_request(start_time=start_time, **mediainfo['visual'])
 
-                                self.trigger_alert_cycle_each(alert, alert_media, self)
 
-                                if (self.repeat_times > 0 and alert.times_played >= self.repeat_times) or (alert.max_plays > 0 and alert.times_played >= alert.max_plays):
-                                    expired_list.append(alert)
+
+
+                                    # if alert_media['secondary']:
+                                    #     start_time = self.ctrl.get_requests_endtime()
+                                    #     self.ctrl.add_request(**alert_media['secondary']['audio'])
+                                    #     if 'visual' in alert_media['secondary']:
+                                    #         self.ctrl.add_request(start_time=start_time, **alert_media['secondary']['visual'])
+                                    #
+                                    # if alert_media['indigenous']:
+                                    #     start_time = self.ctrl.get_requests_endtime()
+                                    #     self.ctrl.add_request(**alert_media['indigenous']['audio'])
+                                    #     if 'visual' in alert_media['indigenous']:
+                                    #         self.ctrl.add_request(start_time=start_time, **alert_media['indigenous']['visual'])
+
+                                    self.trigger_alert_cycle_each(alert, alert_media, self)
+
+                                    if (self.repeat_times > 0 and alert.times_played >= self.repeat_times) or (alert.max_plays > 0 and alert.times_played >= alert.max_plays):
+                                        expired_list.append(alert)
 
                         self.ctrl.add_request(media_type='break', title="alert lead out delay", duration=self.leadout_delay, onend=self.trigger_alert_cycle_stop)
                         self.ctrl.adjust_request_times(time.time())

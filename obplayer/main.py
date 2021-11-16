@@ -22,8 +22,6 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 
 import obplayer
 
-from obplayer.alert_counter import *
-
 import sys
 import time
 import signal
@@ -52,7 +50,6 @@ class ObMainApp:
         parser.add_argument('-p', '--http-port', nargs=1, help='Sets the port number used for the http server.', default=None)
         parser.add_argument('-c', '--configdir', nargs=1, help='specifies an alternate data directory', default=[ '~/.openbroadcaster' ])
         parser.add_argument('--disable-http', action='store_true', help='disables the http admin', default=False)
-        parser.add_argument('--disable-updater', action='store_true', help='disables the OS updater', default=False)
 
         self.args = parser.parse_args()
         obplayer.ObData.set_datadir(self.args.configdir[0])
@@ -61,8 +58,11 @@ class ObMainApp:
         obplayer.Log.set_debug(self.args.debug)
 
         obplayer.Config = obplayer.ObConfigData()
-
         obplayer.Config.args = self.args
+
+        obplayer.Password_System = obplayer.password_system
+
+        obplayer.Translate = obplayer.TranslateSystem()
 
         if self.args.headless is True:
             obplayer.Config.headless = self.args.headless
@@ -73,7 +73,6 @@ class ObMainApp:
             obplayer.custom_http_admin_port = self.args.http_port[0]
         else:
             obplayer.custom_http_admin_port = None
-
 
     def start(self):
         signal.signal(signal.SIGINT, self.sigint_handler)
@@ -109,8 +108,6 @@ class ObMainApp:
                 self.load_module('liveassist')
             if obplayer.Config.setting('audiolog_enable'):
                 self.load_module('audiolog')
-            if obplayer.Config.setting('offair_audiolog_enable'):
-               self.load_module('offair_audiolog')
             if obplayer.Config.setting('streamer_enable'):
                 self.load_module('streamer')
             if obplayer.Config.setting('station_override_enabled'):
@@ -147,10 +144,6 @@ class ObMainApp:
             #alertctrl = obplayer.Player.create_controller('testalert', 100, default_play_mode='overlap', allow_overlay=True)
             #alertctrl.add_request(media_type='audio', start_time=time.time() + 7, uri=obplayer.Player.file_uri("obplayer/alerts/data", "attention-signal.ogg"), duration=4)
             #alertctrl.add_request(media_type='audio', uri="file:///home/trans/.openbroadcaster/alerts/2014_12_01T00_13_00_00_00I2.49.0.1.124.b7fb9ec4.2014", duration=5)
-
-            #ctrl.add_request(media_type='rtp_2', start_time=time.time() + 2, duration=3600)
-
-            #ctrl.add_request(media_type='rtp_2', start_time=time.time() + 2, duration=3600)
 
             #### END TEST CODE ####
 
@@ -195,3 +188,4 @@ class ObMainApp:
     def quit_modules(self):
         for name in self.modules:
             exec('obplayer.%s.quit()' % (name,))
+

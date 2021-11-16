@@ -1,0 +1,359 @@
+<div id="content-streamer">
+    <div class="settings">
+        <div class="row mt-2">
+            <div class="col-md-2">
+                <button class="btn btn-primary save_btn">Save</button>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_enable') %></label>
+                <input class="mx-4" type="checkbox" name="streamer_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_enable') %> title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_enable_tooltip') %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+                <label title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_audio_in_mode_tooltip') %>"><%= obplayer.Translate.t('Streamer Tab', 'streamer_audio_in_mode') %></label>
+                <select class="form-control" id="streamer_audio_in_mode_select" name="streamer_audio_in_mode">
+                    <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','auto') %>>Auto Detect</option>
+                    <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','alsa') %>>ALSA</option>
+                    <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','jack') %>>JACK</option>
+                    <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','oss') %>>OSS</option>
+                    <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','pulse') %>>Pulse Audio</option>
+                    <option value="intersink"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','intersink') %>>InterSink</option>
+                    <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','test') %>>No Input</option>
+                  </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12" id="streamer_audio_in_alsa_device_row" style="display: none;">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_audio_in_alsa_device') %></label>
+                <input class="form-control" type="text" name="streamer_audio_in_alsa_device" value="<%= obplayer.Config.setting('streamer_audio_in_alsa_device',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12" id="streamer_audio_in_jack_name_row" style="display: none;">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_audio_in_jack_name') %></label>
+                <input class="form-control" type="text" name="streamer_audio_in_jack_name" value="<%= obplayer.Config.setting('streamer_audio_in_jack_name',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <h4>Icecast Streaming</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_enable') %></label>
+                <input class="mx-4" type="checkbox" name="streamer_0_icecast_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_0_icecast_enable') %> title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_enable_tooltip') %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_mode') %></label>
+                <select class="form-control" name="streamer_0_icecast_mode">
+                    <option value="audio"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','audio') %>>Audio Only</option>
+                    <option value="video320x200"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','video320x200') %>>Video - 320x200</option>
+                    <option value="video640x480"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','video640x480') %>>Video - 640x480</option>
+                    <option value="video1280x720"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','video1280x720') %>>Video - 1280x720</option>
+                    <option value="video1920x1080"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_mode','video1920x1080') %>>Video - 1920x1080</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_bitrate') %></label>
+                <select class="form-control" name="streamer_0_icecast_bitrate">
+                    <option value="0"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','0') %>>Variable</option>
+                    <option value="8"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','8') %>>8 kbps</option>
+                    <option value="16"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','16') %>>16 kbps</option>
+                    <option value="24"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','24') %>>24 kbps</option>
+                    <option value="32"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','32') %>>32 kbps</option>
+                    <option value="40"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','40') %>>40 kbps</option>
+                    <option value="48"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','48') %>>48 kbps</option>
+                    <option value="56"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','56') %>>56 kbps</option>
+                    <option value="64"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','64') %>>64 kbps</option>
+                    <option value="80"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','80') %>>80 kbps</option>
+                    <option value="96"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','96') %>>96 kbps</option>
+                    <option value="112"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','112') %>>112 kbps</option>
+                    <option value="128"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','128') %>>128 kbps</option>
+                    <option value="160"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','160') %>>160 kbps</option>
+                    <option value="192"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','192') %>>192 kbps</option>
+                    <option value="224"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','224') %>>224 kbps</option>
+                    <option value="256"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','256') %>>256 kbps</option>
+                    <option value="320"<%= obplayer.HTTPAdmin.form_item_selected('streamer_0_icecast_bitrate','320') %>>320 kbps</option>
+                  </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_ip') %></label>
+                <input class="form-control" type="text" name="streamer_0_icecast_ip" value="<%= obplayer.Config.setting('streamer_0_icecast_ip',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_port') %></label>
+                <input class="form-control" type="text" name="streamer_0_icecast_port" value="<%= obplayer.Config.setting('streamer_0_icecast_port',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_mount') %></label>
+                <input class="form-control" type="text" name="streamer_0_icecast_mount" value="<%= obplayer.Config.setting('streamer_0_icecast_mount',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_username') %></label>
+                <input class="form-control" type="text" name="streamer_0_icecast_username" value="<%= obplayer.Config.setting('streamer_0_icecast_username',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_password') %></label>
+                <input class="form-control" type="password" name="streamer_0_icecast_password" value="unchanged">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_streamname') %></label>
+                <input class="form-control" type="text" name="streamer_0_icecast_streamname" value="<%= obplayer.Config.setting('streamer_0_icecast_streamname',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_description') %></label>
+                <input class="form-control" type="text" name="streamer_0_icecast_description" value="<%= obplayer.Config.setting('streamer_0_icecast_description',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_url') %></label>
+                <input class="form-control" type="text" name="streamer_0_icecast_url" value="<%= obplayer.Config.setting('streamer_0_icecast_url',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_public') %></label>
+                <input class="mx-4" type="checkbox" name="streamer_0_icecast_public" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_0_icecast_public') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_title_streaming_enable') %></label>
+                <input class="mx-4" type="checkbox" name="streamer_0_title_streaming_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_0_title_streaming_enable') %> title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_0_title_streaming_enable_tooltip') %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <div class="stl-settings">
+                    <input type="checkbox" id="stl-settings">
+                    <label for="stl-settings">STL Settings</label>
+                    <div class="settings items">
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_enable') %></label>
+                                <input class="mx-4" type="checkbox" name="streamer_1_icecast_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_1_icecast_enable') %> title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_enable_tooltip') %>">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-3 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_bitrate') %></label>
+                                <select class="form-control" name="streamer_1_icecast_bitrate">
+                                    <option value="0"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','0') %>>Variable</option>
+                                    <option value="8"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','8') %>>8 kbps</option>
+                                    <option value="16"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','16') %>>16 kbps</option>
+                                    <option value="24"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','24') %>>24 kbps</option>
+                                    <option value="32"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','32') %>>32 kbps</option>
+                                    <option value="40"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','40') %>>40 kbps</option>
+                                    <option value="48"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','48') %>>48 kbps</option>
+                                    <option value="56"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','56') %>>56 kbps</option>
+                                    <option value="64"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','64') %>>64 kbps</option>
+                                    <option value="80"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','80') %>>80 kbps</option>
+                                    <option value="96"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','96') %>>96 kbps</option>
+                                    <option value="112"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','112') %>>112 kbps</option>
+                                    <option value="128"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','128') %>>128 kbps</option>
+                                    <option value="160"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','160') %>>160 kbps</option>
+                                    <option value="192"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','192') %>>192 kbps</option>
+                                    <option value="224"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','224') %>>224 kbps</option>
+                                    <option value="256"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','256') %>>256 kbps</option>
+                                    <option value="320"<%= obplayer.HTTPAdmin.form_item_selected('streamer_1_icecast_bitrate','320') %>>320 kbps</option>
+                                  </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_ip') %></label>
+                                <input class="form-control" type="text" name="streamer_1_icecast_ip" value="<%= obplayer.Config.setting('streamer_1_icecast_ip',True) %>">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_port') %></label>
+                                <input class="form-control" type="text" name="streamer_1_icecast_port" value="<%= obplayer.Config.setting('streamer_1_icecast_port',True) %>">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_mount') %></label>
+                                <input class="form-control" type="text" name="streamer_1_icecast_mount" value="<%= obplayer.Config.setting('streamer_1_icecast_mount',True) %>">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_username') %></label>
+                                <input class="form-control" type="text" name="streamer_1_icecast_username" value="<%= obplayer.Config.setting('streamer_1_icecast_username',True) %>">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_password') %></label>
+                                <input class="form-control" type="password" name="streamer_1_icecast_password" value="unchanged">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_streamname') %></label>
+                                <input class="form-control" type="text" name="streamer_1_icecast_streamname" value="<%= obplayer.Config.setting('streamer_1_icecast_streamname',True) %>">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_description') %></label>
+                                <input class="form-control" type="text" name="streamer_1_icecast_description" value="<%= obplayer.Config.setting('streamer_1_icecast_description',True) %>">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_url') %></label>
+                                <input class="form-control" type="text" name="streamer_1_icecast_url" value="<%= obplayer.Config.setting('streamer_1_icecast_url',True) %>">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_public') %></label>
+                                <input class="mx-4" type="checkbox" name="streamer_1_icecast_public" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_1_icecast_public') %>>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6 col-sm-12">
+                                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_title_streaming_enable') %></label>
+                                <input class="mx-4" type="checkbox" name="streamer_1_title_streaming_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_1_title_streaming_enable') %> title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_1_title_streaming_enable_tooltip') %>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <h4>RTSP Server</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtsp_enable') %></label>
+                <input class="mx-4" type="checkbox" name="streamer_rtsp_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_rtsp_enable') %> title="streamer_rtsp_enable_tooltip">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtsp_port') %></label>
+                <input class="form-control" type="text" name="streamer_rtsp_port" value="<%= obplayer.Config.setting('streamer_rtsp_port',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtsp_clock_rate') %></label>
+                <select class="form-control" name="streamer_rtsp_clock_rate">
+                    <option value="48000"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtsp_clock_rate','48000') %>>48000 Hz</option>
+                    <option value="44100"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtsp_clock_rate','44100') %>>44100 Hz</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <h4>RTP/Livewire Streaming</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_enable') %></label>
+                <input class="mx-4" type="checkbox" name="streamer_rtp_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_rtp_enable') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_port') %></label>
+                <input class="form-control" type="text" name="streamer_rtp_port" value="<%= obplayer.Config.setting('streamer_rtp_port', True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_address') %></label>
+                <input class="form-control" type="text" name="streamer_rtp_address" value="<%= obplayer.Config.setting('streamer_rtp_address', True) %>" title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_address_tooltip') %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_encoding_tooltip') %>"><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_encoding') %></label>
+                <select class="form-control" id="streamer_rtp_encoding_select" name="streamer_rtp_encoding">
+                    <option value="L24"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_encoding','L24') %>>24-bit PCM (Livewire)</option>
+                    <option value="L16"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_encoding','L16') %>>16-bit PCM</option>
+                    <option value="OPUS"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_encoding','OPUS') %>>Opus</option>
+                    <option value="MPA"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_encoding','MPA') %>>MP3</option>
+                  </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_clock_rate') %></label>
+                <select class="form-control" id="streamer_rtp_clock_rate_select" name="streamer_rtp_clock_rate">
+                    <option value="48000"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_clock_rate','48000') %>>48000 Hz</option>
+                    <option value="44100"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_clock_rate','44100') %>>44100 Hz</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_enable_rtcp') %></label>
+                <input class="mx-4" type="checkbox" name="streamer_rtp_enable_rtcp" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_rtp_enable_rtcp') %> title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_rtp_enable_rtcp_tooltip') %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <h4>YouTube Streaming</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_youtube_enable') %></label>
+                <input class="mx-4" type="checkbox" name="streamer_youtube_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_youtube_enable') %> title="<%= obplayer.Translate.t('Streamer Tab', 'streamer_youtube_enable_tooltip') %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_youtube_key') %></label>
+                <input class="form-control" type="password" name="streamer_youtube_key" value="unchanged">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('Streamer Tab', 'streamer_youtube_mode') %></label>
+                <select class="form-control" name="streamer_youtube_mode">
+                    <option value="240p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','240p') %>>240p</option>
+                    <option value="360p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','360p') %>>360p</option>
+                    <option value="480p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','480p') %>>480p</option>
+                    <option value="720p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','720p') %>>720p</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <button class="btn btn-primary" id="save_btn">Save</button>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>

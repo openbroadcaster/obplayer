@@ -1,0 +1,995 @@
+<div id="content-summary" data-tns="Summary Tab">
+
+	<h2 data-t>Current Configuration</h2>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+		  <label>Version</label>
+		</div>
+		<div class="col-md-3 col-sm-12">
+		  <label>v<%= obplayer.Config.version %></label>
+		</div>
+	  </div>
+	  <div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+		  <label>Local Time</label>
+		</div>
+		<div class="col-md-3 col-sm-12">
+		  <label><%= time.strftime("%c") %></label>
+		</div>
+	  </div>
+	  <% if obplayer.Config.setting('http_show_location'): %>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label>Device Coordinates</label>
+			</div>
+			<div class="col-md-3 col-sm-12">
+			  <label>[<%= obplayer.Config.setting('location_longitude') %>, <%= obplayer.Config.setting('location_latitude') %>]</label>
+			</div>
+		  </div>
+          <% end %>
+
+        <% if obplayer.Config.setting('http_show_sync'): %>
+		<div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'maintenance_enable') %></label>
+			</div>
+			<div class="col-md-3 col-sm-12">
+			  <label><%= obplayer.Config.setting('maintenance_enable') %></label>
+			</div>
+		</div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_device_id') %></label>
+			</div>
+			<div class="col-md-3 col-sm-12">
+			  <label><%= obplayer.Config.setting('sync_device_id') %></label>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_device_password') %></label>
+			</div>
+			<div class="col-md-3 col-sm-12">
+			  <label>(hidden)</label>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_url') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+			  <label><%= obplayer.Config.setting('sync_url') %></label>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_buffer') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+			  <span><%= obplayer.Config.setting('sync_buffer') %> </span>hours
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'remote_media') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+			  <label><%= obplayer.Config.setting('remote_media') %></label>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_showlock') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<%= obplayer.Config.setting('sync_showlock') %> <span>minutes</span>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_freq') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<%= obplayer.Config.setting('sync_freq') %> <span>minutes</span>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_freq_priority') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<%= obplayer.Config.setting('sync_freq_priority') %> <span>minutes</span>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_freq_priority') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<%= obplayer.Config.setting('sync_freq_priority') %> <span>minutes</span>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_freq_playlog') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<%= obplayer.Config.setting('sync_freq_playlog') %> <span>minutes</span>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_mode') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<label id="sync_mode_value"><%= obplayer.Config.setting('sync_mode') %></label>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'sync_copy_media_to_backup') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<label><%= obplayer.Config.setting('sync_copy_media_to_backup') %></label>
+			</div>
+		  </div>
+		  <div class="row mt-2">
+			<div class="col-md-2 col-sm-12">
+			  <label><%= obplayer.Translate.t('Sync Tab', 'local_media') %></label>
+			</div>
+			<div class="col-md-6 col-sm-12">
+				<label><%= obplayer.Config.setting('local_media') %></label>
+			</div>
+		  </div>
+        <% end %>
+
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'fallback_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('fallback_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'fallback_media') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('fallback_media') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'aoip_in_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('aoip_in_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'aoip_in_uri') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('aoip_in_uri') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('rtp_in_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_port') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('rtp_in_port') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_address') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('rtp_in_address') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_encoding') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('rtp_in_encoding') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_clock_rate') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('rtp_in_clock_rate') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'rtp_in_clock_rate') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('rtp_in_enable_rtcp') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'audio_in_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_in_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'audio_in_mode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_in_mode') %></label>
+		</div>
+	</div>
+	<% if obplayer.Config.setting('audio_in_mode') == 'alsa': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'audio_in_alsa_device') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_in_alsa_device') %></label>
+		</div>
+	</div>
+	<% end %>
+	<% if obplayer.Config.setting('audio_in_mode') == 'jack': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'audio_in_jack_name') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_in_jack_name') %></label>
+		</div>
+	</div>
+	<% end %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'audio_in_disable_on_silence') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_in_disable_on_silence') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'audio_in_prioritize_above_scheduler') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_in_prioritize_above_scheduler') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'images_transitions_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('images_transitions_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label>Fixed Image Size &amp; Framerate</label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= str(obplayer.Config.setting('images_width')) + " x " + str(obplayer.Config.setting('images_height')) + " @ " + str(obplayer.Config.setting('images_framerate')) + "fps" %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Sources Tab', 'testsignal_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('testsignal_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_visualization') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_out_visualization') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_mode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_out_mode') %></label>
+		</div>
+	</div>
+	<% if obplayer.Config.setting('audio_out_mode') == 'alsa': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_alsa_device') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_out_alsa_device') %></label>
+		</div>
+	</div>
+	<% end %>
+	<% if obplayer.Config.setting('audio_out_mode') == 'jack': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'audio_out_jack_name') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audio_out_jack_name') %></label>
+		</div>
+	</div>
+	<% end %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'gst_init_callback') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('gst_init_callback') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audiolog_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'audiolog_purge_files') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('audiolog_purge_files') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'video_out_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('video_out_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'video_out_mode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('video_out_mode') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'video_out_resolution') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('video_out_resolution') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'overlay_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('overlay_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Outputs Tab', 'led_sign_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('led_sign_enable') %></label>
+		</div>
+	</div>
+	<% if obplayer.Config.setting('http_show_streaming'): %>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_audio_in_mode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_audio_in_mode') %></label>
+		</div>
+	</div>
+	<% if obplayer.Config.setting('streamer_audio_in_mode') == 'alsa': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_audio_in_alsa_device') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_audio_in_alsa_device') %></label>
+		</div>
+	</div>
+	<% end %>
+	<% if obplayer.Config.setting('streamer_audio_in_mode') == 'jack': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_audio_in_jack_name') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_audio_in_jack_name') %></label>
+		</div>
+	</div>
+	<% end %>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_mode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_mode') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_bitrate') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_bitrate') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_ip') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_ip') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_port') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_port') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_mount') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_mount') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_password') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label>(hidden)</label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_streamname') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_streamname') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_description') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_description') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_url') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_url') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_0_icecast_public') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_0_icecast_public') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_play_on_startup') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_play_on_startup') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_mode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_mode') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_bitrate') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_bitrate') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_port') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_port') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_mount') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_mount') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_password') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label>(hidden)</label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_streamname') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_streamname') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_description') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_description') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_url') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_url') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_1_icecast_public') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_1_icecast_public') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtsp_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_rtsp_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtsp_port') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_rtsp_port') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtsp_clock_rate') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_rtsp_clock_rate') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Streamer Tab', 'streamer_rtsp_allow_discovery<') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('streamer_rtsp_allow_discovery') %></label>
+		</div>
+	</div>
+	<% end %>
+	<% if obplayer.Config.setting('http_show_alerts'): %>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_geocode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_geocode') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_repeat_interval') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_repeat_interval') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_repeat_interval') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<%= obplayer.Config.setting('alerts_repeat_interval') %> <span>minutes</span>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_repeat_times') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<%= obplayer.Config.setting('alerts_repeat_times') %> <span>times</span>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_leadin_delay') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<%= obplayer.Config.setting('alerts_leadin_delay') %> <span>seconds</span>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_leadout_delay') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<%= obplayer.Config.setting('alerts_leadout_delay') %> <span>seconds</span>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_language_primary') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_language_primary') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_language_secondary') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_language_secondary') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_voice_secondary') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_voice_secondary') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_naad_stream1') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_naad_stream1') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_naad_stream2') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_naad_stream2') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_naad_archive1') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_naad_archive1') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_naad_archive2') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_naad_archive2') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_trigger_serial') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_trigger_serial') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_trigger_serial_file') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_trigger_serial_file') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_trigger_streamer') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_trigger_streamer') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_truncate') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_truncate') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_play_moderates') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_play_moderates') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_play_tests') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_play_tests') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('Alerts Tab', 'alerts_purge_files') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('alerts_purge_files') %></label>
+		</div>
+	</div>
+    <% end %>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_language') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_admin_language') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_secure') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label id="https_setting"><%= obplayer.Config.setting('http_admin_secure') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_sslreq') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_admin_sslreq') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_sslkey') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_admin_sslkey') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_sslcert') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_admin_sslcert') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_sslca') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_admin_sslca') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_port') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_admin_port') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_username') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_admin_username') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_password') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label>(hidden)</label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_readonly_username') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_readonly_username') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_readonly_password') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label>(hidden)</label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('HTTP Tab', 'http_readonly_allow_restart') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('http_readonly_allow_restart') %></label>
+		</div>
+	</div>
+	<% if obplayer.Config.setting('http_show_liveassist'): %>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_port') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_port') %></label>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_mic_enable') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_mic_enable') %></label>
+		</div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_mic_mode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_mic_mode') %></label>
+		</div>
+	</div>
+	<% if obplayer.Config.setting('live_assist_mic_mode') == 'alsa': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_mic_alsa_device') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_mic_alsa_device') %></label>
+		</div>
+	</div>
+	<% end %>
+	<% if obplayer.Config.setting('live_assist_mic_mode') == 'jack': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_mic_jack_name') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_mic_jack_name') %></label>
+		</div>
+	</div>
+	<% end %>
+	<div class="row mt-4">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_monitor_mode') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_monitor_mode') %></label>
+		</div>
+	</div>
+	<% if obplayer.Config.setting('live_assist_monitor_mode') == 'alsa': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_monitor_alsa_device') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_monitor_alsa_device') %></label>
+		</div>
+	</div>
+	<% end %>
+	<% if obplayer.Config.setting('live_assist_monitor_mode') == 'jack': %>
+	<div class="row mt-2">
+		<div class="col-md-2 col-sm-12">
+			<label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_monitor_jack_name') %></label>
+		</div>
+		<div class="col-md-6 col-sm-12">
+			<label><%= obplayer.Config.setting('live_assist_monitor_jack_name') %></label>
+		</div>
+	</div>
+	<% end %>
+	<% end %>

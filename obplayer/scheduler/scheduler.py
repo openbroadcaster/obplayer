@@ -326,10 +326,10 @@ class ObLiveAssistShow (ObShow):
         # if we start the show less than 30 seconds in, then start it, otherwise start paused
         if present_time - self.show_data['start_time'] < 30:
             obplayer.Log.log('starting live assist show', 'scheduler')
-        else:
-            obplayer.Log.log('starting live assist show paused', 'scheduler')
-            self.auto_advance = False
-            self.now_playing = self.playlist.current()
+        # else:
+        #     obplayer.Log.log('starting live assist show paused', 'scheduler')
+        #     self.auto_advance = False
+        #     self.now_playing = self.playlist.current()
 
         self.play_current(present_time)
 
@@ -506,7 +506,7 @@ class ObScheduler:
             for group in self.present_show.get_groups():
                 group_items = [ ]
                 for group_item in group['items']:
-                    data = { 'id' : group_item['id'], 'artist' : group_item['artist'], 'title' : group_item['title'], 'duration' : group_item['duration'], 'media_type' : group_item['media_type'], 'media_id': group_item['media_id'] }
+                    data = { 'id' : group_item['id'], 'artist' : group_item['artist'], 'title' : group_item['title'], 'duration' : group_item['duration'], 'media_type' : group_item['media_type'] }
                     group_items.append(data)
                 groups.append({ 'name' : group['name'], 'items' : group_items })
         return groups

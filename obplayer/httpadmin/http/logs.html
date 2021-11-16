@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C/DTD HTML 4.01//EN">
+<!DOCTYPE html>
 <html>
   <head>
     <title><%= obplayer.HTTPAdmin.title %></title>
@@ -52,25 +52,10 @@
         </table>
       </div>
 
-      <div class="column">
-        <h2><span data-t>Off-air Audio Logs</h2>
-
-        <table>
-          <% basedir = obplayer.ObData.get_datadir() + "/offair-audiologs" %>
-          <% for filename in sorted(os.listdir(basedir), reverse=True): %>
-          <tr>
-            <td><a href="/offair-audiologs/<%= urlencode(filename) %>"><%= filename %></a></td>
-            <td class="filesize"><%= format_size(os.path.getsize(os.path.join(basedir, filename))) %></td>
-          </tr>
-          <% end %>
-        </table>
-      </div>
-
     </div>
 
     <p style="font-size: 0.9em; padding-top: 1em;" data-tns="Footer">
-      <span data-t>footer_message</span> <a href="http://www.openbroadcaster.com/">openbroadcaster.com</a>.
-      <a href="http://www.gnu.org/licenses/agpl.html"><span data-t>footer_license</span>.</a>
+      <span data-t><%= obplayer.Translate.t('Footer', 'footer_message1') %></span> <a href="https://openbroadcaster.com/obplayer_licence">Affero GPL v3.</a>
     </p>
   </body>
 </html>

@@ -74,5 +74,3 @@ Include if using Off-air audio log:
 
 - pip3 install pyrtlsdr         (Note: pkg not included in apt-get; must be installed using pip3)
 
-Include if using the news feed override:
- - pip3 install inotify

@@ -21,7 +21,6 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import obplayer
-import obplayer.alerts
 
 import time
 
@@ -116,18 +115,18 @@ class ObRemoteData (obplayer.ObData):
     # Given media id, filename, file_hash, file_size, event_name,
     # language and media_type, add entry to show database.  If entry exists, edit if required.
     # Return false if edit not required.  Return lastrowid otherwise.
-    def alert_audio_addedit(self, media_id, filename, file_hash, file_size, event_name, media_type, language):
-        rows = self.execute("SELECT * from alert_media where media_id=?", (str(media_id),))
+    def alert_audio_addedit(self, media_id, filename, file_hash, file_size, event_name, media_type):
+        rows = self.execute("SELECT media_id from alert_media where media_id=?", (str(media_id),))
         for row in rows:
             # if update not required, return false.
-            if int(row[0]) == int(media_id) and str(row[4]) == str(language):
+            if int(row[0]) == int(media_id):
                 return False
             else:
                 # if we have a match, but update is required, delete entry + associated media.
-                self.execute("DELETE from alert_media where media_id=? and language=?", (str(row[0]), str(language),))
+                self.execute("DELETE from alert_media where media_id=?", (str(row[2]),))
 
         # now add the alert media... (media not added here, but added by sync script)
-        self.execute("INSERT or REPLACE into alert_media VALUES (?, ?, ?, ?, ?, ?, ?)", (media_id, filename, file_hash, file_size, language, event_name, media_type))
+        self.execute("INSERT or REPLACE into alert_media VALUES (?, ?, ?, ?, ?, ?, ?)", (media_id, filename, file_hash, file_size, "demo", event_name, media_type))
         return self.db.last_insert_rowid()
 
     #
@@ -254,8 +253,7 @@ class ObRemoteData (obplayer.ObData):
             media_item['file_size'],
             media_item['file_location'],
             media_item['approved'],
-            media_item['archived'],
-            )
+            media_item['archived'])
 
         self.execute(query, bindings)
         return self.db.last_insert_rowid()
@@ -268,7 +266,7 @@ class ObRemoteData (obplayer.ObData):
         rows = self.execute("SELECT filename,media_id,file_hash,file_location,approved,archived,file_size,media_type from shows_media GROUP by media_id")
 
         media_list = {}
- 
+
         for row in rows:
             media_row = self.get_media_from_row(row)
             media_list[media_row['filename']] = media_row
@@ -301,15 +299,21 @@ class ObRemoteData (obplayer.ObData):
         postfields['pw'] = obplayer.Config.setting('sync_device_password')
 
         data_request = requests.post(obplayer.Config.setting('sync_url').replace('/remote.php', '/modules/alert_languages/remote.php'), data=postfields)
-        if data_request.status_code != 200:
-            return {}
         data = json.loads(data_request.content.decode('utf-8'))
-        for language in obplayer.Config.setting('alerts_selected_indigenous_languages').split(','):
-            for media_item in data[2][language]['alerts']:
-                media_item['language'] = language
-                print(media_item)
-                self.alert_audio_addedit(media_item['media_id'], media_item['alert_name'].lower() + '.' + media_item['media_format'],
-                media_item['media_hash'], media_item['media_filesize'], media_item['alert_name'], media_item['media_type'], media_item['language'])
+        for media_item in data[2]['Demo Language']:
+            #print(media_item)
+            self.alert_audio_addedit(media_item['media_id'], media_item['alert_name'].lower() + '.' + media_item['media_format'], media_item['media_hash'], media_item['media_filesize'], media_item['alert_name'], media_item['media_type'])
+        # for language_code in obplayer.Config.setting('alerts_selected_first_nations_languages').split(','):
+        #     if language_code == 'cr-CA':
+        #        language = 'cree'
+        #     elif language == 'iu-CA':
+        #         return 'inuktitut'
+        #     elif language == 'oj-CA':
+        #         return 'ojibwe'
+        #     elif language == 'chp-CA':
+        #         return 'chipewyan'
+        #     elif language == 'mic-CA':
+        #         return 'mikmaq'
         rows = self.execute("SELECT media_id,filename,file_hash,file_size,language,event_name,media_type from alert_media GROUP by media_id")
 
         media_list = {}
@@ -319,37 +323,6 @@ class ObRemoteData (obplayer.ObData):
             media_list[media_row['filename']] = media_row
 
         return media_list
-
-    def language_lookup(self, code):
-        for item in os.listdir(obplayer.RemoteData.datadir + '/indigenous/'):
-            print(item)
-        #obplayer.Config.setting('alerts_selected_indigenous_languages')
-
-    def fetch_alert_media(self, media):
-        postfields = {}
-
-        postfields['id'] = obplayer.Config.setting('sync_device_id')
-        postfields['pw'] = obplayer.Config.setting('sync_device_password')
-        postfields['media_id'] = media['media_id']
-
-        data_request = requests.post(obplayer.Config.setting('sync_url') + "?action=media", data=postfields)
-
-        if data_request.status_code != 200:
-            obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
-        else:
-            data = data_request.content
-            try:
-                # build save path with language name.
-                save_path = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(obplayer.alert.ObAlert.lang_ref_to_language_name(media['language']))
-                with open(save_path + media['filename'], 'wb') as file:
-                    file.write(data)
-                # convert all non wav audio to wav
-                if media['filename'].endswith('wav') == False:
-                    # strip file ext from filename
-                    filename = media['filename'].replace('.ogg', '').replace('.mp3', '').replace('.OGG', '').replace('.MP3', '')
-                    self.convert_audio(save_path + media['filename'], media['media_format'], filename)
-            except FileNotFoundError as e:
-                obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
 
     @staticmethod
     def get_media_from_row(row):

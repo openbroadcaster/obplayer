@@ -35,7 +35,3 @@ function updateMap(){
   map.panTo(newLatLng,9);
 }
 
-$(document).ready(function () {
-  init_map();
-});
-

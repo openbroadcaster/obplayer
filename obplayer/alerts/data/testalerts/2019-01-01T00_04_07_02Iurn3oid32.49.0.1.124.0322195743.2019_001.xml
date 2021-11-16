@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
     <identifier>urn:oid:2.49.0.1.124.0322195743.2019</identifier>
-    <sender>obplayer@localhost</sender>
-    <sent>2021-02-18T17:13:00-05:00</sent>
+    <sender>OB Self Test</sender>
+    <sent>2021-03-30T00:00:00-04:00</sent>
     <status>Actual</status>
     <msgType>Alert</msgType>
     <source>Env. Can. - Can. Met. Ctr. – Montréal</source>
@@ -36,22 +36,20 @@
             <value>HWW</value>
         </eventCode>
         <effective>2019-01-01T00:03:24-00:00</effective>
-        <senderName>OB self test</senderName>
+        <senderName>OB Self Test</senderName>
         <headline>wind warning in effect</headline>
         <description>
-        This is only a test.
 Strong winds that may cause damage are expected or occurring.
+
+###
 
 High winds may toss loose objects or cause tree branches to break.
 
 Wind warnings are issued when there is a significant risk of damaging winds.
 
-This is only a test.
-
 Please continue to monitor alerts and forecasts issued by Environment Canada. To report severe weather, send an email to BCstorm@canada.ca or tweet reports using #BCStorm.
 </description>
         <instruction>
-        This is only a test.
 Be prepared to adjust your driving with changing road conditions due to high winds.
 </instruction>
         <web>http://weather.gc.ca/warnings/index_e.html?prov=bc</web>

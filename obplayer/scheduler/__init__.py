@@ -58,7 +58,7 @@ def init():
         obplayer.Sync.sync_shows(True)
         obplayer.Sync.sync_priority_broadcasts()
         obplayer.Sync.sync_media()
-        if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
+        if obplayer.Config.setting('alerts_broadcast_message_in_first_nations_languages'):
             obplayer.Sync.sync_alert_media()
 
     # Start sync threads
@@ -66,8 +66,7 @@ def init():
     SyncEmergThread().start()
     SyncMediaThread().start()
     SyncPlaylogThread().start()
-    if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
-        Sync_Alert_Media_Thread().start()
+    Sync_Alert_Media_Thread().start()
 
 def quit():
     # backup our main db to disk.

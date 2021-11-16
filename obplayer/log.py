@@ -24,8 +24,6 @@ import obplayer
 
 import time
 import threading
-import re
-import html
 
 MAX_BACKLOG = 2000
 
@@ -47,70 +45,6 @@ class ObLog:
 
     def set_debug(self, flag):
         self.debug = flag
-
-    def format_logs(self, log_level=None):
-        output = []
-        log_data = self.get_log()
-        #log_data = cgi.escape(log_data)
-        for line in log_data:
-            line = html.escape(line)
-            if log_level == 'normal':
-                if re.search('\[error\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#880000;', line))
-                elif re.search('\[warning\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#888800;', line))
-                elif re.search('\[priority\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#880088;', line))
-                elif re.search('\[player\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#005500;', line))
-                elif re.search('\[data\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#333333;', line))
-                elif re.search('\[data\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#333333;', line))
-                elif re.search('\[scheduler\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#005555;', line))
-                elif re.search('\[sync\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#000055;', line))
-                elif re.search('\[sync download\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#AA4400;', line))
-                elif re.search('\[admin\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#333300;', line))
-                elif re.search('\[live\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#333300;', line))
-                elif re.search('\[alerts\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#880088;', line))
-            elif log_level == 'debug':
-                if re.search('\[error\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#880000;', line))
-                elif re.search('\[warning\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#888800;', line))
-                elif re.search('\[priority\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#880088;', line))
-                elif re.search('\[player\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#005500;', line))
-                elif re.search('\[data\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#333333;', line))
-                elif re.search('\[data\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#333333;', line))
-                elif re.search('\[scheduler\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#005555;', line))
-                elif re.search('\[sync\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#000055;', line))
-                elif re.search('\[sync download\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#AA4400;', line))
-                elif re.search('\[admin\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#333300;', line))
-                elif re.search('\[live\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#333300;', line))
-                elif re.search('\[debug\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#880088;', line))
-                elif re.search('\[alerts\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#880088;', line))
-
-            elif log_level == 'alerts':
-                if re.search('\[alerts\]', line):
-                    output.append('<span style="color: {0}">{1}</span>'.format('#880088;', line))
-        return output
 
     def log(self, message, mtype='error', alert_data=None):
 

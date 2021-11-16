@@ -128,11 +128,9 @@ class ObAudioOutputBin (ObOutputBin):
             self.audiosink.set_property('enable-last-sample', False)
 
         elif audio_output == 'test':
-            self.elements.append(Gst.ElementFactory.make('queue2', 'audio-out-test-queue'))
             self.audiosink = Gst.ElementFactory.make('fakesink', 'audiosink')
 
         else:
-            self.elements.append(Gst.ElementFactory.make('queue2', 'audio-out-auto-queue'))
             self.audiosink = Gst.ElementFactory.make('autoaudiosink', 'audiosink')
 
         self.elements.append(self.audiosink)
@@ -307,11 +305,9 @@ class ObVideoOutputBin (ObOutputBin):
             self.videosink.set_property('enable-last-sample', False)
 
         elif video_out_mode == 'test':
-            self.elements.append(Gst.ElementFactory.make('queue2', 'video-out-test-queue'))
             self.videosink = Gst.ElementFactory.make('fakesink', 'video-out-sink')
 
         else:
-            self.elements.append(Gst.ElementFactory.make('queue2', 'video-out-auto-queue'))
             self.videosink = Gst.ElementFactory.make('autovideosink', 'video-out-sink')
 
         self.elements.append(self.videosink)

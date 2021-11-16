@@ -1,0 +1,144 @@
+<div id="content-sync" data-tns="Sync Tab">
+    <div class="settings">
+      <div class="row mt-2">
+        <div class="col-md-2">
+            <button class="btn btn-primary save_btn">Save</button>
+        </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-2 col-sm-12">
+            <label><%= obplayer.Translate.t('Sync Tab', 'scheduler_enable') %></label>
+          </div>
+          <div class="col-md-1 col-sm-12">
+            <input type="checkbox" name="scheduler_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('scheduler_enable') %> title="<%= obplayer.Translate.t('Sync Tab', 'scheduler_enable_tooltip') %>">
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-2 col-sm-12">
+            <label><%= obplayer.Translate.t('Sync Tab', 'sync_device_id') %></label>
+          </div>
+          <div class="col-md-1 col-sm-12">
+            <input type="text" name="sync_device_id" value="<%= obplayer.Config.setting('sync_device_id',True) %>" style="width: 80px;">
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-2 col-sm-12">
+            <label><%= obplayer.Translate.t('Sync Tab', 'sync_device_password') %></label>
+          </div>
+          <div class="col-md-2 col-sm-12">
+            <input type="password" name="sync_device_password" value="unchanged">
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-2 col-sm-12">
+            <label><%= obplayer.Translate.t('Sync Tab', 'sync_url') %></label>
+          </div>
+          <div class="col-md-2 col-sm-12">
+            <input type="text" name="sync_url" value="<%= obplayer.Config.setting('sync_url',True) %>">
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-2 col-sm-12">
+            <label><%= obplayer.Translate.t('Sync Tab', 'sync_playlog_enable') %></label>
+          </div>
+          <div class="col-md-2 col-sm-12">
+            <input type="checkbox" name="sync_playlog_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('sync_playlog_enable') %> title="<%= obplayer.Translate.t('Sync Tab', 'sync_playlog_enable_tooltip') %>">
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-2 col-sm-12">
+            <label title="<%= obplayer.Translate.t('Sync Tab', 'sync_mode_tooltip') %>"><%= obplayer.Translate.t('Sync Tab', 'sync_mode') %></label>
+          </div>
+          <div class="col-md-2 col-sm-12">
+            <select class="form-control" id="sync_media_mode" name="sync_mode" class="form-control">
+              <option value="remote"<%= obplayer.HTTPAdmin.form_item_selected('sync_mode', 'remote') %> data-t>remote</option>
+              <option value="backup"<%= obplayer.HTTPAdmin.form_item_selected('sync_mode', 'backup') %> data-t>backup</option>
+              <option value="local"<%= obplayer.HTTPAdmin.form_item_selected('sync_mode', 'local') %> data-t>local</option>
+            </select>
+          </div>
+        </div>
+        <div class="row mt-4 sync_display_adjust sync_backup" id="sync_backup" style="visibility: hidden; height: 0;">
+          <div class="col-md-2 col-sm-12">
+            <label><%= obplayer.Translate.t('Sync Tab', 'sync_copy_media_to_backup') %></label>
+          </div>
+          <div class="col-md-3 col-sm-12">
+            <input type="checkbox" name="sync_copy_media_to_backup" value="1"<%= obplayer.HTTPAdmin.form_item_checked('sync_copy_media_to_backup') %>>
+          </div>
+        </div>
+        <div id="sync_local" style="visibility: hidden; height: 0;">
+          <div class="row mt-2">
+            <div class="col-md-2 col-sm-12">
+              <%= obplayer.Translate.t('Sync Tab', 'local_media') %>
+            </div>
+            <div class="col-md-3 col-sm-12">
+              <input type="text" name="local_media" value="<%= obplayer.Config.setting('local_media',True) %>">
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="advanced-settings" style="width: 40%;">
+      <input type="checkbox" id="sync-advanced" />
+      <label for="sync-advanced" data-t>Advanced Settings</label>
+      <div class="settings items">
+          <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+              <label><%= obplayer.Translate.t('Sync Tab', 'sync_buffer') %></label>
+            </div>
+            <div class="col-md-2 col-sm-12">
+              <input class="form-control" type="text" name="sync_buffer" value="<%= obplayer.Config.setting('sync_buffer', True) %>" title="<%= obplayer.Translate.t('Sync Tab', 'sync_buffer_tooltip') %>">
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+              <label><%= obplayer.Translate.t('Sync Tab', 'sync_showlock') %></label>
+            </div>
+            <div class="col-md-2 col-sm-12">
+              <input class="form-control" type="text" name="sync_showlock" value="<%= obplayer.Config.setting('sync_showlock', True) %>" title="<%= obplayer.Translate.t('Sync Tab', 'sync_showlock_tooltip') %>">
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+              <label><%= obplayer.Translate.t('Sync Tab', 'sync_freq') %></label>
+            </div>
+            <div class="col-md-2 col-sm-12">
+              <input class="form-control" type="text" name="sync_freq" value="<%= obplayer.Config.setting('sync_freq', True) %>" title="<%= obplayer.Translate.t('Sync Tab', 'sync_freq_tooltip') %>">
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+              <label><%= obplayer.Translate.t('Sync Tab', 'sync_freq_priority') %></label>
+            </div>
+            <div class="col-md-2 col-sm-12">
+              <input class="form-control" type="text" name="sync_freq_priority" value="<%= obplayer.Config.setting('sync_freq_priority', True) %>" title="<%= obplayer.Translate.t('Sync Tab', 'sync_freq_priority_tooltip') %>">
+            </div>
+          </div>
+          <div class="row mt-2 mb-2">
+            <div class="col-md-6 col-sm-12">
+              <label><%= obplayer.Translate.t('Sync Tab', 'sync_freq_playlog') %></label>
+            </div>
+            <div class="col-md-2 col-sm-12">
+              <input class="form-control" type="text" name="sync_freq_playlog" value="<%= obplayer.Config.setting('sync_freq_playlog', True) %>" title="<%= obplayer.Translate.t('Sync Tab', 'sync_freq_playlog_tooltip') %>">
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="row mt-2 mx-1">
+      <button class="btn btn-primary save_btn" type="button">Save</button>
+    </div>
+
+    <% if obplayer.Config.setting('scheduler_enable'): %>
+    <div class="row mt-2">
+      <div class="col-md-6 col-sm-12">
+        <label>Enable Maintenance Mode</label>
+        <button class="mx-4 btn btn-primary" id="toggle-maintenance-btn" type="button">Toggle</button>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-md-3 col-sm-12">
+        <label>Status:</label> <label id="toggle-maintenance-status"><%= '(refresh dashboard)' if not hasattr(obplayer, 'Scheduler') else 'Enabled' if obplayer.Scheduler.ctrl.enabled else 'Disabled'  %></label>
+      </div>
+    </div>
+    <% end %>
+  </div>

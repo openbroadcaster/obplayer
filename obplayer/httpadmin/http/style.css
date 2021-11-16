@@ -1,0 +1,198 @@
+/* This a override stylesheet for bootstrap.
+   This code should be loaded after bootstrap.
+*/
+
+.form-control {
+  color: var(--bs-dark);
+}
+
+#top_nav {
+    margin-top: 12px;
+}
+
+.nav-item > .selected {
+  border: 1px solid #2A2D79;
+}
+
+#log-data {
+    background-color: #eee;
+    height: 30em;
+    overflow: auto;
+}
+
+#audio-levels
+{
+  border: 1px solid black;
+}
+
+.advanced-settings {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border: 1px solid #2A2D79;
+}
+
+.advanced-settings > input + label + .items {
+  padding-top: 2px;
+  padding-left: 20px;
+}
+
+.advanced-settings > input {
+  display: none;
+}
+
+.advanced-settings > input ~ .items {
+  display: none;
+}
+
+.advanced-settings > input:checked ~ .items {
+  display: block;
+}
+
+.advanced-settings > input + label::before {
+  content: "\229e";
+  margin-right: 4px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}
+
+.advanced-settings > input:checked + label::before {
+  content: "\229f";
+  margin-right: 4px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}
+
+.experimental-settings {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border: 1px solid #2A2D79;
+}
+
+label.experimental-settings,
+label.experimental-settings::before {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.experimental-settings > input + label + table {
+  padding-top: 2px;
+  padding-left: 20px;
+}
+
+.experimental-settings > input {
+  display: none;
+}
+
+.experimental-settings > input ~ table {
+  display: none;
+}
+
+.experimental-settings > input:checked ~ table {
+  display: block;
+}
+
+.experimental-settings > input + label::before {
+  content: "\229e";
+  margin-right: 4px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}
+
+.experimental-settings > input:checked + label::before {
+  content: "\229f";
+  margin-right: 4px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}
+
+label.experimental-settings,
+label.experimental-settings::before {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.stl-settings {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border: 1px solid #2A2D79;
+}
+
+label.stl-settings,
+label.stl-settings::before {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.stl-settings > input + label + .items {
+  padding-top: 2px;
+  padding-left: 20px;
+}
+
+.stl-settings > input {
+  display: none;
+}
+
+.stl-settings > input ~ .items {
+  display: none;
+}
+
+.stl-settings > input:checked ~ .items {
+  display: block;
+}
+
+.stl-settings > input + label::before {
+  content: "\229e";
+  margin-right: 4px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}
+
+.stl-settings > input:checked + label::before {
+  content: "\229f";
+  margin-right: 4px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}
+
+label.stl-settings,
+label.stl-settings::before {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.sync-advanced {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  border: 1px solid #2A2D79;
+}
+
+.sync-advanced > input + label + .items {
+  padding-top: 2px;
+  padding-left: 20px;
+}
+
+.sync-advanced > input {
+  display: none;
+}
+
+.sync-advanced > input ~ .items {
+  display: none;
+}
+
+.sync-advanced > input:checked ~ .items {
+  display: block;
+}
+
+.sync-advanced > input + label::before {
+  content: "\229e";
+  margin-right: 4px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}
+
+.sync-advanced > input:checked + label::before {
+  content: "\229f";
+  margin-right: 4px;
+  margin-left: 4px;
+  vertical-align: bottom;
+}

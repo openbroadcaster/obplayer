@@ -27,7 +27,10 @@ from obplayer.log import ObLog
 from obplayer.data import ObData, ObConfigData
 from obplayer.main import ObMainApp
 from obplayer.gui import ObGui
+import obplayer.password_system as password_system
+from obplayer.translate import TranslateSystem
 from obplayer.alert_counter import Alert_Counter
+
 
 Log = None
 Config = None

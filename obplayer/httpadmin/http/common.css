@@ -56,7 +56,7 @@ h2:first-child
   text-align: right;
 }
 
-#content
+#content 
 {
   padding: 30px;
   border-left: 1px solid #2A2D79;
@@ -94,7 +94,7 @@ h2:first-child
 {
   vertical-align: top;
   display: inline-block;
-  width: 22em;
+  width: 25em;
 }
 
 .summary h4
@@ -107,11 +107,7 @@ h2:first-child
 .summary div label
 {
   display: inline-block;
-  width: 8em;
-}
-
-#live-audio-summary {
-  margin-right: 4em;
+  width: 10em;
 }
 
 #log-data
@@ -214,92 +210,6 @@ label.advanced-settings::before {
   display: inline-block;
 }
 
-.experimental-settings {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  border: 1px solid #2A2D79;
-}
-
-.experimental-settings > input + label + table {
-  padding-top: 2px;
-  padding-left: 20px;
-}
-
-.experimental-settings > input {
-  display: none;
-}
-
-.experimental-settings > input ~ table {
-  display: none;
-}
-
-.experimental-settings > input:checked ~ table {
-  display: block;
-}
-
-.experimental-settings > input + label::before {
-  content: "\229e";
-  margin-right: 4px;
-  margin-left: 4px;
-  vertical-align: bottom;
-}
-
-.experimental-settings > input:checked + label::before {
-  content: "\229f";
-  margin-right: 4px;
-  margin-left: 4px;
-  vertical-align: bottom;
-}
-
-label.experimental-settings,
-label.experimental-settings::before {
-  cursor: pointer;
-  display: inline-block;
-}
-
-.stl-settings {
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  border: 1px solid #2A2D79;
-}
-
-.stl-settings > input + label + table {
-  padding-top: 2px;
-  padding-left: 20px;
-}
-
-.stl-settings > input {
-  display: none;
-}
-
-.stl-settings > input ~ table {
-  display: none;
-}
-
-.stl-settings > input:checked ~ table {
-  display: block;
-}
-
-.stl-settings > input + label::before {
-  content: "\229e";
-  margin-right: 4px;
-  margin-left: 4px;
-  vertical-align: bottom;
-}
-
-.stl-settings > input:checked + label::before {
-  content: "\229f";
-  margin-right: 4px;
-  margin-left: 4px;
-  vertical-align: bottom;
-}
-
-label.stl-settings,
-label.stl-settings::before {
-  cursor: pointer;
-  display: inline-block;
-}
-
 .pulse-mixer {
   margin-left: 10px;
 }
@@ -360,71 +270,4 @@ input[type="range"] {
   text-align: right;
 }
 
-.select2-search__field {
-  min-width: 100px;
-}
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-.modal-content {
-  box-sizing: border-box;
-  max-width: 80%;
-  max-height: 80%;
-  padding: 24px;
-  margin: 24px auto;
-  background-color: #fff;
-}
-
-.modal-content ul {
-  padding: 0;
-  list-style: none;
-}
-
-.modal_close_btn {
-  float: right;
-  outline: none;
-  background-color: #fff;
-  border: 0;
-  font-size: 32px;
-}
-
-.modal_close_btn:hover {
-  cursor: pointer;
-}
-
-#update_modal > .modal-content {
-  border: 2px dotted #fc3d03;
-}
-
-#update_modal p {
-  font-size: 38px;
-}
-
-#update_modal textarea {
-  width: 100%;
-}
-
-.warning-text {
-  color: #fc3d03;
-  font-weight: bold;
-  font-size: 42px;
-  text-align: center;
-}
-
-.tos_textarea {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  line-height: 20px;
-  width: 100%;
-  height: 100%;
-  white-space: pre-wrap;
-}

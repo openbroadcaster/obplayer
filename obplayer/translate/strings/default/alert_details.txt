@@ -1,0 +1,27 @@
+
+Alert Details
+
+  Details of: Details of
+
+  Identifier: Identifier
+  Sender: Sender
+  Sent: Sent
+  Codes: Codes
+  Status: Status
+  Message Type: Message Type
+  Scope: Scope
+  Language: Language
+  Event: Event
+  Urgency: Urgency
+  Severity: Severity
+  Certainty: Certainty
+  Expires: Expires
+  Sender Name: Sender Name
+  Headline: Headline
+  Description: Description
+  Instruction: Instruction
+  Parameters: Parameters
+  Event Codes: Event Codes
+  Attached Resources: Attached Resources
+
+ 

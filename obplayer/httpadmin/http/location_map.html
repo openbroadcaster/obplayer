@@ -1,0 +1,48 @@
+<div id="content-location">
+    <div class="settings">
+      <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+          <label><%= obplayer.Translate.t('Location Tab', 'location_enable') %></label>
+          <input class="mx-4" type="checkbox" name="location_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('location_enable') %>>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-6 col-sm-12">
+          <label>Device Location (use decimal degrees)</label>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+          <label><%= obplayer.Translate.t('Location Tab', 'location_longitude') %></label>
+          <input class="form-control" type="text" name="location_longitude" value="<%= obplayer.Config.setting('location_longitude', True) %>" onchange="updateMap()">
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+          <label><%= obplayer.Translate.t('Location Tab', 'location_latitude') %></label>
+          <input class="form-control" type="text" name="location_latitude" value="<%= obplayer.Config.setting('location_latitude', True) %>" onchange="updateMap()">
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3 col-sm-12">
+          <button class="btn btn-primary" id="save_btn" type="button">Save</button>
+        </div>
+      </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-md-6 col-sm-12">
+      <div id="map-container">
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-md-3 col-sm-12">
+      <span><%= obplayer.Translate.t('Location Tab', 'drag_marker') %></span><br/><span><%= obplayer.Translate.t('Location Tab', 'drag_map') %></span>
+    </div>
+  </div>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="./map.js"></script>
+  </div>

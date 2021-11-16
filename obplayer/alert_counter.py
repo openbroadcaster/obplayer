@@ -25,7 +25,7 @@ class Alert_Counter(object):
             elif alert_type == 'Broadcast Intrusive Alert':
                 self.alerts['broadcast_intrusive'].append(alert_id)
             else:
-                obplayer.Log.log("couldn't log alert: {0} with type {1}!".format(alert_id, alert_type), 'alerts')
+                obplayer.Log.log("couldn't log alert: {0} with type {1}!".format(alert_id, alert_type), 'alert counter')
         self.save_data()
 
     def is_already_logged(self, alert_id):

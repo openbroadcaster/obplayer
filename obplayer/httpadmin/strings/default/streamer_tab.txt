@@ -15,37 +15,21 @@ Streamer Tab
 
   Icecast Streaming: Icecast Streaming
 
-  streamer_0_icecast_enable: Enable Icecast Streaming
-  streamer_0_icecast_enable_tooltip: If enabled, an audio recorder will send audio to an icecast server via http.
+  streamer_icecast_enable: Enable Icecast Streaming
+  streamer_icecast_enable_tooltip: If enabled, an audio recorder will send audio to an icecast server via http.
 
-  streamer_0_icecast_mode: Icecast (One) Output Mode
-  streamer_0_icecast_bitrate: Icecast (One) Output Bitrate
-  streamer_0_icecast_ip: Icecast (One) IP
-  streamer_0_icecast_port: Icecast (One) Port
-  streamer_0_icecast_mount: Icecast (One) Mountpoint
-  streamer_0_icecast_username: Icecast (One) Username
-  streamer_0_icecast_password: Icecast (One) Password
-  streamer_0_icecast_streamname: Icecast (One) Stream Name
-  streamer_0_icecast_description: Icecast (One) Description
-  streamer_0_icecast_url: Icecast (One) URL
-  streamer_0_icecast_public: Publicly List Icecast (One) Stream
-  streamer_0_title_streaming_enable: Enable title streaming
-  streamer_1_icecast_enable: Enable Icecast Streaming
-  streamer_1_icecast_enable_tooltip: If enabled, an audio recorder will send audio to an icecast server via http.
-  streamer_1_icecast_mode: Icecast (Two) Output Mode
-  streamer_1_icecast_bitrate: Icecast (Two) Output Bitrate
-  streamer_1_icecast_ip: Icecast (Two) IP
-  streamer_1_icecast_port: Icecast (Two) Port
-  streamer_1_icecast_mount: Icecast (Two) Mountpoint
-  streamer_1_icecast_username: Icecast (Two) Username
-  streamer_1_icecast_password: Icecast (Two) Password
-  streamer_1_icecast_streamname: Icecast (Two) Stream Name
-  streamer_1_icecast_description: Icecast (Two) Description
-  streamer_1_icecast_url: Icecast (Two) URL
-  streamer_1_icecast_public: Publicly List Icecast (Two) Stream
-  streamer_1_title_streaming_enable: Enable title streaming
+  streamer_icecast_mode: Icecast Output Mode
+  streamer_icecast_bitrate: Icecast Output Bitrate
+  streamer_icecast_ip: Icecast IP
+  streamer_icecast_port: Icecast Port
+  streamer_icecast_mount: Icecast Mountpoint
+  streamer_icecast_password: Icecast Password
+  streamer_icecast_streamname: Icecast Stream Name
+  streamer_icecast_description: Icecast Description
+  streamer_icecast_url: Icecast URL
+  streamer_icecast_public: Publicly List Icecast Stream
 
-  streamer_play_on_startup: Play Streams on Startup
+  streamer_play_on_startup: Play Stream on Startup
   streamer_play_on_startup_tooltip: Uncheck this when using the 'trigger icecast stream on alerts' feature on the alerts tab
 
 
@@ -83,3 +67,4 @@ Streamer Tab
   streamer_youtube_key: YouTube Streaming Key
 
   streamer_youtube_mode: YouTube Output Mode
+

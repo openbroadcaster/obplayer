@@ -34,13 +34,13 @@ class StreamerTrigger (object):
         pass
 
     def alert_cycle_start(self):
-        if hasattr(obplayer, 'Streamer_stream_1'):
+        if hasattr(obplayer, 'Streamer'):
             obplayer.Log.log("starting icecast streamer for alert cycle", 'alerts')
-            obplayer.Streamer_stream_1.start()
+            obplayer.Streamer.start()
 
     def alert_cycle_stop(self):
-        if hasattr(obplayer, 'Streamer_stream_1'):
+        if hasattr(obplayer, 'Streamer'):
             obplayer.Log.log("stopping icecast streamer after alert cycle", 'alerts')
-            obplayer.Streamer_stream_1.stop()
+            obplayer.Streamer.stop()
 
 

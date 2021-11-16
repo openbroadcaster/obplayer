@@ -1,0 +1,16 @@
+
+Location Tab
+
+  Location Map: Location Map
+
+  Device Location (use decimal degrees): Device Location (use decimal degrees)
+
+  location_enable: Enable Map Display
+  location_longitude: Longitude
+  location_latitude_invalid: Invalid latitude coordinate.
+  location_latitude: Latitude
+  location_longitude_invalid: Invalid longitude coordinate.
+
+  drag_marker: Drag and drop marker to update coordinates.
+  drag_map: Drag and drop map to pan.
+

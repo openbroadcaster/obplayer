@@ -1,0 +1,221 @@
+<div id="content-admin" data-tns="Admin Tab">
+
+  <div class="advanced-settings">
+    <input type="checkbox" id="admin-advanced" />
+    <label for="admin-advanced" data-t>Advanced Settings</label>
+    <div class="items settings">
+      <div class="row">
+        <div class="col-md-4 col-sm-12">
+          <label for="http_show_sync"><%= obplayer.Translate.t('Admin Tab', 'http_show_sync') %></label>
+          <input type="checkbox" name="http_show_sync" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_sync') %>>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-12">
+          <label for="http_show_streaming"><%= obplayer.Translate.t('Admin Tab', 'http_show_streaming') %></label>
+          <input type="checkbox" name="http_show_streaming" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_streaming') %>>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-12">
+          <label for="http_show_alerts"><%= obplayer.Translate.t('Admin Tab', 'http_show_alerts') %></label>
+          <input type="checkbox" name="http_show_alerts" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_alerts') %>>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-12">
+          <label for="http_show_streaming"><%= obplayer.Translate.t('Admin Tab', 'http_show_location') %></label>
+          <input type="checkbox" name="http_show_location" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_location') %>>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-12">
+          <label for="http_show_liveassist"><%= obplayer.Translate.t('Admin Tab', 'http_show_liveassist') %></label>
+          <input type="checkbox" name="http_show_liveassist" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_liveassist') %>>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-md-4 col-sm-12">
+          <label for="aws_access_key_id"><%= obplayer.Translate.t('Admin Tab', 'aws_access_key_id') %></label>
+          <input type="password" name="aws_access_key_id" value="<%= obplayer.Config.setting('aws_access_key_id') %>">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-12">
+          <label for="aws_secret_access_key"><%= obplayer.Translate.t('Admin Tab', 'aws_secret_access_key') %></label>
+          <input type="password" name="aws_secret_access_key" value="<%= obplayer.Config.setting('aws_secret_access_key', True) %>">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 col-sm-12">
+          <label for="aws_region_name"><%= obplayer.Translate.t('Admin Tab', 'aws_region_name') %></label>
+          <select class="form-control" name="aws_region_name">
+            <option value="us-east-1" <%= obplayer.HTTPAdmin.form_item_selected('aws_region_name', 'us-east-1') %>>Northern Virginia</option>
+            <option value="us-west-1" <%= obplayer.HTTPAdmin.form_item_selected('aws_region_name', 'us-west-1') %>>Oregon</option>
+            <option value="us-west-2" <%= obplayer.HTTPAdmin.form_item_selected('aws_region_name', 'us-west-2') %>>Northern California</option>
+            <option value="ca-central-1" <%= obplayer.HTTPAdmin.form_item_selected('aws_region_name', 'ca-central-1') %>>Montreal</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="experimental-settings">
+    <input type="checkbox" id="admin-experimental"/>
+    <label for="admin-experimental" data-t>Experimental Settings</label>
+    <table class="settings">
+      <tbody>
+        <tr>
+          <td data-t><%= obplayer.Translate.t('Admin Tab', 'show_indigenous_alert_settings') %></td>
+          <td><input type="checkbox" name="show_indigenous_alert_settings" value="1"<%= obplayer.HTTPAdmin.form_item_checked('show_indigenous_alert_settings') %>></td>
+        </tr>
+        <tr>
+          <td data-t><%= obplayer.Translate.t('Admin Tab', 'show_alert_ledin_settings') %></td>
+          <td><input type="checkbox" name="show_alert_ledin_settings" value="1"<%= obplayer.HTTPAdmin.form_item_checked('show_alert_ledin_settings') %>></td>
+        </tr>
+        <tr>
+          <td data-t><%= obplayer.Translate.t('Admin Tab', 'show_station_remote_override_settings') %></td>
+          <td><input type="checkbox" name="show_station_remote_override_settings" value="1"<%= obplayer.HTTPAdmin.form_item_checked('show_station_remote_override_settings') %>></td>
+        </tr>
+        <tr>
+          <td data-t><%= obplayer.Translate.t('Admin Tab', 'show_ssl_settings') %></td>
+          <td><input type="checkbox" name="show_ssl_settings" value="1"<%= obplayer.HTTPAdmin.form_item_checked('show_ssl_settings') %>></td>
+        </tr>
+        <tr>
+          <td data-t><%= obplayer.Translate.t('Admin Tab', 'show_sdr_streaming_logging_settings') %></td>
+          <td><input type="checkbox" name="show_sdr_streaming_logging_settings" value="1"<%= obplayer.HTTPAdmin.form_item_checked('show_sdr_streaming_logging_settings') %>></td>
+        </tr>
+        <tr>
+          <td data-t><%= obplayer.Translate.t('Admin Tab', 'newsfeed_override') %></td>
+          <td>
+            <input type="checkbox" name="newsfeed_override_enabled" value="<%= obplayer.HTTPAdmin.form_item_selected('newsfeed_override_enabled', '1') %>">
+          </td>
+        </tr>
+        <tr>
+          <td><p>To ensure all Experimental features work, please make sure all dependencies are met.</p>
+          <a href="https://wiki.openbroadcaster.com/Experimental" target="_blank">More info </a>
+        </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal" id="icecast_config_modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Icecast Config Editor</h5>
+        </div>
+        <div class="modal-body">
+          <div class="setting">
+            <div class="row">
+              <div class="col-4 col-sm-12">
+                <label for="icecast_admin_password"><%= obplayer.Translate.t('Admin Tab', 'icecast_admin_password') %></label>
+                <input type="password" id="icecast_config_modal_admin_password" value="">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-4 col-sm-12">
+                <label for="icecast_source_password"><%= obplayer.Translate.t('Admin Tab', 'icecast_source_password') %></label>
+                <input type="password" id="icecast_config_modal_source_password" value="">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-4 col-sm-12">
+                <label for="icecast_relay_password"><%= obplayer.Translate.t('Admin Tab', 'icecast_relay_password') %></label>
+                <input type="password" id="icecast_config_modal_relay_password" value="">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-4 col-sm-12">
+                <p>Any values set as default will be replaced with a random password.</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-4 col-sm-12">
+                <button class="btn btn-primary" type="button" id="icecast_config_editor_save_btn">Save</button>
+                <button class="btn btn-primary" type="button" id="icecast_config_editor_exit_btn">Exit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-1 col-sm-12 mt-2">
+      <button class="btn btn-primary" id="save_btn" name="save" type="button" data-tns="Common" data-t>Save</button>
+    </div>
+    <div class="col-md-2 col-sm-12 mt-2">
+      <button class="btn btn-primary" type="button" id="icecast_config_editor_open_btn">Icecast config editor</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 col-sm-12">
+      <label for="hard-restart-btn"><%= obplayer.Translate.t('Admin Tab', 'delete_and_reset') %></label>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <button class="btn btn-primary" id="hard-restart-btn" type="button" data-tns="Miscellaneous" data-t>Restart</button>
+    </div>
+  </div>
+
+  <form id="import-settings" method="post" action="/import_settings" enctype="multipart/form-data">
+    <div class="row mt-2">
+      <div class="col-md-3 col-sm-12">
+        <label>Import Settings</label>
+      </div>
+      <div class="col-md-6 col-sm-12">
+        <button class="btn btn-primary" type="submit" data-t>Import</button>
+        <input name="importfile" type="file" />
+      </div>
+    </div>
+  </form>
+
+  <form method="post" action="/export_settings">
+    <div class="row mt-2">
+      <div class="col-md-3 col-sm-12">
+        <label>Export Settings</label>
+      </div>
+      <div class="col-md-3 col-sm-12">
+        <button class="btn btn-primary" type="submit" data-t>Export</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="row mt-2">
+    <div class="col-md-3 col-sm-12">
+      <label>
+        Reset To Defaults and Restart
+      </label>
+    </div>
+    <div class="col-md-6 col-sm-12">
+      <button class="btn btn-primary" id="defaults-restart" type="button" data-tns="Miscellaneous" data-t>Restart</button>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-4 col-sm-12">
+      <label>Update Player</label>
+      <button class="btn btn-primary" id="update-check" type="button" data-t>Check</button>
+      <button class="btn btn-primary" id="update-player" type="button" data-t>Update</button>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-4 col-sm-12">
+      <label>Current Version</label>
+      <label><%= obplayer.Config.version %></label>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-4 col-sm-12" id="update-check-output-row">
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-4 col-sm-12">
+      <label id="update-output"></label>
+    </div>
+  </div>
+</div>

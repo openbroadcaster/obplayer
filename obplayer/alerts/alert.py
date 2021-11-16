@@ -37,7 +37,7 @@ import socket
 
 import traceback
 
-import html
+import cgi
 import requests
 import subprocess
 
@@ -169,7 +169,7 @@ class ObAlert (object):
                 self.info.append(ObAlertInfo(node, False))
 
             # # Check for indigenous broadcast settings
-            if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
+            if obplayer.Config.setting('alerts_selected_indigenous_languages'):
                 for node in xml_get_tags(alert, 'info'):
                     self.info.append(ObAlertInfo(node, True))
                     break
@@ -259,6 +259,16 @@ class ObAlert (object):
         return None
 
     def generate_audio(self, language, voice=None, indigenous=False):
+        #print('TEST: {0}'.format(language))
+        # if language == 'eng': language = 'en-CA'
+        # elif language == 'fr': language = 'fr-CA'
+        #print('indigenous = {0}'.format(indigenous))
+        # if language == 'indigenous':
+        #     indigenous = True
+        # else:
+        #     indigenous = False
+        #print('Language: ' + str(self.lang_ref(language)))
+        #info = self.get_first_info(self.lang_ref(language), bestmatch=False)
         info = self.get_first_info(language, bestmatch=False)
         #print(info.get_message_text(False))
         #print(self.get_first_info('en-CA', bestmatch=False))
@@ -267,11 +277,20 @@ class ObAlert (object):
             self.media_info[language] = None
             return False
         if indigenous == True:
+            #print("indigenous Text: " + self.get_first_info('indigenous', bestmatch=True).get_message_text(False, True))
+            #message_text = self.get_first_info('indigenous', bestmatch=True).get_message_text(False, True)
             # over writting for cg scroll text and logging. TODO: shoud be indigenous text here.
             cg_message_text = self.get_first_info('english', bestmatch=True).get_message_text(False)
+            #print(cg_message_text)
+            #time.sleep(20)
+            #print("indigenous Text: " + message_text)
+            #time.sleep(20)
         if indigenous == False:
             truncate = not self.broadcast_immediately() and obplayer.Config.setting('alerts_truncate')
             message_text = info.get_message_text(truncate)
+            #print(message_text)
+        # print(message_text)
+        # time.sleep(20)
 
         # TODO there needs to be a better way to get the datadir
         location = obplayer.ObData.get_datadir() + "/alerts"
@@ -290,7 +309,12 @@ class ObAlert (object):
             else:
                 return False
         else:
+            #print('Build indigenous Message...')
+            #os.system('cp indigenous/{0}/{1} {3}'.format(language.lower(), event.lower(), os.path.join(location, filename)))
+            #self.write_indigenous_file(os.path.join(location, filename), info.event.lower())
+            #print(self.get_first_info('indigenous', bestmatch=True).get_message_text(False, True))
             self.write_indigenous_file(os.path.join(location, filename), self.get_first_info('indigenous', bestmatch=True).get_message_text(False, True))
+            #print('indigenous control text:', self.get_first_info('indigenous', bestmatch=True).get_message_text(False, True))
             # over writting for cg scroll text and logging. TODO: shoud be indigenous text here.
             cg_message_text = self.get_first_info('english', bestmatch=True).get_message_text(False)
             uri = obplayer.Player.file_uri(location, filename)
@@ -344,7 +368,7 @@ class ObAlert (object):
                 #'overlay_text' : message_text,
                 'uri' : obplayer.Player.file_uri(location, filename),
                 'duration' : self.media_info[language]['audio']['duration'],
-                #'alert_type': self.alert_type
+                'alert_type': alert_type
             }
             self.media_info[language]['audio']['overlay_text'] = None
 
@@ -421,7 +445,7 @@ class ObAlert (object):
                 wf.setsampwidth(2)
                 wf.setframerate(22050)
                 wf.writeframes(b''.join(frames))
-                obplayer.Log.log('Writting indigenous alert messages...', 'debug')
+                obplayer.Log.log('Writting indigenous messages...', 'debug')
         except Exception as e:
             print(e)
             obplayer.Log.log(e, 'error')
@@ -445,7 +469,7 @@ class ObAlert (object):
             try:
                 response = polly_client.synthesize_speech(VoiceId=voice,
                                 OutputFormat='pcm',
-                                Text = "<speak><prosody volume=\"+3dB\"><break time=\"1s\" /> " + message_text + "</prosody></speak>",
+                                Text = "<speak><break time=\"2s\" /> " + message_text + " <break time=\"2s\" /> " + message_text + " <break time=\"3s\" /></speak>",
                                 TextType = "ssml")
 
                 audio_data = response['AudioStream'].read()
@@ -458,23 +482,32 @@ class ObAlert (object):
                     file.writeframes(audio_data)
             except Exception as e:
                 # if aws errors use espeak
-                obplayer.Log.log('AWS error such as network outage, or invaild aws ids/keys in use. error: {0}\nUsing local tts as backup audio.', 'error'.format(e))
+                obplayer.Log.log('AWS error such as network outage, or invaild aws ids/keys in use. error: {0}\nUsing local tts as backup audio.', 'error').format(e)
                 voice = 'en'
                 proc = subprocess.Popen([ 'espeak', '-m', '-v', voice, '-s', '140', '--stdout' ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
-                message_text = html.escape(message_text).encode('utf-8')
-                (stdout, stderr) = proc.communicate(b"...<break time=\"1s\" /> " + message_text)
+                message_text = self.xml_escape(message_text).encode('utf-8')
+                (stdout, stderr) = proc.communicate(b"...<break time=\"2s\" /> " + message_text + b" <break time=\"2s\" /> " + message_text + b" <break time=\"3s\" /> ")
                 proc.wait()
 
                 with open(path, 'wb') as f:
                     f.write(stdout)
         else:
             proc = subprocess.Popen([ 'espeak', '-m', '-v', voice, '-s', '140', '--stdout' ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
-            message_text = html.escape(message_text).encode('utf-8')
-            (stdout, stderr) = proc.communicate(b"...<break time=\"1s\" /> " + message_text)
+            message_text = self.xml_escape(message_text).encode('utf-8')
+            (stdout, stderr) = proc.communicate(b"...<break time=\"2s\" /> " + message_text + b" <break time=\"2s\" /> " + message_text + b" <break time=\"3s\" /> ")
             proc.wait()
 
             with open(path, 'wb') as f:
                 f.write(stdout)
+
+    @staticmethod
+    def xml_escape(data):
+        data = data.replace('&', '&amp;')
+        data = data.replace('"', '&quot;')
+        data = data.replace('\'', '&apos;')
+        data = data.replace('<', '&lt;')
+        data = data.replace('>', '&gt;')
+        return data
 
     @staticmethod
     def reference(timestamp, identifier):
@@ -503,20 +536,6 @@ class ObAlert (object):
         else:
             #raise Exception("Unsupported language: " + language)
             return 'en-US'
-    @staticmethod
-    def lang_ref_to_language_name(language_code):
-        if language_code == 'cr-CA':
-            return 'cree'
-        elif language_code == 'iu-CA':
-            return 'inuktitut'
-        elif language_code == 'oj-CA':
-            return 'ojibwe'
-        elif language_code == 'chp-CA':
-            return 'chipewyan'
-        elif language_code == 'mic-CA':
-            return 'mikmaq'
-        else:
-            raise Exception("Unsupported language: " + language_code)
 
     @staticmethod
     def get_indigenous_languages_by_sgcs(sgcs):
@@ -679,9 +698,13 @@ class ObAlertInfo (object):
             output_geocodes = list(dict.fromkeys(output_geocodes))
             #print(type(output_geocodes))
             #time.sleep(20)
+            #self.indigenous = ObAlert.get_indigenous_languages_by_sgcs(output_geocodes)
+            #obplayer.Log.log('indigenous Data: ' + str(self.indigenous), 'alerts')
             description = '. ' + self.description if self.description else ''
             instruction = '. ' + self.instruction if self.instruction else ''
             event = ' ' + self.event if self.event else ''
+            #self.indigenous = ObAlert.get_indigenous_languages_by_sgcs(geocodes)
+            #obplayer.Log.log('Locations Data: ' + str(geocodes), 'alerts')
             if self.event == "test":
                event = 'Test Alert'
             if self.language == 'fr-CA':
@@ -691,13 +714,13 @@ class ObAlertInfo (object):
                 #print(self.indigenous)
                 message_text = ""
                 self.indigenous_languages_enabled = obplayer.Config.setting('alerts_selected_indigenous_languages').split(',')
-                for indigenous in self.indigenous:
+                for language in self.indigenous:
                     # check if language is enabled.
-                    if ObAlert.lang_ref(indigenous.lower()) in self.indigenous_languages_enabled:
-                        print('lang_ref:', ObAlert.lang_ref(indigenous))
+                    if ObAlert.lang_ref(language.lower()) in self.indigenous_languages_enabled:
+                        print('lang_ref:', ObAlert.lang_ref(language))
                         # Check to make sure file exists.
-                        if os.path.isfile("{0}/indigenous/{1}/{2}.wav".format(obplayer.Config.datadir, indigenous.lower(), self.event.lower())):
-                            message_text += '{0}/indigenous/{1}/{2}.wav\n'.format(obplayer.Config.datadir, indigenous.lower(), self.event.lower())
+                        if os.path.isfile("{0}/indigenous/{1}/{2}.wav".format(obplayer.Config.datadir, language.lower(), self.event.lower())):
+                            message_text += '{0}/indigenous/{1}/{2}.wav\n'.format(obplayer.Config.datadir, language.lower(), self.event.lower())
                 text = message_text
                 print(message_text)
             else:
@@ -705,11 +728,14 @@ class ObAlertInfo (object):
         # Always must be indigenous alert audio
         if self.language == 'indigenous':
             self.indigenous = ObAlert.get_indigenous_languages_by_sgcs(output_geocodes)
+            #obplayer.Log.log('indigenous Data: ' + str(self.indigenous), 'alerts')
             message_text = ""
             self.indigenous_languages_enabled = obplayer.Config.setting('alerts_selected_indigenous_languages').split(',')
-            for indigenous_language in self.indigenous:
-                if ObAlert.lang_ref(indigenous_language.lower()) in self.indigenous_languages_enabled:
-                    message_text += '{0}/indigenous/{1}/{2}.wav\n'.format(obplayer.Config.datadir, indigenous_language.lower(), self.event.lower())
+            for indigenous in self.indigenous:
+                #print(indigenous)
+                if ObAlert.lang_ref(indigenous.lower()) in self.indigenous_languages_enabled:
+                    #message_text += '<audio src="{0}/indigenous/{1}/{2}.wav">'.format(obplayer.Config.datadir, indigenous.lower(), self.event.lower())
+                    message_text += '{0}/indigenous/{1}/{2}.wav\n'.format(obplayer.Config.datadir, indigenous.lower(), self.event.lower())
             text = message_text
         if self.language != 'indigenous':
             if sys.version.startswith('3'):

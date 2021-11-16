@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+import os.path
 import sys
 import time
 import argparse
+import configparser
 
 import gi
 gi.require_version('Gst', '1.0')
@@ -14,19 +16,45 @@ from gi.repository import GObject, Gtk, Gdk, Gst
 GObject.threads_init()
 Gst.init(None)
 
-
 class ObLocalStreamer (object):
     def __init__(self):
-        parser = argparse.ArgumentParser(prog='local_streamer', formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="Stream local audio to an RTP receiver.")
-        parser.add_argument('-a', '--audio', type=str, help='Audio mode to use (alsa/pulse/jack/auto/etc).', default='auto')
-        parser.add_argument('-D', '--alsa-device', type=str, help='Name of the ALSA device to monitor.', default='default')
-        parser.add_argument('-J', '--jack-port', type=str, help='Name of the jack port to monitor.', default='default')
-        parser.add_argument('-i', '--ip', type=str, help='RTP receiver IP address.', default='127.0.0.1')
-        parser.add_argument('-p', '--port', type=str, help='RTP receiver port number.', default='5004')
-        parser.add_argument('-e', '--encoding', type=str, help='Audio encoding format: OPUS, MPA, L16, or L24.', default='OPUS')
-        parser.add_argument('-c', '--clockrate', type=str, help='Audio clock rate: 48000 or 44100', default='48000')
+        self.ip = '127.0.0.1'
+        self.encoding_type = 'OPUS'
+        self.port = 5004
+        self.audio_system_type = 'auto'
+        self.audio_sample_rate = 48000
+        self.alsa_device = 'default'
+        self.jack_audio_client_name = ''
+        datadir = os.path.expanduser('~/.openbroadcaster')
+        if os.access(datadir, os.F_OK) == False:
+            os.mkdir(datadir)
+        # parser = argparse.ArgumentParser(prog='local_streamer', formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="Stream local audio to an RTP receiver.")
+        # parser.add_argument('-a', '--audio', type=str, help='Audio mode to use (alsa/pulse/jack/auto/etc).', default='auto')
+        # parser.add_argument('-D', '--alsa-device', type=str, help='Name of the ALSA device to monitor.', default='default')
+        # parser.add_argument('-J', '--jack-port', type=str, help='Name of the jack port to monitor.', default='default')
+        # parser.add_argument('-i', '--ip', type=str, help='RTP receiver IP address.', default='127.0.0.1')
+        # parser.add_argument('-p', '--port', type=str, help='RTP receiver port number.', default='5004')
+        # parser.add_argument('-e', '--encoding', type=str, help='Audio encoding format: OPUS, MPA, L16, or L24.', default='OPUS')
+        # parser.add_argument('-c', '--clockrate', type=str, help='Audio clock rate: 48000 or 44100', default='48000')
 
-        self.args = parser.parse_args()
+        #self.args = parser.parse_args()
+        config_file_path = datadir + '/live.cnf'
+        if os.access(config_file_path, os.F_OK):
+            config = configparser.ConfigParser()
+            try:
+                config.read(config_file_path)
+                self.ip = config['Network']['ip_addr']
+                self.port = config['Network']['port']
+                self.audio_system_type = config['Sound']['system_type']
+                self.jack_audio_client_name = config['Sound']['jack_audio_client_name']
+                self.audio_sample_rate = config['Sound']['sample_rate']
+                self.encoding_type = config['Sound']['encoding']
+            except Exception as e:
+                print('Error in config file! Please check ' + config_file_path)
+        else:
+            print('Config file not found. Using defualts.')
+
+
 
         self.create_pipeline()
 
@@ -35,17 +63,17 @@ class ObLocalStreamer (object):
 
         self.elements = [ ]
 
-        audio_input = self.args.audio
+        audio_input = self.audio_system_type
         if audio_input == 'alsa':
             self.audiosrc = Gst.ElementFactory.make('alsasrc', 'audiosrc')
-            alsa_device = self.args.alsa_device
+            alsa_device = self.alsa_device
             if alsa_device != '':
                 self.audiosrc.set_property('device', alsa_device)
 
         elif audio_input == 'jack':
             self.audiosrc = Gst.ElementFactory.make('jackaudiosrc', 'audiosrc')
             self.audiosrc.set_property('connect', 0)  # don't autoconnect ports.
-            self.audiosrc.set_property('client-name', self.args.port)
+            self.audiosrc.set_property('client-name', self.jack_audio_client_name)
 
         elif audio_input == 'oss':
             self.audiosrc = Gst.ElementFactory.make('osssrc', 'audiosrc')
@@ -83,7 +111,7 @@ class ObLocalStreamer (object):
         self.elements.append(self.shout2send)
         """
 
-        clockrate = self.args.clockrate
+        clockrate = self.audio_sample_rate
 
         self.capsfilter = Gst.ElementFactory.make('capsfilter', "audiocapsfilter")
         #self.capsfilter.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100,format=S16LE,layout=interleaved"))
@@ -100,7 +128,7 @@ class ObLocalStreamer (object):
         self.audioconvert = Gst.ElementFactory.make("audioconvert")
         self.elements.append(self.audioconvert)
 
-        encoding = self.args.encoding.upper()
+        encoding = self.encoding_type.upper()
         if encoding == 'OPUS':
             self.encoder = Gst.ElementFactory.make("opusenc")
             self.elements.append(self.encoder)
@@ -142,14 +170,14 @@ class ObLocalStreamer (object):
         self.pipeline.add(self.rtpbin)
 
         self.udpsink_rtp = Gst.ElementFactory.make("udpsink")
-        self.udpsink_rtp.set_property('host', self.args.ip)
-        self.udpsink_rtp.set_property('port', int(self.args.port))
+        self.udpsink_rtp.set_property('host', self.ip)
+        self.udpsink_rtp.set_property('port', int(self.port))
         #self.elements.append(self.udpsink_rtp)
         self.pipeline.add(self.udpsink_rtp)
 
         self.udpsink_rtcp = Gst.ElementFactory.make("udpsink")
-        self.udpsink_rtcp.set_property('host', self.args.ip)
-        self.udpsink_rtcp.set_property('port', int(self.args.port) + 1)
+        self.udpsink_rtcp.set_property('host', self.ip)
+        self.udpsink_rtcp.set_property('port', int(self.port) + 1)
         #self.elements.append(self.udpsink_rtcp)
         self.pipeline.add(self.udpsink_rtcp)
 
@@ -201,8 +229,123 @@ class ObLocalStreamer (object):
         return True
 
     def get_address(self):
-        return "(UDP) -> {0}:{1}".format(self.args.ip, self.args.port)
+        return "(UDP) -> {0}:{1}".format(self.ip, self.port)
 
+class Setting_Window(Gtk.Window):
+    def __init__(self):
+        self.sound_system_type = ''
+        self.encoding_type = ''
+        self.sample_rate = None
+        self.datadir = os.path.expanduser('~/.openbroadcaster')
+        if os.access(self.datadir, os.F_OK) == False:
+            os.mkdir(self.datadir)
+        self.config_file_path = self.datadir + '/live.cnf'
+        if os.access(self.config_file_path, os.F_OK):
+            self.config = configparser.ConfigParser()
+            self.config.read(self.config_file_path)
+        Gtk.Window.__init__(self, title="Local Audio Streamer Settings")
+        self.set_border_width(10)
+        self.set_default_size(400, 250)
+        self.grid = Gtk.Grid()
+        self.grid.set_hexpand(True)
+        self.grid.set_vexpand(True)
+        self.ip_addr_entry = Gtk.Entry()
+        self.ip_addr_entry.set_text(self.config['Network']['ip_addr'])
+        self.ip_addr_entry.set_hexpand(True)
+        self.port_spinbox = Gtk.SpinButton.new_with_range(5004, 5016, 1)
+        self.port_spinbox.set_value(int(self.config['Network']['port']))
+        # Sound system type: ALSA, Pulse, Jack, or Automatic.
+        self.sound_system_type_list_store = Gtk.ListStore(str)
+        for item in ['alsa', 'pulse', 'jack', 'auto']:
+            self.sound_system_type_list_store.append([item])
+        self.sound_system_type_combo = Gtk.ComboBox.new_with_model(self.sound_system_type_list_store)
+        self.set_combo_value(self.sound_system_type_combo, self.config['Sound']['system_type'])
+        self.sound_system_type_combo.connect('changed', self.set_sound_system_type)
+        renderer_text = Gtk.CellRendererText()
+        self.sound_system_type_combo.pack_start(renderer_text, True)
+        self.sound_system_type_combo.add_attribute(renderer_text, "text", 0)
+        # Encoding type (Audio Encoder): OPUS, MPA, L16, or L24.
+        self.encoding_type_list_store = Gtk.ListStore(str)
+        for item in ['OPUS', 'MPA', 'L16', 'L24']:
+            self.encoding_type_list_store.append([item])
+        self.encoding_type_combo = Gtk.ComboBox.new_with_model(self.encoding_type_list_store)
+        self.encoding_type_combo.connect('changed', self.set_encoding_type)
+        self.set_combo_value(self.encoding_type_combo, self.config['Sound']['encoding'])
+        renderer_text = Gtk.CellRendererText()
+        self.encoding_type_combo.pack_start(renderer_text, True)
+        self.encoding_type_combo.add_attribute(renderer_text, "text", 0)
+        # Sample Radio (Clock Rate): 48000, or 44100.
+        self.sample_rate_list_store = Gtk.ListStore(str)
+        for item in ['48000', '44100']:
+            self.sample_rate_list_store.append([item])
+        self.sample_rate_combo = Gtk.ComboBox.new_with_model(self.sample_rate_list_store)
+        self.set_combo_value(self.encoding_type_combo, self.config['Sound']['sample_rate'])
+        self.sample_rate_combo.connect('changed', self.set_sample_rate)
+        renderer_text = Gtk.CellRendererText()
+        self.sample_rate_combo.pack_start(renderer_text, True)
+        self.sample_rate_combo.add_attribute(renderer_text, "text", 0)
+        self.save_btn = Gtk.Button('Save')
+        self.save_btn.connect('clicked', self.save)
+        self.save_btn.set_halign(Gtk.Align.START)
+        self.grid.attach(Gtk.Label('IP Address'), 0, 0, 1, 1)
+        self.grid.attach(self.ip_addr_entry, 0, 1, 1, 1)
+        self.grid.attach(Gtk.Label('Port'), 0, 2, 1, 1)
+        self.grid.attach(self.port_spinbox, 0, 3, 1, 1)
+        self.grid.attach(Gtk.Label('Sound System Type'), 0, 4, 1, 1)
+        self.grid.attach(self.sound_system_type_combo, 0, 5, 1, 1)
+        self.grid.attach(Gtk.Label('Encoding Type'), 0, 6, 1, 1)
+        self.grid.attach(self.encoding_type_combo, 0, 7, 1, 1)
+        self.grid.attach(self.save_btn, 0, 8, 1, 1)
+        self.add(self.grid)
+        self.show_all()
+
+    def save(self, widget):
+        # Placeholder
+        config = configparser.ConfigParser()
+        config['Network'] = {
+            'ip_addr': self.ip_addr_entry.get_text(),
+            'port': self.port_spinbox.get_text()
+        }
+        config['Sound'] = {
+            'system_type': self.sound_system_type,
+            'jack_audio_client_name': '',
+            'sample_rate': self.sample_rate,
+            'encoding': self.encoding_type
+        }
+
+
+        with open(self.config_file_path, 'w') as file:
+            config.write(file)
+
+    def set_combo_value(self, combo, val):
+        model = combo.get_model()
+        iter = model.get_iter_first()
+        for i in range(model.get_n_columns()):
+            value = model.get_value(iter, i)
+            if value == val:
+                combo.set_active(i)
+                break
+
+    def set_sound_system_type(self, widget):
+        tree_iter = widget.get_active_iter()
+        if tree_iter is not None:
+            model = widget.get_model()
+            system_type = model[tree_iter][:2][0]
+            self.sound_system_type = system_type
+
+    def set_encoding_type(self, widget):
+        tree_iter = widget.get_active_iter()
+        if tree_iter is not None:
+            model = widget.get_model()
+            encoding_type = model[tree_iter][:2][0]
+            self.encoding_type = encoding_type
+
+    def set_sample_rate(self, widget):
+        tree_iter = widget.get_active_iter()
+        if tree_iter is not None:
+            model = widget.get_model()
+            sample_rate = model[tree_iter][:2][0]
+            self.sample_rate = sample_rate
 
 class MainWindow (Gtk.Window):
     def __init__(self, address):
@@ -213,10 +356,17 @@ class MainWindow (Gtk.Window):
         self.color_stop = Gdk.color_parse('#770000')
 
         self.set_border_width(10)
+        self.set_default_size(400, 250)
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.add(vbox)
 
+        self.menubar = Gtk.MenuBar()
+        self.settings_btn = Gtk.Button('Settings')
+        self.settings_btn.connect('clicked', self.open_settings)
+        vbox.pack_start(self.settings_btn, False, True, 0)
+
         hbox = Gtk.Box(spacing=6)
+        hbox.set_border_width(10)
         vbox.pack_start(hbox, True, True, 0)
 
         self.start_btn = Gtk.Button.new_with_label("Start")
@@ -238,6 +388,7 @@ class MainWindow (Gtk.Window):
 
     def on_start(self, button):
         global streamer
+        streamer.__init__()
         if streamer.start():
             self.display_play()
         else:
@@ -264,6 +415,8 @@ class MainWindow (Gtk.Window):
         self.start_btn.set_sensitive(True)
         self.stop_btn.set_sensitive(False)
 
+    def open_settings(self, widget):
+        Setting_Window()
 
 
 mainloop = None
@@ -293,4 +446,3 @@ def quit(self, widget):
     mainloop.quit()
 
 main()
-

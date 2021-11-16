@@ -1,23 +1,13 @@
-*, *:before, *:after {
-  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
-}
-
-body
-{
+body {
   padding: 0;
   margin: 0;
 
-  background-color: #333;
-
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
   color: #fff;
 
   overflow: hidden;
 }
 
-#header
-{
+#header {
   position: absolute;
   top: 0;
   left: 0;
@@ -26,7 +16,6 @@ body
   border-bottom: 1px solid #999;
   overflow: hidden;
 
-  background-color: #333;
   z-index: 100;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -43,8 +32,11 @@ body
   line-height: 60px;
 }
 
-#header-show_name
-{
+#main {
+  margin-top: 64px;
+}
+
+#header-show_name {
   float: left;
   width: 100%;
   height: 100%;
@@ -52,61 +44,46 @@ body
   padding-left: 12px;
 }
 
-#main-playlist
-{
-  position: absolute;
+#main-playlist {
+  /* position: absolute;
   top: 0;
-  left: 0;
-  width: 50%;
+  left: 0; */
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 98vh;
   padding: 12px;
   border-top: 60px solid rgba(0,0,0,0);
   border-bottom: 140px solid rgba(0,0,0,0);
 }
 
-  #main-playlist .ui-resizable-handle
-  {
+  #main-playlist .ui-resizable-handle {
     background-color: #555;
   }
 
-  #main-playlist-tracks
-  {
+  #main-playlist-tracks {
     max-width: 630px;
     margin: 0 auto;
   }
 
-  #main-playlist .track
-  {
-    display: flex;
-    justify-content: start;
-    align-items: center;
+  #main-playlist .track {
     margin-left: 30px;
+    margin-top: 12px;
     border: 1px solid #000;
     border-bottom: none;
     padding: 15px 65px 15px 15px;
     position: relative;
     cursor: pointer;
-    height: 100px;
   }
 
-  .track img
-  {
-    width: auto;
-    height: 100%;
-    object-fit: cover;
-    margin-right: 12px;
-  }
-
-  #main-playlist .track:last-child
-  {
+  #main-playlist .track:last-child {
     border-bottom: 1px solid #000;
   }
 
-  #main-playlist .track .status
-  {
+  #main-playlist .track .status {
     position: absolute;
     top: 15px;
     left: -30px;
@@ -114,24 +91,41 @@ body
     height: 30px;
   }
 
-  #main-buttons .button .status
-  {
+  #main-buttons .button .status {
     position: absolute;
-    top: 37px;
-    left: -30px;
+    top: 15px;
+    left: -1px;
     width: 30px;
     height: 30px;
   }
 
-  #main-playlist .track[data-status=playing] .status, #main-buttons .button[data-status=playing] .status
-  {
+  #main-buttons > div {
+    margin-top: 40px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 70vh;
+  }
+
+  #main-buttons ul {
+    list-style: none;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #main-buttons li {
+    margin-top: 12px;
+    padding: 0px 12px;
+  }
+
+  #main-playlist .track[data-status=playing] .status, #main-buttons .button[data-status=playing] .status {
     background-image: url('svg/play.svg');
     background-size: 15px 15px;
     background-repeat: no-repeat;
   }
 
-  #main-playlist .track[data-status=paused] .status
-  {
+  #main-playlist .track[data-status=paused] .status {
     top: 12px;
     left: -35px;
     background-image: url('svg/pause.svg');
@@ -139,222 +133,40 @@ body
     background-repeat: no-repeat;
   }
 
-  #main-playlist .track[data-type=audio], #main-buttons .button[data-type=audio]
-  {
+  #main-playlist .track[data-type=audio], #main-buttons .button[data-type=audio] {
     background: #669;
   }
 
 
-  #main-playlist .track[data-type=video], #main-buttons .button[data-type=video]
-  {
+  #main-playlist .track[data-type=video], #main-buttons .button[data-type=video] {
     background: #696;
   }
 
-  #main-playlist .track[data-type=image], #main-buttons .button[data-type=image]
-  {
+  #main-playlist .track[data-type=image], #main-buttons .button[data-type=image] {
     background: #966;
   }
 
   #main-playlist .track[data-type=linein], #main-buttons .button[data-type=linein],
   #main-playlist .track[data-type=rtp], #main-buttons .button[data-type=rtp],
   #main-playlist .track[data-type=sdp], #main-buttons .button[data-type=sdp],
-  #main-playlist .track[data-type=rtsp], #main-buttons .button[data-type=rtsp]
-  {
+  #main-playlist .track[data-type=rtsp], #main-buttons .button[data-type=rtsp] {
     background: #666;
   }
 
-  #main-playlist .track[data-type=breakpoint]
-  {
+  #main-playlist .track[data-type=breakpoint] {
     background: #996;
     text-align: center;
     padding-right: 15px;
     font-style: italic;
   }
 
-  #main-playlist .duration
-  {
-    margin-left: 12px;
+  #main-playlist .duration {
+    position: absolute;
+    top: 15px;
+    right: 15px;
   }
 
-#main-buttons
-{
-  position: absolute;
-  top: 0;
-  right: 0px;
-  width: 50%;
-  height: 100%;
-  overflow: auto;
-  max-height: 100%;
-  padding: 12px;
-  border-top: 60px solid rgba(0,0,0,0);
-  border-bottom: 140px solid rgba(0,0,0,0);
-  text-align: center;
-}
-
-  #main-buttons .column
-  {
-    float: left;
-    width: 340px;
-    padding-left: 40px;
-    list-style-type: none;
-  }
-
-  #main-buttons .heading
-  {
-    height: 70px;
-    line-height: 70px;
-    font-size: 1.2em;
-    overflow: hidden;
-    margin-bottom: 15px;
-  }
-
-  #main-buttons .button
-  {
-    height: 90px;
-    line-height: 90px;
-    font-size: 1em;
-    border: 1px solid #000;
-    border-bottom: none;
-    border-radius: 10px;
-    position: relative;
-    padding: 5px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #main-buttons .button > * {
-    margin-left: 12px;
-  }
-
-  #main-buttons .button:last-child
-  {
-    border-bottom: 1px solid #000;
-  }
-
-  #main-buttons .button span:last-child
-  {
-    max-width:100%;
-    overflow: hidden;
-  }
-
-  #main-buttons span
-  {
-    display: inline-block;
-    line-height: normal;
-    vertical-align: middle;
-    text-align: center;
-  }
-
-  .button img {
-    width: auto;
-    height: 100%;
-    object-fit: cover;
-  }
-
-#main-mixer-toggle
-{
-  position: absolute;
-  right: 0px;
-  z-index: 100;
-
-  font-size: 1.5em;
-  background-color: #333;
-  border: 1px solid #000;
-  padding-right: 0.5em;
-  padding-left: 0.5em;
-
-  bottom: 140px;
-}
-
-#main-mixer
-{
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 200px;
-  height: 100%;
-  overflow: auto;
-  max-height: 100%;
-  border-top: 60px solid rgba(0,0,0,0);
-  border-bottom: 140px solid rgba(0,0,0,0);
-  text-align: center;
-
-  border-left: 1px solid #999;
-}
-
-  #main-mixer #stream-controls {
-    padding: 12px;
-    position: relative;
-    border-bottom: 1px solid #999;
-  }
-
-  #main-mixer #mixer-controls {
-    position: relative;
-  }
-
-  #main-mixer .mixer-channel
-  {
-    display: inline-block;
-    height: 100%;
-    margin-top: 5px;
-    margin-left: 10px;
-  }
-
-  #main-mixer .mixer-channel .label
-  {
-    font-size: 0.8em;
-    text-align: center;
-    padding: 3px;
-  }
-
-  #main-mixer .mixer-volume
-  {
-    margin-top: 1em;
-    margin-bottom: 1em;
-    margin-left: auto;
-    margin-right: auto;
-    height: 250px;
-  }
-
-  #main-mixer .mixer-mute
-  {
-    cursor: pointer;
-    margin: auto;
-    display: inline-block;
-    border: 1px solid #999;
-    padding: 3px;
-    font-size: 0.8em;
-    text-align: center;
-    width: 100%;
-  }
-
-  #main-mixer .mixer-mute.muted
-  {
-    background-color: #700;
-  }
-
-  #main-mixer #mixer-vu-meter {
-    position: relative;
-    height: 10px;
-    margin: 2px;
-    border: 1px solid black;
-    /*background-color: #900;*/
-    background: linear-gradient(to right, #090, #900);
-  }
-
-  #main-mixer #mixer-vu-meter .level
-  {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 100%;
-      height: 8px;
-      background: #333;
-  }
-
-#supfooter
+  #supfooter
 {
   position: absolute;
   bottom: 70px;
@@ -363,7 +175,6 @@ body
   border-top: 1px solid #999;
   width: 100%;
 
-  background-color: #333;
   z-index: 100;
 }
 
@@ -387,27 +198,16 @@ body
 
   #supfooter-controls
   {
-    width: 25%;
+    width: 30%;
   }
 
-  .override-btn {
-    border: 0;
-    border-radius: 6px;
-    color: #000;
-    font-size: 24px;
-    padding: 12px;
-    text-align: center;
-    margin: auto;
-    border: 1px solid #000;
-  }
-
-  .override-start {
+  /* .override-start {
     background-color: #669;
   }
 
   .override-stop {
     background-color: green;
-  }
+  } */
 
   #live_stations {
     margin-left: 12px;
@@ -426,7 +226,7 @@ body
 
   #supfooter-track_position
   {
-    width: 50%;
+    width: 40%;
   }
 
   #supfooter .label
@@ -454,8 +254,6 @@ body
   left: 0;
   border-top: 1px solid #999;
   width: 100%;
-
-  background-color: #333;
   z-index: 100;
 }
 

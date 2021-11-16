@@ -27,7 +27,7 @@ import os
 import os.path
 import re
 import traceback
-import subprocess
+import passlib.hash as hashing
 
 
 class ObData (object):
@@ -55,12 +55,6 @@ class ObData (object):
         if os.access(cls.datadir + '/audiologs', os.F_OK) == False:
             os.mkdir(cls.datadir + '/audiologs')
 
-        if os.access(cls.datadir + '/lineinlogs', os.F_OK) == False:
-            os.mkdir(cls.datadir + '/lineinlogs')
-
-        if os.access(cls.datadir + '/offair-audiologs', os.F_OK) == False:
-            os.mkdir(cls.datadir + '/offair-audiologs')
-
         if os.access(cls.datadir + '/media', os.F_OK) == False:
             os.mkdir(cls.datadir + '/media')
 
@@ -69,9 +63,6 @@ class ObData (object):
 
         if os.access(cls.datadir + '/fallback_media', os.F_OK) == False:
             os.mkdir(cls.datadir + '/fallback_media')
-
-        if os.access(cls.datadir + '/news_feed_override', os.F_OK) == False:
-            os.mkdir(cls.datadir + '/news_feed_override')
 
     @classmethod
     def get_datadir(cls, subdir=None):
@@ -138,15 +129,6 @@ class ObConfigData (ObData):
         self.headless = False
         self.args = None
         self.version = open('VERSION').read().strip()
-        srcpath = os.path.dirname(os.path.dirname(obplayer.__file__))
-        branch = subprocess.Popen('cd "{0}" && git branch'.format(srcpath), stdout=subprocess.PIPE, shell=True)
-        (branchoutput, _) = branch.communicate()
-        branchname = 'master'
-        for name in branchoutput.decode('utf-8').split('\n'):
-            if name.startswith('*'):
-                branchname = name.strip('* ')
-                break
-        self.branch = branchname
 
         self.db = self.open_db(self.datadir + '/settings.db')
 
@@ -232,9 +214,6 @@ class ObConfigData (ObData):
         if setting_name == 'streamer_icecast_bitrate' and (self.is_int(setting_value) == False or int(setting_value) not in [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320]):
             return 'streamer_icecast_bitrate_invalid'
 
-        if setting_name == 'offair_audiolog_icecast_bitrate' and (self.is_int(setting_value) == False or int(setting_value) not in [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320]):
-            return 'streamer_icecast_bitrate_invalid'
-
         url_regex = re.compile(
                 r'^(?:http|ftp)s?://' # http:// or https://
                 r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
@@ -299,13 +278,6 @@ class ObConfigData (ObData):
         if setting_name == 'location_longitude' and lng_regex.match(setting_value) == None:
             return 'location_longitude_invalid'
 
-        streams_regex = re.compile(r'^\s+$')
-        if setting_name == 'station_override_monitored_streams' and streams_regex.match(setting_value):
-            return 'station_override_monitored_streams_invalid'
-
-        if setting_name == 'station_override_server_admin_username' and 'station_override_server_admin_username' == '':
-            return 'station_override_passwords_invalid'
-
         return None
 
     """
@@ -345,6 +317,7 @@ class ObConfigData (ObData):
         self.add_setting('streamer_audio_in_mode', 'intersink', 'text')
         self.add_setting('streamer_audio_in_alsa_device', 'default', 'text')
         self.add_setting('streamer_audio_in_jack_name', '', 'text')
+
         for i in range(2):
             i = str(i)
             if i != "1":
@@ -358,7 +331,6 @@ class ObConfigData (ObData):
             self.add_setting('streamer_' + i + '_icecast_ip', '127.0.0.1', 'text')
             self.add_setting('streamer_' + i + '_icecast_port', '8000', 'int')
             self.add_setting('streamer_' + i + '_icecast_mount', 'stream_' + i, 'text')
-            self.add_setting('streamer_' + i + '_icecast_username', 'source', 'text')
             self.add_setting('streamer_' + i + '_icecast_password', 'hackme', 'text')
             self.add_setting('streamer_' + i + '_icecast_streamname', '', 'text')
             self.add_setting('streamer_' + i + '_icecast_description', '', 'text')
@@ -390,6 +362,7 @@ class ObConfigData (ObData):
         self.add_setting('station_override_monitored_streams', 'http://localhost:8000/local', 'text')
         self.add_setting('station_override_enabled', '0', 'bool')
 
+        self.add_setting('maintenance_enable', '0', 'bool')
         self.add_setting('scheduler_enable', '0', 'bool')
         self.add_setting('sync_device_id', '1', 'int')
         self.add_setting('sync_device_password', '', 'text')
@@ -414,7 +387,6 @@ class ObConfigData (ObData):
         self.add_setting('audio_in_mode', 'auto', 'text')
         self.add_setting('audio_in_alsa_device', 'default', 'text')
         self.add_setting('audio_in_jack_name', '', 'text')
-
         self.add_setting('audio_in_disable_on_silence', '0', 'bool')
         self.add_setting('audio_in_prioritize_above_scheduler', '0', 'bool')
         self.add_setting('audio_in_log', '0', 'bool')
@@ -426,6 +398,9 @@ class ObConfigData (ObData):
         self.add_setting('audio_in_enable_time', '1', 'int')
         self.add_setting('audio_in_disable_time', '10', 'int')
         self.add_setting('audio_in_threshold', '-28', 'int')
+        self.add_setting('audiolog_quality', '0.0', 'str')
+        self.add_setting('audiolog_enable_upload', '0', 'bool')
+        self.add_setting('audiolog_upload_appkey', '', 'text')
 
         self.add_setting('aoip_in_enable', '0', 'bool')
         self.add_setting('aoip_in_uri', '', 'text')
@@ -441,15 +416,14 @@ class ObConfigData (ObData):
 
         self.add_setting('http_admin_port', '23233', 'int')
         self.add_setting('http_admin_username', 'admin', 'text')
-        self.add_setting('http_admin_password', 'admin', 'text')
+        hash = hashing.bcrypt.hash("admin")
+        self.add_setting('http_admin_password_hash', hash, 'text')
+        self.add_setting('http_admin_password_default', '1', 'bool')
         self.add_setting('http_readonly_username', 'user', 'text')
         self.add_setting('http_readonly_password', 'user', 'text')
+        hash = hashing.bcrypt.hash("user")
+        self.add_setting('http_readonly_password_hash', hash, 'text')
         self.add_setting('http_readonly_allow_restart', '1', 'bool')
-        self.add_setting('show_ssl_settings', '0', 'bool')
-        self.add_setting('show_sdr_streaming_logging_settings', '0', 'bool')
-        self.add_setting('show_indigenous_alert_settings', '0', 'bool')
-        self.add_setting('show_station_remote_override_settings', '0', 'bool')
-        self.add_setting('show_alert_ledin_settings', '0', 'bool')
         self.add_setting('http_admin_secure', '0', 'bool')
         self.add_setting('http_admin_sslreq', '0', 'bool')
         self.add_setting('http_admin_sslcert', '', 'text')
@@ -467,7 +441,12 @@ class ObConfigData (ObData):
         self.add_setting('http_show_alerts', '1', 'bool')
         self.add_setting('http_show_location', '1', 'bool')
         self.add_setting('http_show_liveassist', '1', 'bool')
-        self.add_setting('update_at_3_am', '1', 'bool')
+        self.add_setting('show_ssl_settings', '0', 'bool')
+        self.add_setting('show_sdr_streaming_logging_settings', '0', 'bool')
+        self.add_setting('show_indigenous_alert_settings', '0', 'bool')
+        self.add_setting('show_station_remote_override_settings', '0', 'bool')
+        self.add_setting('show_alert_ledin_settings', '0', 'bool')
+
         self.add_setting('live_assist_enable', '0', 'bool')
         self.add_setting('live_assist_port', '23456', 'int')
         self.add_setting('live_assist_mic_enable', '0', 'bool')
@@ -479,7 +458,6 @@ class ObConfigData (ObData):
         self.add_setting('live_assist_monitor_jack_name', '', 'text')
 
         self.add_setting('alerts_enable', '0', 'bool')
-        self.add_setting('alerts_location_type', 'CA', 'text')
         self.add_setting('alerts_aws_voices_enable', '0', 'bool')
         self.add_setting('aws_access_key_id', '', 'text')
         self.add_setting('aws_secret_access_key', '', 'text')
@@ -487,8 +465,6 @@ class ObConfigData (ObData):
         self.add_setting('alerts_location_type', 'CA', 'text')
         self.add_setting('alerts_play_leadin_enable', '0', 'bool')
         self.add_setting('alerts_alert_start_audio', self.datadir + '/media/' + 'L/' + 'leadin_message.mp3', 'text')
-        self.add_setting('leadin_audio_file_type', '.mp3', 'text')
-        self.add_setting('leadin_audio_file', '.mp3', 'text')
         self.add_setting('alerts_language_primary', 'english', 'text')
         self.add_setting('alerts_language_secondary', 'french', 'text')
         self.add_setting('alerts_voice_primary', 'en', 'text')
@@ -515,14 +491,6 @@ class ObConfigData (ObData):
         self.add_setting('location_enable', '0', 'bool')
         self.add_setting('location_longitude', '-134.18537', 'float')
         self.add_setting('location_latitude', '60.27434', 'float')
-
-        self.add_setting('offair_audiolog_enable', '0', 'bool')
-        self.add_setting('offair_audiolog_icecast_ip', 'localhost', 'text')
-        self.add_setting('offair_audiolog_icecast_port', '8000', 'int')
-        self.add_setting('offair_audiolog_icecast_mountpoint', 'fm_audio', 'text')
-        self.add_setting('offair_audiolog_icecast_password', 'hackme', 'text')
-        self.add_setting('offair_audiolog_icecast_bitrate', '128', 'int')
-        self.add_setting('offair_audiolog_feq', '88.0', 'float')
 
         self.add_setting('led_sign_enable', '0', 'bool')
         self.add_setting('led_sign_serial_file', '/dev/ttyS1', 'text')
@@ -572,3 +540,5 @@ class ObConfigData (ObData):
             if not hidepasswords or not name.endswith('_password'):
                 result[name] = value
         return result
+
+

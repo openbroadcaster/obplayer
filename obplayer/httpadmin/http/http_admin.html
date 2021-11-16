@@ -1,0 +1,97 @@
+<div id="content-http">
+    <div class="settings">
+        <div class="row mt-2">
+            <div class="col-md-2">
+                <button class="btn btn-primary save_btn">Save</button>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_language') %></label>
+                <select class="form-control" name="http_admin_language">
+                    <option value="en"<%= obplayer.HTTPAdmin.form_item_selected('http_admin_language','en') %>>English</option>
+                    <option value="fr"<%= obplayer.HTTPAdmin.form_item_selected('http_admin_language','fr') %>>Français</option>
+                </select>
+            </div>
+        </div>
+        <% if obplayer.Config.setting('show_ssl_settings'): %>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_secure') %></label>
+                <input class="mx-4" id="http_admin_secure" type="checkbox" name="http_admin_secure" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_admin_secure') %>>
+            </div>
+        </div>
+        <div class="row mt-2 http_admin_sslcert_row" style="display: none;">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_sslreq') %></label>
+                <input class="mx-4" type="checkbox" name="http_admin_sslreq" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_admin_sslreq') %>>
+            </div>
+        </div>
+        <div class="row mt-2 http_admin_sslcert_row" style="display: none;">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_sslkey') %></label>
+                <input class="form-control" type="text" name="http_admin_sslkey" value="<%= obplayer.Config.setting('http_admin_sslkey',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2 http_admin_sslcert_row" style="display: none;">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_sslca') %></label>
+                <input class="form-control" type="text" name="http_admin_sslca" value="<%= obplayer.Config.setting('http_admin_sslca',True) %>">
+            </div>
+        </div>
+        <% end %>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_port') %></label>
+                <input class="form-control" type="text" name="http_admin_port" value="<%= obplayer.Config.setting('http_admin_port',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_username') %></label>
+                <input class="form-control" type="text" name="http_admin_username" value="<%= obplayer.Config.setting('http_admin_username',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_password') %></label>
+                <input class="form-control" type="password" name="http_admin_password" value="">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_password_retype') %></label>
+                <input class="form-control" type="password" name="http_admin_password_retype" value="">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_readonly_username') %></label>
+                <input class="form-control" type="text" name="http_readonly_username" value="<%= obplayer.Config.setting('http_readonly_username',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_readonly_password') %></label>
+                <input class="form-control" type="password" name="http_readonly_password" value="<%= obplayer.Config.setting('http_readonly_password',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_readonly_allow_restart') %></label>
+                <input class="mx-4" type="checkbox" name="http_readonly_allow_restart" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_readonly_allow_restart') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('HTTP Tab', 'http_admin_title') %></label>
+                <input class="form-control" type="text" name="http_admin_title" value="<%= obplayer.Config.setting('http_admin_title',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <button class="btn btn-primary save_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,1853 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title><%= obplayer.HTTPAdmin.title %></title>
+    <meta charset="utf-8" />
+
+    <link href="/style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script type="text/javascript" src="/extras/jquery.min.js"></script>
+    <script type="text/javascript" src="/ui.js" defer></script>
+    <script type="text/javascript" src="/common.js" defer></script>
+
+    <% if obplayer.Config.setting('http_show_location'): %>
+      <link rel="stylesheet" href="/extras/leaflet.css" />
+      <script src="/extras/leaflet.js"></script>
+      <script src="/extras/leaflet.draw.js"></script>
+      <script type="text/javascript" src="/map.js"></script>
+    <% end %>
+
+  </head>
+  <body>
+    <div class="container">
+      
+    </div>
+    <div id="top_nav" class="d-flex justify-content-around">
+      <a href="/"><img src="/oblogo.svg" width="150"></a>
+      <h1><%= obplayer.HTTPAdmin.title %></h1>
+      <div id="commands" data-tns="Miscellaneous">
+        <button class="btn btn-primary" id="command_restart" type="button" onclick="Site.restart();" data-t>Restart</button>
+        <button class="btn btn-primary" id="command_fullscreen" type="button" onclick="Site.fullscreen();" data-t>Fullscreen (<%= obplayer.HTTPAdmin.fullscreen_status() %>)</button>
+      </div>
+    </div>
+
+    <% if obplayer.Config.setting('http_admin_password',True) == 'admin': %>
+        <div class="alert alert-warning">The admin password is set to the default.  Please go to the HTTP(S) Admin tab and change it.</div>
+    <% end %>
+
+    <% if sys.version_info.major == 2: %>
+        <div class="alert alert-warning">This version of obplayer 5.0 is running on python2.  Please <a href="http://support.openbroadcaster.com/python3-upgrade">upgrade</a> your system dependencies and restart.</div>
+    <% end %>
+
+    <nav>
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Status</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Summary</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="./admin.html">Admin</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Sync/Media</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Sources</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Outputs</a>
+        </li>
+        <% if obplayer.Config.setting('http_show_streaming'): %><li class="nav-item"><a class="nav-link" href="#" data-content="streamer" data-tns="Streamer Tab" data-t>Outputs</a></li><% end %>
+        <% if obplayer.Config.setting('http_show_alerts'): %><li class="nav-item"><a data-content="alerts" data-tns="Alerts Tab" data-t class="nav-link" href="#">Emergency Alerts</a></li><% end %>
+        <% if obplayer.Config.setting('http_show_location'): %><li class="nav-item"><a data-content="alerts" data-tns="Location Tab" data-t class="nav-link" href="#">Location Map</a></li><% end %>
+      </ul>
+    </nav>
+
+    <div id="tabs">
+      <div class="tab selected" data-content="status" data-tns="Status Tab" data-t>Status</div>
+      <div class="tab" data-content="summary" data-tns="Summary Tab" data-t>Summary</div>
+      <div class="tab" data-content="admin" data-tns="Admin Tab" data-t>Admin</div>
+      <% if obplayer.Config.setting('http_show_sync'): %><div class="tab" data-content="sync" data-tns="Sync Tab" data-t>Sync/Media</div><% end %>
+      <div class="tab" data-content="sources" data-tns="Sources Tab" data-t>Sources</div>
+      <div class="tab" data-content="outputs" data-tns="Outputs Tab" data-t>Outputs</div>
+      <% if obplayer.Config.setting('http_show_streaming'): %><div class="tab" data-content="streamer" data-tns="Streamer Tab" data-t>Streaming</div><% end %>
+      <% if obplayer.Config.setting('http_show_alerts'): %><div class="tab" data-content="alerts" data-tns="Alerts Tab" data-t>Emergency Alerts</div><% end %>
+      <% if obplayer.Config.setting('http_show_location'): %><div class="tab" data-content="location" data-tns="Location Tab" data-t>Location Map</div><% end %>
+      <div class="tab" data-content="http" data-tns="HTTP Tab" data-t>HTTP(S) Admin</div>
+      <% if obplayer.Config.setting('http_show_liveassist'): %><div class="tab" data-content="liveassist" data-tns="LiveAssist Tab" data-t>Live Assist</div><% end %>
+
+      <div id="commands" data-tns="Miscellaneous">
+        <button class="btn btn-primary" id="command_restart" type="button" onclick="Site.restart();" data-t>Restart</button>
+        <button class="btn btn-primary" id="command_fullscreen" type="button" onclick="Site.fullscreen();" data-t>Fullscreen (<%= obplayer.HTTPAdmin.fullscreen_status() %>)</button>
+      </div>
+
+      <div style="clear: both;"></div>
+    </div>
+
+    <aside>
+      <p>The Rough-skinned Newt defends itself with a deadly neurotoxin.</p>
+    </aside>
+
+    <div id="content_container">
+
+      <div id="notice" style="display: none;"></div>
+      <div id="error" style="display: none;"></div>
+
+      <div id="content-status" data-tns="Status Tab">
+
+	<div id="show-summary" class="summary">
+	  <h4 data-t>Show</h4>
+	  <div>
+	    <label><span data-t>Current Time</span>:</label>
+	    <span id="show-summary-time"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Uptime</span>:</label>
+	    <span id="show-summary-uptime"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Show Type</span>:</label>
+	    <span id="show-summary-type"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Show ID</span>:</label>
+	    <span id="show-summary-id"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Show Name</span>:</label>
+	    <span id="show-summary-name"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Show Description</span>:</label>
+	    <span id="show-summary-description"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Last Updated</span>:</label>
+	    <span id="show-summary-last-updated"></span>
+	  </div>
+	</div>
+
+	<div id="audio-summary" class="summary">
+	  <h4 data-t>Audio Stream</h4>
+	  <div>
+	    <label><span data-t>Media Type</span>:</label>
+	    <span id="audio-summary-media-type"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Order #</span>:</label>
+	    <span id="audio-summary-order-num"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Media ID</span>:</label>
+	    <span id="audio-summary-media-id"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Media Artist</span>:</label>
+	    <span id="audio-summary-artist"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Media Title</span>:</label>
+	    <span id="audio-summary-title"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Media Duration</span>:</label>
+	    <span id="audio-summary-duration"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Scheduled End</span>:</label>
+	    <span id="audio-summary-end-time"></span>
+	  </div>
+	  <div>
+	    <canvas id="audio-levels" width=200 height=20></canvas>
+	  </div>
+	</div>
+
+	<div id="visual-summary" class="summary">
+	  <h4 data-t>Visual Stream</h4>
+	  <div>
+	    <label><span data-t>Media Type</span>:</label>
+	    <span id="visual-summary-media-type"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Order #</span>:</label>
+	    <span id="visual-summary-order-num"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Media ID</span>:</label>
+	    <span id="visual-summary-media-id"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Media Artist</span>:</label>
+	    <span id="visual-summary-artist"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Media Title</span>:</label>
+	    <span id="visual-summary-title"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Media Duration</span>:</label>
+	    <span id="visual-summary-duration"></span>
+	  </div>
+	  <div>
+	    <label><span data-t>Scheduled End</span>:</label>
+	    <span id="visual-summary-end-time"></span>
+	  </div>
+	</div>
+
+	<div id="log-window">
+	  <h4 data-t>Logs</h4>
+	  <div>
+	    <label><span data-t>Log Level</span>:</label>
+	    <select id="log_level">
+              <option value="normal" data-t>Normal</option>
+              <option value="debug" data-t>Debug</option>
+            </select>
+            &nbsp;<button class="btn btn-primary" id="logs-open" data-t>Downloads</button>
+	  </div>
+          <br />
+	  <div id="log-data">
+	    <!-- Content loaded when displayed -->
+	  </div>
+	</div>
+      </div>
+
+      <div style="display: none;" id="content-summary" data-tns="Summary Tab">
+
+	<h2 data-t>Current Configuration</h2>
+
+	<table>
+	  <tr>
+	    <td data-t>Version</td>
+	    <td>v<%= obplayer.Config.version %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>Local Time</td>
+	    <td><%= time.strftime("%c") %></td>
+	  </tr>
+          <% if obplayer.Config.setting('http_show_location'): %>
+          <tr>
+            <td data-t>Device Coordinates</td>
+            <td>[<%= obplayer.Config.setting('location_longitude') %>, <%= obplayer.Config.setting('location_latitude') %>]</td>
+          </tr>
+          <% end %>
+	</table>
+
+        <% if obplayer.Config.setting('http_show_sync'): %>
+	<table data-tns="Sync Tab">
+	  <tr class="padding">
+	    <td data-t>scheduler_enable</td>
+	    <td><%= obplayer.Config.setting('scheduler_enable') %></td>
+	  </tr>
+        </table>
+
+	<table data-tns="Sync Tab">
+	  <tr>
+	    <td data-t>sync_device_id</td>
+	    <td><%= obplayer.Config.setting('sync_device_id') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>sync_device_password</td>
+	    <td>(hidden)</td>
+	  </tr>
+	  <tr>
+	    <td data-t>sync_url</td>
+	    <td><%= obplayer.Config.setting('sync_url') %></td>
+	  </tr>
+	</table>
+
+	<table data-tns="Sync Tab">
+	  <tr>
+	    <td data-t>sync_buffer</td>
+	    <td><%= obplayer.Config.setting('sync_buffer') %> <span data-tns="Time" data-t>hours</span></td>
+	  </tr>
+	  <tr class="padding">
+	    <td data-t>remote_media</td>
+	    <td><%= obplayer.Config.setting('remote_media') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>sync_showlock</td>
+	    <td><%= obplayer.Config.setting('sync_showlock') %> <span data-tns="Time" data-t>minutes</span></td>
+	  </tr>
+	  <tr>
+	    <td data-t>sync_freq</td>
+	    <td><%= obplayer.Config.setting('sync_freq') %> <span data-tns="Time" data-t>minutes</span></td>
+	  </tr>
+	  <tr>
+	    <td data-t>sync_freq_priority</td>
+	    <td><%= obplayer.Config.setting('sync_freq_priority') %> <span data-tns="Time" data-t>minutes</span></td>
+	  </tr>
+	  <tr>
+	    <td data-t>sync_freq_playlog</td>
+	    <td><%= obplayer.Config.setting('sync_freq_playlog') %> <span data-tns="Time" data-t>minutes</span></td>
+	  </tr>
+	  <tr>
+	    <td data-t>sync_mode</td>
+	    <td id="sync_mode_value"><%= obplayer.Config.setting('sync_mode') %></td>
+	  </tr>
+	  <tr class="backup_media">
+	    <td data-t>sync_copy_media_to_backup</td>
+	    <td><%= obplayer.Config.setting('sync_copy_media_to_backup') %></td>
+	  </tr>
+	  <tr class="local_media_location">
+	    <td data-t>local_media</td>
+	    <td><%= obplayer.Config.setting('local_media') %></td>
+	  </tr>
+	</table>
+        <% end %>
+
+	<table data-tns="Sources Tab">
+	  <tr class="padding">
+	    <td data-t>fallback_enable</td>
+	    <td><%= obplayer.Config.setting('fallback_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>fallback_media</td>
+	    <td><%= obplayer.Config.setting('fallback_media') %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>aoip_in_enable</td>
+	    <td><%= obplayer.Config.setting('aoip_in_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>aoip_in_uri</td>
+	    <td><%= obplayer.Config.setting('aoip_in_uri') %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>rtp_in_enable</td>
+	    <td><%= obplayer.Config.setting('rtp_in_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>rtp_in_port</td>
+	    <td><%= obplayer.Config.setting('rtp_in_port') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>rtp_in_address</td>
+	    <td><%= obplayer.Config.setting('rtp_in_address') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>rtp_in_encoding</td>
+	    <td><%= obplayer.Config.setting('rtp_in_encoding') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>rtp_in_clock_rate</td>
+	    <td><%= obplayer.Config.setting('rtp_in_clock_rate') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>rtp_in_enable_rtcp</td>
+	    <td><%= obplayer.Config.setting('rtp_in_enable_rtcp') %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>audio_in_enable</td>
+	    <td><%= obplayer.Config.setting('audio_in_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>audio_in_mode</td>
+	    <td><%= obplayer.Config.setting('audio_in_mode') %></td>
+	  </tr>
+	  <% if obplayer.Config.setting('audio_in_mode') == 'alsa': %>
+            <tr>
+              <td data-t>audio_in_alsa_device</td>
+              <td><%= obplayer.Config.setting('audio_in_alsa_device') %></td>
+            </tr>
+          <% end %>
+	  <% if obplayer.Config.setting('audio_in_mode') == 'jack': %>
+	  <tr>
+	    <td data-t>audio_in_jack_name</td>
+	    <td><%= obplayer.Config.setting('audio_in_jack_name') %></td>
+	  </tr>
+          <% end %>
+	  <tr>
+	    <td data-t>audio_in_disable_on_silence</td>
+	    <td><%= obplayer.Config.setting('audio_in_disable_on_silence') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>audio_in_prioritize_above_scheduler</td>
+	    <td><%= obplayer.Config.setting('audio_in_prioritize_above_scheduler') %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>images_transitions_enable</td>
+	    <td><%= obplayer.Config.setting('images_transitions_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>Fixed Image Size &amp; Framerate</td>
+	    <td><%= str(obplayer.Config.setting('images_width')) + " x " + str(obplayer.Config.setting('images_height')) + " @ " + str(obplayer.Config.setting('images_framerate')) + "fps" %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>testsignal_enable</td>
+	    <td><%= obplayer.Config.setting('testsignal_enable') %></td>
+	  </tr>
+	</table>
+
+	<table data-tns="Outputs Tab">
+	  <tr class="padding">
+	    <td data-t>audio_out_visualization</td>
+	    <td><%= obplayer.Config.setting('audio_out_visualization') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>audio_out_mode</td>
+	    <td><%= obplayer.Config.setting('audio_out_mode') %></td>
+	  </tr>
+	  <% if obplayer.Config.setting('audio_out_mode') == 'alsa': %>
+            <tr>
+              <td data-t>audio_out_alsa_device</td>
+              <td><%= obplayer.Config.setting('audio_out_alsa_device') %></td>
+            </tr>
+          <% end %>
+	  <% if obplayer.Config.setting('audio_out_mode') == 'jack': %>
+            <tr>
+              <td data-t>audio_out_jack_name</td>
+              <td><%= obplayer.Config.setting('audio_out_jack_name') %></td>
+            </tr>
+          <% end %>
+	  <tr>
+	    <td data-t>gst_init_callback</td>
+	    <td><%= obplayer.Config.setting('gst_init_callback') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>audiolog_enable</td>
+	    <td><%= obplayer.Config.setting('audiolog_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>audiolog_purge_files</td>
+	    <td><%= obplayer.Config.setting('audiolog_purge_files') %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>video_out_enable</td>
+	    <td><%= obplayer.Config.setting('video_out_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>video_out_mode</td>
+	    <td><%= obplayer.Config.setting('video_out_mode') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>video_out_resolution</td>
+	    <td><%= obplayer.Config.setting('video_out_resolution') %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>overlay_enable</td>
+	    <td><%= obplayer.Config.setting('overlay_enable') %></td>
+	  </tr>
+
+          <tr class="padding">
+            <td data-t>led_sign_enable</td>
+            <td><%= obplayer.Config.setting('led_sign_enable') %></td>
+          </tr>
+	</table>
+
+        <% if obplayer.Config.setting('http_show_streaming'): %>
+	<table data-tns="Streamer Tab">
+	  <tr class="padding">
+	    <td data-t>streamer_enable</td>
+	    <td><%= obplayer.Config.setting('streamer_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_audio_in_mode</td>
+	    <td><%= obplayer.Config.setting('streamer_audio_in_mode') %></td>
+	  </tr>
+	  <% if obplayer.Config.setting('streamer_audio_in_mode') == 'alsa': %>
+            <tr>
+              <td data-t>streamer_audio_in_alsa_device</td>
+              <td><%= obplayer.Config.setting('streamer_audio_in_alsa_device') %></td>
+            </tr>
+          <% end %>
+	  <% if obplayer.Config.setting('streamer_audio_in_mode') == 'jack': %>
+            <tr>
+              <td data-t>streamer_audio_in_jack_name</td>
+              <td><%= obplayer.Config.setting('streamer_audio_in_jack_name') %></td>
+            </tr>
+          <% end %>
+
+	  <tr class="padding">
+	    <td data-t>streamer_icecast_enable</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_mode</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_mode') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_bitrate</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_bitrate') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_ip</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_ip') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_port</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_port') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_mount</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_mount') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_password</td>
+	    <td>(hidden)</td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_streamname</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_streamname') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_description</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_description') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_url</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_url') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_icecast_public</td>
+	    <td><%= obplayer.Config.setting('streamer_icecast_public') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_play_on_startup</td>
+	    <td><%= obplayer.Config.setting('streamer_play_on_startup') %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>streamer_rtsp_enable</td>
+	    <td><%= obplayer.Config.setting('streamer_rtsp_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_rtsp_port</td>
+	    <td><%= obplayer.Config.setting('streamer_rtsp_port') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_rtsp_clock_rate</td>
+	    <td><%= obplayer.Config.setting('streamer_rtsp_clock_rate') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>streamer_rtsp_allow_discovery</td>
+	    <td><%= obplayer.Config.setting('streamer_rtsp_allow_discovery') %></td>
+	  </tr>
+	</table>
+        <% end %>
+
+        <% if obplayer.Config.setting('http_show_alerts'): %>
+	<table data-tns="Alerts Tab">
+	  <tr class="padding">
+	    <td data-t>alerts_enable</td>
+	    <td><%= obplayer.Config.setting('alerts_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_geocode</td>
+	    <td><%= obplayer.Config.setting('alerts_geocode') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_repeat_interval</td>
+	    <td><%= obplayer.Config.setting('alerts_repeat_interval') %> <span data-tns="Time" data-t>minutes</span></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_repeat_times</td>
+	    <td><%= obplayer.Config.setting('alerts_repeat_times') %> <span data-tns="Time" data-t>times</span></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_leadin_delay</td>
+	    <td><%= obplayer.Config.setting('alerts_leadin_delay') %> <span data-tns="Time" data-t>seconds</span></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_leadout_delay</td>
+	    <td><%= obplayer.Config.setting('alerts_leadout_delay') %> <span data-tns="Time" data-t>seconds</span></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_language_primary</td>
+	    <td><%= obplayer.Config.setting('alerts_language_primary') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_voice_primary</td>
+	    <td><%= obplayer.Config.setting('alerts_voice_primary') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_language_secondary</td>
+	    <td><%= obplayer.Config.setting('alerts_language_secondary') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_voice_secondary</td>
+	    <td><%= obplayer.Config.setting('alerts_voice_secondary') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_naad_stream1</td>
+	    <td><%= obplayer.Config.setting('alerts_naad_stream1') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_naad_stream2</td>
+	    <td><%= obplayer.Config.setting('alerts_naad_stream2') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_naad_archive1</td>
+	    <td><%= obplayer.Config.setting('alerts_naad_archive1') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_naad_archive2</td>
+	    <td><%= obplayer.Config.setting('alerts_naad_archive2') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_trigger_serial</td>
+	    <td><%= obplayer.Config.setting('alerts_trigger_serial') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_trigger_serial_file</td>
+	    <td><%= obplayer.Config.setting('alerts_trigger_serial_file') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_trigger_streamer</td>
+	    <td><%= obplayer.Config.setting('alerts_trigger_streamer') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_truncate</td>
+	    <td><%= obplayer.Config.setting('alerts_truncate') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_play_moderates</td>
+	    <td><%= obplayer.Config.setting('alerts_play_moderates') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_play_tests</td>
+	    <td><%= obplayer.Config.setting('alerts_play_tests') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>alerts_purge_files</td>
+	    <td><%= obplayer.Config.setting('alerts_purge_files') %></td>
+	  </tr>
+	</table>
+        <% end %>
+
+	<table data-tns="HTTP Tab">
+	  <tr class="padding">
+	    <td data-t>http_admin_language</td>
+	    <td><%= obplayer.Config.setting('http_admin_language') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>http_admin_secure</td>
+	    <td id="https_setting"><%= obplayer.Config.setting('http_admin_secure') %></td>
+	  </tr>
+	  <tr class="ssl_certificate">
+	    <td data-t>http_admin_sslreq</td>
+	    <td><%= obplayer.Config.setting('http_admin_sslreq') %></td>
+	  </tr>
+	  <tr class="ssl_certificate">
+	    <td data-t>http_admin_sslkey</td>
+	    <td><%= obplayer.Config.setting('http_admin_sslkey') %></td>
+	  </tr>
+	  <tr class="ssl_certificate">
+	    <td data-t>http_admin_sslcert</td>
+	    <td><%= obplayer.Config.setting('http_admin_sslcert') %></td>
+	  </tr>
+	  <tr class="ssl_certificate">
+	    <td data-t>http_admin_sslca</td>
+	    <td><%= obplayer.Config.setting('http_admin_sslca') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>http_admin_port</td>
+	    <td><%= obplayer.Config.setting('http_admin_port') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>http_admin_username</td>
+	    <td><%= obplayer.Config.setting('http_admin_username') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>http_admin_password</td>
+	    <td>(hidden)</td>
+	  </tr>
+	  <tr>
+	    <td data-t>http_readonly_username</td>
+	    <td><%= obplayer.Config.setting('http_readonly_username') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>http_readonly_password</td>
+	    <td>(hidden)</td>
+	  </tr>
+	  <tr>
+	    <td data-t>http_readonly_allow_restart</td>
+	    <td><%= obplayer.Config.setting('http_readonly_allow_restart') %></td>
+	  </tr>
+	</table>
+
+        <% if obplayer.Config.setting('http_show_liveassist'): %>
+	<table data-tns="LiveAssist Tab">
+	  <tr class="padding">
+	    <td data-t>live_assist_enable</td>
+	    <td><%= obplayer.Config.setting('live_assist_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>live_assist_port</td>
+	    <td><%= obplayer.Config.setting('live_assist_port') %></td>
+	  </tr>
+
+	  <tr class="padding">
+	    <td data-t>live_assist_mic_enable</td>
+	    <td><%= obplayer.Config.setting('live_assist_mic_enable') %></td>
+	  </tr>
+	  <tr>
+	    <td data-t>live_assist_mic_mode</td>
+	    <td><%= obplayer.Config.setting('live_assist_mic_mode') %></td>
+	  </tr>
+          <% if obplayer.Config.setting('live_assist_mic_mode') == 'alsa': %>
+            <tr>
+              <td data-t>live_assist_mic_alsa_device</td>
+              <td><%= obplayer.Config.setting('live_assist_mic_alsa_device') %></td>
+            </tr>
+          <% end %>
+          <% if obplayer.Config.setting('live_assist_mic_mode') == 'jack': %>
+            <tr>
+              <td data-t>live_assist_mic_jack_name</td>
+              <td><%= obplayer.Config.setting('live_assist_mic_jack_name') %></td>
+            </tr>
+          <% end %>
+
+	  <tr class="padding">
+	    <td data-t>live_assist_monitor_mode</td>
+	    <td><%= obplayer.Config.setting('live_assist_monitor_mode') %></td>
+	  </tr>
+          <% if obplayer.Config.setting('live_assist_monitor_mode') == 'alsa': %>
+            <tr>
+              <td data-t>live_assist_monitor_alsa_device</td>
+              <td><%= obplayer.Config.setting('live_assist_monitor_alsa_device') %></td>
+            </tr>
+          <% end %>
+          <% if obplayer.Config.setting('live_assist_monitor_mode') == 'jack': %>
+            <tr>
+              <td data-t>live_assist_monitor_jack_name</td>
+              <td><%= obplayer.Config.setting('live_assist_monitor_jack_name') %></td>
+            </tr>
+          <% end %>
+	</table>
+        <% end %>
+
+      </div>
+      <div style="display: none;" id="content-admin" data-tns="Admin Tab">
+
+        <div class="advanced-settings">
+          <input type="checkbox" id="admin-advanced" />
+          <label for="admin-advanced" data-t>Advanced Settings</label>
+          <table class="settings">
+            <tbody>
+              <tr>
+                <td data-t>http_show_sync</td>
+                <td><input type="checkbox" name="http_show_sync" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_sync') %>></td>
+              </tr>
+              <tr>
+                <td data-t>http_show_streaming</td>
+                <td><input type="checkbox" name="http_show_streaming" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_streaming') %>></td>
+              </tr>
+              <tr>
+                <td data-t>http_show_alerts</td>
+                <td><input type="checkbox" name="http_show_alerts" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_alerts') %>></td>
+              </tr>
+              <tr>
+                <td data-t>http_show_location</td>
+                <td><input type="checkbox" name="http_show_location" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_location') %>></td>
+              </tr>
+              <tr>
+                <td data-t>http_show_liveassist</td>
+                <td><input type="checkbox" name="http_show_liveassist" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_show_liveassist') %>></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td colspan="2"><button class="btn btn-primary" name="save" type="button" onclick="javascript: Site.save('admin');" data-tns="Common" data-t>Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br/>
+
+        <table>
+          <tbody>
+            <tr>
+              <td data-t>delete_and_reset</td>
+              <td><button class="btn btn-primary" name="hard-restart" type="button" onclick="javascript: Site.restart('hard');" data-tns="Miscellaneous" data-t>Restart</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <form id="import-settings" method="post" action="/import_settings" enctype="multipart/form-data">
+          <table>
+            <tbody>
+              <tr>
+                <td data-t>Import Settings</td>
+                <td><button class="btn btn-primary" type="submit" data-t>Import</button></td>
+                <td><input name="importfile" type="file" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+
+        <form method="post" action="/export_settings">
+          <table>
+            <tbody>
+              <tr>
+                <td data-t>Export Settings</td>
+                <td><button class="btn btn-primary" type="submit" data-t>Export</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+
+        <table>
+          <tbody>
+            <tr>
+              <td data-t>Reset To Defaults and Restart</td>
+              <td><button class="btn btn-primary"name="defaults-restart" type="button" onclick="javascript: Site.restart('defaults');" data-tns="Miscellaneous" data-t>Restart</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br/>
+
+        <table>
+          <tbody>
+            <tr>
+              <td data-t>Update Player</td>
+              <td><button class="btn btn-primary" id="update-check" type="button" data-t>Check</button></td>
+              <td><button class="btn btn-primary" id="update-player" type="button" data-t>Update</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table>
+          <tbody>
+            <tr>
+              <td data-t>Current Version</td><td><%= obplayer.Config.version %></td>
+            </tr>
+            <tr id="update-check-output-row" style="display: none;">
+            </tr>
+            <tr>
+              <td id="update-output" colspan="0"></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <% if obplayer.Config.setting('http_show_sync'): %>
+      <div style="display: none;" id="content-sync" data-tns="Sync Tab">
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>scheduler_enable</td>
+              <td><input type="checkbox" name="scheduler_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('scheduler_enable') %> title="scheduler_enable_tooltip" data-t></td>
+            </tr>
+
+            <tr>
+              <td data-t>sync_device_id</td>
+              <td><input type="text" name="sync_device_id" value="<%= obplayer.Config.setting('sync_device_id',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>sync_device_password</td>
+              <td><input type="password" name="sync_device_password" value="<%= obplayer.Config.setting('sync_device_password',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>sync_url</td>
+              <td><input type="text" name="sync_url" value="<%= obplayer.Config.setting('sync_url',True) %>"></td>
+            </tr>
+            <tr class="padding">
+              <td data-t>sync_playlog_enable</td>
+              <td><input type="checkbox" name="sync_playlog_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('sync_playlog_enable') %> title="sync_playlog_enable_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t title="sync_mode_tooltip">sync_mode</td>
+              <td><select id="sync_media_mode" name="sync_mode">
+                <option value="remote"<%= obplayer.HTTPAdmin.form_item_selected('sync_mode', 'remote') %> data-t>remote</option>
+                <option value="backup"<%= obplayer.HTTPAdmin.form_item_selected('sync_mode', 'backup') %> data-t>backup</option>
+                <option value="local"<%= obplayer.HTTPAdmin.form_item_selected('sync_mode', 'local') %> data-t>local</option>
+              </select></td>
+            </tr>
+            <tr class="sync_display_adjust sync_backup">
+              <td data-t>sync_copy_media_to_backup</td>
+              <td><input type="checkbox" name="sync_copy_media_to_backup" value="1"<%= obplayer.HTTPAdmin.form_item_checked('sync_copy_media_to_backup') %>></td>
+            </tr>
+            <tr class="sync_display_adjust sync_backup sync_local">
+              <td data-t>local_media</td>
+              <td><input type="text" name="local_media" value="<%= obplayer.Config.setting('local_media',True) %>"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="advanced-settings">
+          <input type="checkbox" id="sync-advanced" />
+          <label for="sync-advanced" data-t>Advanced Settings</label>
+          <table class="settings">
+            <tbody>
+              <tr>
+                <td data-t>sync_buffer</td>
+                <td><input type="text" name="sync_buffer" value="<%= obplayer.Config.setting('sync_buffer', True) %>" title="sync_buffer_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>sync_showlock</td>
+                <td><input type="text" name="sync_showlock" value="<%= obplayer.Config.setting('sync_showlock', True) %>" title="sync_showlock_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>sync_freq</td>
+                <td><input type="text" name="sync_freq" value="<%= obplayer.Config.setting('sync_freq', True) %>" title="sync_freq_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>sync_freq_priority</td>
+                <td><input type="text" name="sync_freq_priority" value="<%= obplayer.Config.setting('sync_freq_priority', True) %>" title="sync_freq_priority_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>sync_freq_playlog</td>
+                <td><input type="text" name="sync_freq_playlog" value="<%= obplayer.Config.setting('sync_freq_playlog', True) %>" title="sync_freq_playlog_tooltip" data-t></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('sync');" data-tns="Common" data-t>Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br/>
+
+        <% if obplayer.Config.setting('scheduler_enable'): %>
+        <table>
+          <tbody>
+            <tr>
+              <td data-t>Enable/Disable Scheduler</td>
+              <td><button id="toggle-scheduler" type="button" data-t>Toggle</button></td>
+              <td id="toggle-scheduler-status"><%= '(refresh dashboard)' if not hasattr(obplayer, 'Scheduler') else 'Enabled' if obplayer.Scheduler.ctrl.enabled else 'Disabled'  %></td>
+            </tr>
+          </tbody>
+        </table>
+        <% end %>
+
+      </div>
+      <% end %>
+
+      <div style="display: none;" id="content-sources" data-tns="Sources Tab">
+
+        <h4 data-t>Fallback Player Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>fallback_enable</td>
+              <td><input type="checkbox" name="fallback_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('fallback_enable') %> title="fallback_enable_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>fallback_media</td>
+              <td><input type="text" name="fallback_media" value="<%= obplayer.Config.setting('fallback_media',True) %>"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>AoIP Input Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>aoip_in_enable</td>
+              <td><input type="checkbox" name="aoip_in_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('aoip_in_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>aoip_in_uri</td>
+              <td><input type="text" name="aoip_in_uri" value="<%= obplayer.Config.setting('aoip_in_uri', True) %>" title="aoip_in_uri_tooltip" data-t></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>RTP/Livewire Audio Input Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>rtp_in_enable</td>
+              <td><input type="checkbox" name="rtp_in_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('rtp_in_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>rtp_in_port</td>
+              <td><input type="text" name="rtp_in_port" value="<%= obplayer.Config.setting('rtp_in_port', True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>rtp_in_address</td>
+              <td><input type="text" name="rtp_in_address" value="<%= obplayer.Config.setting('rtp_in_address', True) %>" title="rtp_in_address_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td title="rtp_in_encoding_tooltip" data-t>rtp_in_encoding</td>
+              <td><select id="rtp_in_encoding_select" name="rtp_in_encoding">
+                  <option value="OPUS"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_encoding','OPUS') %>>Opus</option>
+                  <!-- <option value="MPA"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_encoding','MPA') %>>MP3</option> -->
+                  <option value="L16"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_encoding','L16') %>>16-bit PCM</option>
+                  <option value="L24"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_encoding','L24') %>>24-bit PCM (Livewire)</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td data-t>rtp_in_clock_rate</td>
+              <td><select id="rtp_in_clock_rate_select" name="rtp_in_clock_rate">
+                  <option value="48000"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_clock_rate','48000') %>>48000 Hz</option>
+                  <option value="44100"<%= obplayer.HTTPAdmin.form_item_selected('rtp_in_clock_rate','44100') %>>44100 Hz</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td data-t>rtp_in_enable_rtcp</td>
+              <td><input type="checkbox" name="rtp_in_enable_rtcp" value="1"<%= obplayer.HTTPAdmin.form_item_checked('rtp_in_enable_rtcp') %> title="rtp_in_enable_rtcp_tooltip" data-t></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>Audio Input Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>audio_in_enable</td>
+              <td><input type="checkbox" name="audio_in_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_in_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>audio_in_mode</td>
+              <td><select id="audio_in_mode_select" name="audio_in_mode" data-tns="Gstreamer Modes">
+                  <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','auto') %> data-t>Auto Detect</option>
+                  <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','alsa') %> data-t>ALSA</option>
+                  <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','jack') %> data-t>JACK</option>
+                  <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','oss') %> data-t>OSS</option>
+                  <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','pulse') %> data-t>Pulse Audio</option>
+                  <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('audio_in_mode','test') %> data-t>No Input</option>
+                </select></td>
+            </tr>
+            <tr id="audio_in_alsa_device_row">
+              <td data-t>audio_in_alsa_device</td>
+              <td><input type="text" name="audio_in_alsa_device" value="<%= obplayer.Config.setting('audio_in_alsa_device',True) %>"></td>
+            </tr>
+            <tr id="audio_in_jack_name_row">
+              <td data-t>audio_in_jack_name</td>
+              <td><input type="text" name="audio_in_jack_name" value="<%= obplayer.Config.setting('audio_in_jack_name',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>audio_in_disable_on_silence</td>
+              <td><input type="checkbox" name="audio_in_disable_on_silence" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_in_disable_on_silence') %>></td>
+            </tr>
+            <tr>
+              <td data-t>audio_in_prioritize_above_scheduler</td>
+              <td><input type="checkbox" name="audio_in_prioritize_above_scheduler" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_in_prioritize_above_scheduler') %>></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <% if hasattr(obplayer, 'pulse') and obplayer.pulse.is_loaded() and obplayer.Config.setting('audio_in_mode') == 'pulse': %>
+          <% py.include("obplayer/pulse/views/sources.pyhtml") %>
+        <% end %>
+
+        <h4 data-t>Image Display Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>images_transitions_enable</td>
+              <td><input type="checkbox" name="images_transitions_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('images_transitions_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>images_width</td>
+              <td><input type="text" name="images_width" value="<%= obplayer.Config.setting('images_width', True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>images_height</td>
+              <td><input type="text" name="images_height" value="<%= obplayer.Config.setting('images_height', True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>images_framerate</td>
+              <td><input type="text" name="images_framerate" value="<%= obplayer.Config.setting('images_framerate', True) %>"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>Test Signal Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>testsignal_enable</td>
+              <td><input type="checkbox" name="testsignal_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('testsignal_enable') %>></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('sources');" data-tns="Common" data-t>Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <!--
+        <h4>Sources List</h4>
+        <table>
+            <% for ctrl in obplayer.Player.controllers: %>
+            <tr><td><%= ctrl.name %></td><td><%= ctrl.priority %></td><td><%= ctrl.enabled %></td></tr>
+            <% end %>
+        </table>
+        -->
+
+      </div>
+
+      <div style="display: none;" id="content-outputs" data-tns="Outputs Tab">
+
+        <h4 data-t>Audio Output Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>audio_out_mode</td>
+              <td><select id="audio_out_mode_select" name="audio_out_mode" data-tns="Gstreamer Modes">
+                  <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','auto') %> data-t>Auto Detect</option>
+                  <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','alsa') %> data-t>ALSA</option>
+                  <option value="esd"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','esd') %> data-t>Esound</option>
+                  <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','jack') %> data-t>JACK</option>
+                  <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','oss') %> data-t>OSS</option>
+                  <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','pulse') %> data-t>Pulse Audio</option>
+                  <!-- <option value="shout2send"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','shout2send') %> data-t>Shoutcast</option> -->
+                  <!-- <option value="intersink"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','intersink') %> data-t>Direct Streaming</option> -->
+                  <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','test') %> data-t>No Output</option>
+                </select></td>
+            </tr>
+            <tr id="audio_out_alsa_device_row">
+              <td data-t>audio_out_alsa_device</td>
+              <td><input type="text" name="audio_out_alsa_device" value="<%= obplayer.Config.setting('audio_out_alsa_device',True) %>"></td>
+            </tr>
+            <tr id="audio_out_jack_name_row">
+              <td data-t>audio_out_jack_name</td>
+              <td><input type="text" name="audio_out_jack_name" value="<%= obplayer.Config.setting('audio_out_jack_name',True) %>"></td>
+            </tr>
+            <tr id="audio_out_shout2send_ip_row">
+              <td data-t>audio_out_shout2send_ip</td>
+              <td><input type="text" name="audio_out_shout2send_ip" value="<%= obplayer.Config.setting('audio_out_shout2send_ip',True) %>"></td>
+            </tr>
+            <tr id="audio_out_shout2send_port_row">
+              <td data-t>audio_out_shout2send_port</td>
+              <td><input type="text" name="audio_out_shout2send_port" value="<%= obplayer.Config.setting('audio_out_shout2send_port',True) %>"></td>
+            </tr>
+            <tr id="audio_out_shout2send_mount_row">
+              <td data-t>audio_out_shout2send_mount</td>
+              <td><input type="text" name="audio_out_shout2send_mount" value="<%= obplayer.Config.setting('audio_out_shout2send_mount',True) %>"></td>
+            </tr>
+            <tr id="audio_out_shout2send_password_row">
+              <td data-t>audio_out_shout2send_password</td>
+              <td><input type="password" name="audio_out_shout2send_password" value="<%= obplayer.Config.setting('audio_out_shout2send_password',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>audio_out_visualization</td>
+              <td><input type="checkbox" name="audio_out_visualization" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audio_out_visualization') %>></td>
+            </tr>
+            <tr>
+              <td data-t>gst_init_callback</td>
+              <td><input type="text" name="gst_init_callback" value="<%= obplayer.Config.setting('gst_init_callback',False) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>audiolog_enable</td>
+              <td><input type="checkbox" id="audiolog_enable" name="audiolog_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audiolog_enable') %>></td>
+            </tr>
+            <tr id="audiolog_purge_files_row">
+              <td data-t>audiolog_purge_files</td>
+              <td><input type="checkbox" name="audiolog_purge_files" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audiolog_purge_files') %> title="audiolog_purge_files_tooltip" data-t></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <% if hasattr(obplayer, 'pulse') and obplayer.pulse.is_loaded() and obplayer.Config.setting('audio_out_mode') == 'pulse': %>
+          <% py.include("obplayer/pulse/views/sinks.pyhtml") %>
+        <% end %>
+
+        <h4 data-t>Video Output Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>video_out_enable</td>
+              <td><input type="checkbox" name="video_out_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('video_out_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>video_out_mode</td>
+              <td><select id="video_out_mode_select" name="video_out_mode" data-tns="Gstreamer Modes">
+                  <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','auto') %> data-t>Auto Detect</option>
+                  <option value="x11"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','x11') %> data-t>X11</option>
+                  <option value="xvideo"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','xvideo') %> data-t>XVideo</option>
+                  <option value="opengl"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','opengl') %> data-t>OpenGL</option>
+                  <option value="egl"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','egl') %> data-t>EGL/GLES</option>
+                  <option value="wayland"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','wayland') %> data-t>Wayland</option>
+                  <option value="ascii"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','ascii') %> data-t>Coloured ASCII</option>
+                  <!-- <option value="intersink"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','intersink') %> data-t>Direct Streaming</option> -->
+                  <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('video_out_mode','test') %> data-t>No Output</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td data-t>video_out_resolution</td>
+              <td><select name="video_out_resolution">
+                  <option value="default"<%= obplayer.HTTPAdmin.form_item_selected('video_out_resolution','default') %> data-t>default</option>
+                  <% if hasattr(obplayer, 'xrandr'): %>
+                  <% for mode in obplayer.xrandr.get_modes(): %>
+                  <option value="<%= mode %>"<%= obplayer.HTTPAdmin.form_item_selected('video_out_resolution',mode) %>><%= mode %></option>
+                  <% end %>
+                  <% end %>
+                </select></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>Video Overlay Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>overlay_enable</td>
+              <td><input type="checkbox" name="overlay_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('overlay_enable') %>></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>LED Sign Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>led_sign_enable</td>
+              <td><input type="checkbox" name="led_sign_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('led_sign_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>led_sign_serial_file</td>
+              <td><input type="text" name="led_sign_serial_file" value="<%= obplayer.Config.setting('led_sign_serial_file',True) %>" title="led_sign_serial_file_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>led_sign_timedisplay</td>
+              <td><input type="checkbox" name="led_sign_timedisplay" value="1"<%= obplayer.HTTPAdmin.form_item_checked('led_sign_timedisplay') %>></td>
+            </tr>
+            <tr>
+              <td data-t>led_sign_init_message</td>
+              <td><input type="text" name="led_sign_init_message" value="<%= obplayer.Config.setting('led_sign_init_message',True) %>" title="led_sign_init_message_tooltip" data-t></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('outputs');" data-tns="Common" data-t>Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <% if obplayer.Config.setting('http_show_streaming'): %>
+      <div style="display: none;" id="content-streamer" data-tns="Streamer Tab">
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>streamer_enable</td>
+              <td><input type="checkbox" name="streamer_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_enable') %> title="streamer_enable_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t title="streamer_audio_in_mode_tooltip">streamer_audio_in_mode</td>
+              <td><select id="streamer_audio_in_mode_select" name="streamer_audio_in_mode" data-tns="Gstreamer Modes">
+                  <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','auto') %> data-t>Auto Detect</option>
+                  <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','alsa') %> data-t>ALSA</option>
+                  <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','jack') %> data-t>JACK</option>
+                  <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','oss') %> data-t>OSS</option>
+                  <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','pulse') %> data-t>Pulse Audio</option>
+                  <option value="intersink"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','intersink') %> data-t>InterSink</option>
+                  <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','test') %> data-t>No Input</option>
+                </select></td>
+            </tr>
+            <tr id="streamer_audio_in_alsa_device_row">
+              <td data-t>streamer_audio_in_alsa_device</td>
+              <td><input type="text" name="streamer_audio_in_alsa_device" value="<%= obplayer.Config.setting('streamer_audio_in_alsa_device',True) %>"></td>
+            </tr>
+            <tr id="streamer_audio_in_jack_name_row">
+              <td data-t>streamer_audio_in_jack_name</td>
+              <td><input type="text" name="streamer_audio_in_jack_name" value="<%= obplayer.Config.setting('streamer_audio_in_jack_name',True) %>"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>Icecast Streaming</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>streamer_icecast_enable</td>
+              <td><input type="checkbox" name="streamer_icecast_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_icecast_enable') %> title="streamer_icecast_enable_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_mode</td>
+              <td><select name="streamer_icecast_mode">
+                  <option value="audio"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_mode','audio') %>>Audio Only</option>
+                  <option value="video320x200"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_mode','video320x200') %>>Video - 320x200</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_bitrate</td>
+              <td><select name="streamer_icecast_bitrate">
+                  <option value="0"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','0') %>>Variable</option>
+                  <option value="8"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','8') %>>8 kbps</option>
+                  <option value="16"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','16') %>>16 kbps</option>
+                  <option value="24"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','24') %>>24 kbps</option>
+                  <option value="32"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','32') %>>32 kbps</option>
+                  <option value="40"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','40') %>>40 kbps</option>
+                  <option value="48"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','48') %>>48 kbps</option>
+                  <option value="56"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','56') %>>56 kbps</option>
+                  <option value="64"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','64') %>>64 kbps</option>
+                  <option value="80"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','80') %>>80 kbps</option>
+                  <option value="96"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','96') %>>96 kbps</option>
+                  <option value="112"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','112') %>>112 kbps</option>
+                  <option value="128"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','128') %>>128 kbps</option>
+                  <option value="160"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','160') %>>160 kbps</option>
+                  <option value="192"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','192') %>>192 kbps</option>
+                  <option value="224"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','224') %>>224 kbps</option>
+                  <option value="256"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','256') %>>256 kbps</option>
+                  <option value="320"<%= obplayer.HTTPAdmin.form_item_selected('streamer_icecast_bitrate','320') %>>320 kbps</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_ip</td>
+              <td><input type="text" name="streamer_icecast_ip" value="<%= obplayer.Config.setting('streamer_icecast_ip',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_port</td>
+              <td><input type="text" name="streamer_icecast_port" value="<%= obplayer.Config.setting('streamer_icecast_port',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_mount</td>
+              <td><input type="text" name="streamer_icecast_mount" value="<%= obplayer.Config.setting('streamer_icecast_mount',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_password</td>
+              <td><input type="password" name="streamer_icecast_password" value="<%= obplayer.Config.setting('streamer_icecast_password',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_streamname</td>
+              <td><input type="text" name="streamer_icecast_streamname" value="<%= obplayer.Config.setting('streamer_icecast_streamname',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_description</td>
+              <td><input type="text" name="streamer_icecast_description" value="<%= obplayer.Config.setting('streamer_icecast_description',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_url</td>
+              <td><input type="text" name="streamer_icecast_url" value="<%= obplayer.Config.setting('streamer_icecast_url',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_icecast_public</td>
+              <td><input type="checkbox" name="streamer_icecast_public" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_icecast_public') %>></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_play_on_startup</td>
+              <td><input type="checkbox" name="streamer_play_on_startup" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_play_on_startup') %> title="streamer_play_on_startup_tooltip" data-t></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>RTSP Server</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>streamer_rtsp_enable</td>
+              <td><input type="checkbox" name="streamer_rtsp_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_rtsp_enable') %> title="streamer_rtsp_enable_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_rtsp_port</td>
+              <td><input type="text" name="streamer_rtsp_port" value="<%= obplayer.Config.setting('streamer_rtsp_port',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_rtsp_clock_rate</td>
+              <td><select name="streamer_rtsp_clock_rate">
+                  <option value="48000"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtsp_clock_rate','48000') %>>48000 Hz</option>
+                  <option value="44100"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtsp_clock_rate','44100') %>>44100 Hz</option>
+              </select></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_rtsp_allow_discovery</td>
+              <td><input type="checkbox" name="streamer_rtsp_allow_discovery" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_rtsp_allow_discovery') %> title="streamer_rtsp_allow_discovery_tooltip" data-t></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>RTP/Livewire Streaming</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>streamer_rtp_enable</td>
+              <td><input type="checkbox" name="streamer_rtp_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_rtp_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_rtp_port</td>
+              <td><input type="text" name="streamer_rtp_port" value="<%= obplayer.Config.setting('streamer_rtp_port', True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_rtp_address</td>
+              <td><input type="text" name="streamer_rtp_address" value="<%= obplayer.Config.setting('streamer_rtp_address', True) %>" title="streamer_rtp_address_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td title="streamer_rtp_encoding_tooltip" data-t>streamer_rtp_encoding</td>
+              <td><select id="streamer_rtp_encoding_select" name="streamer_rtp_encoding">
+                  <option value="L24"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_encoding','L24') %>>24-bit PCM (Livewire)</option>
+                  <option value="L16"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_encoding','L16') %>>16-bit PCM</option>
+                  <option value="OPUS"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_encoding','OPUS') %>>Opus</option>
+                  <option value="MPA"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_encoding','MPA') %>>MP3</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_rtp_clock_rate</td>
+              <td><select id="streamer_rtp_clock_rate_select" name="streamer_rtp_clock_rate">
+                  <option value="48000"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_clock_rate','48000') %>>48000 Hz</option>
+                  <option value="44100"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtp_clock_rate','44100') %>>44100 Hz</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_rtp_enable_rtcp</td>
+              <td><input type="checkbox" name="streamer_rtp_enable_rtcp" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_rtp_enable_rtcp') %> title="streamer_rtp_enable_rtcp_tooltip" data-t></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>YouTube Streaming</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>streamer_youtube_enable</td>
+              <td><input type="checkbox" name="streamer_youtube_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_youtube_enable') %> title="streamer_youtube_enable_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_youtube_key</td>
+              <td><input type="text" name="streamer_youtube_key" value="<%= obplayer.Config.setting('streamer_youtube_key',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>streamer_youtube_mode</td>
+              <td><select name="streamer_youtube_mode">
+                  <option value="240p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','240p') %>>240p</option>
+                  <option value="360p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','360p') %>>360p</option>
+                  <option value="480p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','480p') %>>480p</option>
+                  <option value="720p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','720p') %>>720p</option>
+              </select></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('streamer');" data-tns="Common" data-t>Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <% end %>
+
+      <% if obplayer.Config.setting('http_show_alerts'): %>
+      <div style="display: none;" id="content-alerts" data-tns="Alerts Tab">
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>alerts_enable</td>
+              <td><input type="checkbox" name="alerts_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('alerts_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>alerts_geocode</td>
+              <td><input type="text" name="alerts_geocode" value="<%= obplayer.Config.setting('alerts_geocode', True) %>" title="alerts_geocode_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>alerts_language_primary</td>
+              <td>
+		<select id="alerts_language_primary_select" name="alerts_language_primary">
+                  <option value="english"<%= obplayer.HTTPAdmin.form_item_selected('alerts_language_primary','english') %> data-t>english</option>
+                  <option value="french"<%= obplayer.HTTPAdmin.form_item_selected('alerts_language_primary','french') %> data-t>french</option>
+                </select>
+	      </td>
+            </tr>
+            <tr>
+              <td data-t>alerts_voice_primary</td>
+              <td>
+		<select id="alerts_voice_primary_select" name="alerts_voice_primary">
+                  <option value="en"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','en') %>>en</option>
+                  <option value="fr"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','fr') %>>fr</option>
+                  <option value="mb-en1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-en1') %>>mb-en1</option>
+                  <option value="mb-us1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-us1') %>>mb-us1</option>
+                  <option value="mb-us2"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-us2') %>>mb-us2</option>
+                  <option value="mb-us3"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-us3') %>>mb-us3</option>
+                  <option value="mb-fr1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-fr1') %>>mb-fr1</option>
+                  <option value="mb-fr4"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-fr4') %>>mb-fr4</option>
+                  <option value="mb-la1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-la1') %>>mb-la1</option>
+                  <option value="mb-sw1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-sw1') %>>mb-sw1</option>
+                  <option value="mb-sw2"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_primary','mb-sw2') %>>mb-sw2</option>
+                </select>
+	      </td>
+            </tr>
+            <tr>
+              <td data-t>alerts_language_secondary</td>
+              <td>
+		<select id="alerts_language_secondary_select" name="alerts_language_secondary">
+                  <option value=""<%= obplayer.HTTPAdmin.form_item_selected('alerts_language_secondary','') %>>None</option>
+                  <option value="english"<%= obplayer.HTTPAdmin.form_item_selected('alerts_language_secondary','english') %> data-t>english</option>
+                  <option value="french"<%= obplayer.HTTPAdmin.form_item_selected('alerts_language_secondary','french') %> data-t>french</option>
+                </select>
+	      </td>
+            </tr>
+            <tr>
+              <td data-t>alerts_voice_secondary</td>
+              <td>
+		<select id="alerts_voice_secondary_select" name="alerts_voice_secondary">
+                  <option value="en"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','en') %>>en</option>
+                  <option value="fr"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','fr') %>>fr</option>
+                  <option value="mb-en1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-en1') %>>mb-en1</option>
+                  <option value="mb-us1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-us1') %>>mb-us1</option>
+                  <option value="mb-us2"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-us2') %>>mb-us2</option>
+                  <option value="mb-us3"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-us3') %>>mb-us3</option>
+                  <option value="mb-fr1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-fr1') %>>mb-fr1</option>
+                  <option value="mb-fr4"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-fr4') %>>mb-fr4</option>
+                  <option value="mb-la1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-la1') %>>mb-la1</option>
+                  <option value="mb-sw1"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-sw1') %>>mb-sw1</option>
+                  <option value="mb-sw2"<%= obplayer.HTTPAdmin.form_item_selected('alerts_voice_secondary','mb-sw2') %>>mb-sw2</option>
+                </select>
+	      </td>
+            </tr>
+            <tr>
+              <td data-t>alerts_repeat_interval</td>
+              <td><input type="text" name="alerts_repeat_interval" value="<%= obplayer.Config.setting('alerts_repeat_interval', True) %>" title="alerts_repeat_interval_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>alerts_repeat_times</td>
+              <td><input type="text" name="alerts_repeat_times" value="<%= obplayer.Config.setting('alerts_repeat_times', True) %>" title="alerts_repeat_times_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>alerts_truncate</td>
+              <td><input type="checkbox" name="alerts_truncate" value="1"<%= obplayer.HTTPAdmin.form_item_checked('alerts_truncate') %> title="alerts_truncate_tooltip" data-t></td>
+            </tr>
+            <tr>
+              <td data-t>alerts_play_moderates</td>
+              <td><input type="checkbox" name="alerts_play_moderates" value="1"<%= obplayer.HTTPAdmin.form_item_checked('alerts_play_moderates') %> title="alerts_play_moderates_tooltip" data-t></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="advanced-settings">
+          <input type="checkbox" id="alert-advanced" />
+          <label for="alert-advanced" data-t>Advanced Settings</label>
+          <table class="settings">
+            <tbody>
+              <tr>
+                <td data-t>alerts_purge_files</td>
+                <td><input type="checkbox" name="alerts_purge_files" value="1"<%= obplayer.HTTPAdmin.form_item_checked('alerts_purge_files') %> title="alerts_purge_files_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_trigger_serial</td>
+                <td><input type="checkbox" name="alerts_trigger_serial" value="1"<%= obplayer.HTTPAdmin.form_item_checked('alerts_trigger_serial') %> title="alerts_trigger_serial_tooltip" data-t></td>
+              </tr>
+              <tr id="alerts_trigger_serial_file_row">
+                <td data-t>alerts_trigger_serial_file</td>
+                <td><input type="text" name="alerts_trigger_serial_file" value="<%= obplayer.Config.setting('alerts_trigger_serial_file',True) %>" title="alerts_trigger_serial_file_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_trigger_streamer</td>
+                <td><input type="checkbox" name="alerts_trigger_streamer" value="1"<%= obplayer.HTTPAdmin.form_item_checked('alerts_trigger_streamer') %> title="alerts_trigger_streamer_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_play_tests</td>
+                <td><input type="checkbox" name="alerts_play_tests" value="1"<%= obplayer.HTTPAdmin.form_item_checked('alerts_play_tests') %> title="alerts_play_tests_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_leadin_delay</td>
+                <td><input type="text" name="alerts_leadin_delay" value="<%= obplayer.Config.setting('alerts_leadin_delay', True) %>" title="alerts_leadin_delay_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_leadout_delay</td>
+                <td><input type="text" name="alerts_leadout_delay" value="<%= obplayer.Config.setting('alerts_leadout_delay', True) %>" title="alerts_leadout_delay_tooltip" data-t></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_naad_stream1</td>
+                <td><input type="text" name="alerts_naad_stream1" value="<%= obplayer.Config.setting('alerts_naad_stream1',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_naad_stream2</td>
+                <td><input type="text" name="alerts_naad_stream2" value="<%= obplayer.Config.setting('alerts_naad_stream2',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_naad_archive1</td>
+                <td><input type="text" name="alerts_naad_archive1" value="<%= obplayer.Config.setting('alerts_naad_archive1',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>alerts_naad_archive2</td>
+                <td><input type="text" name="alerts_naad_archive2" value="<%= obplayer.Config.setting('alerts_naad_archive2',True) %>"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('alerts');" data-tns="Common" data-t>Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>Alerting System Tests</h4>
+
+        <table>
+          <tbody>
+            <tr>
+              <td data-t>Test Alerts</td>
+              <td><select id="test_alert_select" name="test_alert">
+                  <option value="obplayer/alerts/data/testalerts/1example_CAPCP_No_Attachment.xml" data-t>Simple Test</option>
+                  <option value="obplayer/alerts/data/testalerts/4example_CAPCP_with_External_Large_Audio_File.xml" data-t>External Audio Test</option>
+                  <option value="obplayer/alerts/data/testalerts/2example_CAPCP_with_Embedded_Large_Audio_File.xml" data-t>Embedded Audio Test</option>
+                  <option value="obplayer/alerts/data/testalerts/2016_03_01T07_54_04_04_00IC0B0D06C_882E_1195_7170_24D9BF99FAD9.xml" data-t>Embedded Audio and Image Test</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td colspan="2"><button id="alerts_inject_button" type="button" data-t>Inject Alert</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>Active Alerts</h4>
+
+	<div>
+	  <span data-t>Last Heartbeat Received</span>:
+	  <span id="alerts-last-heartbeat"></span>
+	</div>
+	<div>
+	  <span data-t>Alerts Will Play In</span>:
+	  <span id="alerts-next-play"></span>
+	</div>
+	<table id="active-alerts" class="alerts-table">
+	</table>
+	<button id="alerts_cancel_button" type="button" data-t>Cancel Alerts</button>
+
+        <h4 data-t>Expired Alerts</h4>
+
+	<table id="expired-alerts" class="alerts-table">
+	</table>
+
+      </div>
+      <% end %>
+
+      <% if obplayer.Config.setting('http_show_location'): %>
+      <div style="display: none;" id="content-location" data-tns="Location Tab">
+        <table class="settings">
+        <tbody>
+          <tr>
+            <td data-t>location_enable</td>
+            <td><input type="checkbox" name="location_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('location_enable') %>></td>
+          </tr>
+          <tr>
+            <td colspan="2" data-t>Device Location (use decimal degrees)</td>
+          </tr>
+          <tr>
+            <td data-t>location_longitude</td>
+            <td><input type="text" name="location_longitude" value="<%= obplayer.Config.setting('location_longitude', True) %>" onchange="updateMap()"></td>
+          </tr>
+          <tr>
+            <td data-t>location_latitude</td>
+            <td><input type="text" name="location_latitude" value="<%= obplayer.Config.setting('location_latitude', True) %>" onchange="updateMap()"></td>
+          </tr>
+          <tr>
+            <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('location');" data-tns="Common" data-t>Save</button></td>
+          </tr>
+        </tbody>
+        </table>
+
+        <table>
+        <tbody>
+          <tr>
+            <td><div id="map-container"><div id="map"></div></div></td>
+            <td><span data-t>drag_marker</span><br/><span data-t>drag_map</span></td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+      <% end %>
+
+      <div style="display: none;" id="content-http" data-tns="HTTP Tab">
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>http_admin_language</td>
+              <td>
+		<select name="http_admin_language">
+                  <option value="en"<%= obplayer.HTTPAdmin.form_item_selected('http_admin_language','en') %>>English</option>
+                  <option value="fr"<%= obplayer.HTTPAdmin.form_item_selected('http_admin_language','fr') %>>Français</option>
+                </select>
+	      </td>
+            </tr>
+            <tr>
+              <td data-t>http_admin_secure</td>
+              <td><input id="http_admin_secure" type="checkbox" name="http_admin_secure" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_admin_secure') %>></td>
+            </tr>
+            <tr class="http_admin_sslcert_row">
+              <td data-t>http_admin_sslreq</td>
+              <td><input type="checkbox" name="http_admin_sslreq" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_admin_sslreq') %>></td>
+            </tr>
+            <tr class="http_admin_sslcert_row">
+              <td data-t>http_admin_sslkey</td>
+              <td><input type="text" name="http_admin_sslkey" value="<%= obplayer.Config.setting('http_admin_sslkey',True) %>"></td>
+            </tr>
+            <tr class="http_admin_sslcert_row">
+              <td data-t>http_admin_sslcert</td>
+              <td><input type="text" name="http_admin_sslcert" value="<%= obplayer.Config.setting('http_admin_sslcert',True) %>"></td>
+            </tr>
+            <tr class="http_admin_sslcert_row">
+              <td data-t>http_admin_sslca</td>
+              <td><input type="text" name="http_admin_sslca" value="<%= obplayer.Config.setting('http_admin_sslca',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>http_admin_port</td>
+              <td><input type="text" name="http_admin_port" value="<%= obplayer.Config.setting('http_admin_port',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>http_admin_username</td>
+              <td><input type="text" name="http_admin_username" value="<%= obplayer.Config.setting('http_admin_username',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>http_admin_password</td>
+              <td><input type="password" name="http_admin_password" value=""></td>
+            </tr>
+            <tr>
+              <td data-t>http_admin_password_retype</td>
+              <td><input type="password" name="http_admin_password_retype" value=""></td>
+            </tr>
+            <tr>
+              <td data-t>http_readonly_username</td>
+              <td><input type="text" name="http_readonly_username" value="<%= obplayer.Config.setting('http_readonly_username',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>http_readonly_password</td>
+              <td><input type="password" name="http_readonly_password" value="<%= obplayer.Config.setting('http_readonly_password',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>http_readonly_allow_restart</td>
+              <td><input type="checkbox" name="http_readonly_allow_restart" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_readonly_allow_restart') %>></td>
+            </tr>
+            <tr>
+              <td data-t>http_admin_title</td>
+              <td><input type="text" name="http_admin_title" value="<%= obplayer.Config.setting('http_admin_title',True) %>"></td>
+            </tr>
+            <tr>
+              <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('http');" data-tns="Common" data-t>Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <% if obplayer.Config.setting('http_show_liveassist'): %>
+      <div style="display: none;" id="content-liveassist" data-tns="LiveAssist Tab">
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>live_assist_enable</td>
+              <td><input type="checkbox" name="live_assist_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('live_assist_enable') %>></td>
+            </tr>
+            <tr>
+              <td data-t>live_assist_port</td>
+              <td><input type="text" name="live_assist_port" value="<%= obplayer.Config.setting('live_assist_port', True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>live_assist_mic_enable</td>
+              <td><input type="checkbox" name="live_assist_mic_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('live_assist_mic_enable') %>></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>Microphone Output Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>live_assist_mic_mode</td>
+              <td><select id="live_assist_mic_mode_select" name="live_assist_mic_mode" data-tns="Gstreamer Modes">
+                  <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','auto') %> data-t>Auto Detect</option>
+                  <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','alsa') %> data-t>ALSA</option>
+                  <option value="esd"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','esd') %> data-t>Esound</option>
+                  <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','jack') %> data-t>JACK</option>
+                  <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','oss') %> data-t>OSS</option>
+                  <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','pulse') %> data-t>Pulse Audio</option>
+                  <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','test') %> data-t>No Output</option>
+                </select></td>
+            </tr>
+            <tr id="live_assist_mic_alsa_device_row">
+              <td data-t>live_assist_mic_alsa_device</td>
+              <td><input type="text" name="live_assist_mic_alsa_device" value="<%= obplayer.Config.setting('live_assist_mic_alsa_device',True) %>"></td>
+            </tr>
+            <tr id="live_assist_mic_jack_name_row">
+              <td data-t>live_assist_mic_jack_name</td>
+              <td><input type="text" name="live_assist_mic_jack_name" value="<%= obplayer.Config.setting('live_assist_mic_jack_name',True) %>"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 data-t>Monitor Input Settings</h4>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td data-t>live_assist_monitor_mode</td>
+              <td><select id="live_assist_monitor_mode_select" name="live_assist_monitor_mode" data-tns="Gstreamer Modes">
+                  <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','auto') %> data-t>Auto Detect</option>
+                  <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','alsa') %> data-t>ALSA</option>
+                  <option value="esd"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','esd') %> data-t>Esound</option>
+                  <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','jack') %> data-t>JACK</option>
+                  <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','oss') %> data-t>OSS</option>
+                  <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','pulse') %> data-t>Pulse Audio</option>
+                  <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','test') %> data-t>No Output</option>
+                </select></td>
+            </tr>
+            <tr id="live_assist_monitor_alsa_device_row">
+              <td data-t>live_assist_monitor_alsa_device</td>
+              <td><input type="text" name="live_assist_monitor_alsa_device" value="<%= obplayer.Config.setting('live_assist_monitor_alsa_device',True) %>"></td>
+            </tr>
+            <tr id="live_assist_monitor_jack_name_row">
+              <td data-t>live_assist_monitor_jack_name</td>
+              <td><input type="text" name="live_assist_monitor_jack_name" value="<%= obplayer.Config.setting('live_assist_monitor_jack_name',True) %>"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="settings">
+          <tbody>
+            <tr>
+              <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('liveassist');" data-tns="Common" data-t>Save</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <% end %>
+
+
+    </div>
+
+    <!-- <p style="font-size: 0.9em; padding-top: 1em;">OpenBroadcaster Player is released under Affero GPL v3 Downloads and updates at <a href="http://www.openbroadcaster.com/">openbroadcaster.com</a>.  </p> -->
+    <p style="font-size: 0.9em; padding-top: 1em;" data-tns="Footer">
+      <span data-t>footer_message1</span> <a href="https://openbroadcaster.com/obplayer_licence">Affero GPL v3.</a>
+      <span data-t>footer_message2</span> <a href="http://support.openbroadcaster.com/obplayer-updates">support.openbroadcaster.com/obplayer-updates</a>.
+      <span data-t>footer_message3</span> <a href="https://wiki.openbroadcaster.com/obplayer">wiki.openbroadcaster.com/obplayer</a>.
+    </p>
+  </body>
+</html>

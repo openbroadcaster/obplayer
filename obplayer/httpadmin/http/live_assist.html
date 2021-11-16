@@ -1,0 +1,94 @@
+<div id="content-liveassist">
+    <div class="settings">
+        <div class="row mt-2">
+            <div class="col-md-2">
+                <button class="btn btn-primary save_btn">Save</button>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_enable') %></label>
+                <input class="mx-4" type="checkbox" name="live_assist_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('live_assist_enable') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_port') %></label>
+                <input class="form-control" type="text" name="live_assist_port" value="<%= obplayer.Config.setting('live_assist_port', True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_mic_enable') %></label>
+                <input class="mx-4" type="checkbox" name="live_assist_mic_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('live_assist_mic_enable') %>>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-12 col-sm-12">
+                <h4>Microphone Output Settings</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_mic_mode') %></label>
+                <select class="form-control" id="live_assist_mic_mode_select" name="live_assist_mic_mode">
+                    <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','auto') %> data-t>Auto Detect</option>
+                    <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','alsa') %> data-t>ALSA</option>
+                    <option value="esd"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','esd') %> data-t>Esound</option>
+                    <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','jack') %> data-t>JACK</option>
+                    <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','oss') %> data-t>OSS</option>
+                    <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','pulse') %> data-t>Pulse Audio</option>
+                    <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_mic_mode','test') %> data-t>No Output</option>
+                  </select>
+            </div>
+        </div>
+        <div class="row mt-2" id="live_assist_mic_alsa_device_row" style="display: none;">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_mic_alsa_device') %></label>
+                <input class="form-control" type="text" name="live_assist_mic_alsa_device" value="<%= obplayer.Config.setting('live_assist_mic_alsa_device',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2" id="live_assist_mic_jack_name_row" style="display: none;">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_mic_jack_name') %></label>
+                <input class="form-control" type="text" name="live_assist_mic_jack_name" value="<%= obplayer.Config.setting('live_assist_mic_jack_name',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <h4>Monitor Input Settings</h4>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-3 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_monitor_mode') %></label>
+                <select class="form-control" id="live_assist_monitor_mode_select" name="live_assist_monitor_mode">
+                    <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','auto') %> data-t>Auto Detect</option>
+                    <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','alsa') %> data-t>ALSA</option>
+                    <option value="esd"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','esd') %> data-t>Esound</option>
+                    <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','jack') %> data-t>JACK</option>
+                    <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','oss') %> data-t>OSS</option>
+                    <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','pulse') %> data-t>Pulse Audio</option>
+                    <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('live_assist_monitor_mode','test') %> data-t>No Output</option>
+                  </select>
+            </div>
+        </div>
+        <div class="row mt-2" id="live_assist_monitor_alsa_device_row" style="display: none;">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_monitor_alsa_device') %></label>
+                <input class="form-control" type="text" name="live_assist_monitor_alsa_device" value="<%= obplayer.Config.setting('live_assist_monitor_alsa_device',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2" id="live_assist_monitor_jack_name_row" style="display: none;">
+            <div class="col-md-2 col-sm-12">
+                <label><%= obplayer.Translate.t('LiveAssist Tab', 'live_assist_monitor_jack_name') %></label>
+                <input class="form-control" type="text" name="live_assist_monitor_jack_name" value="<%= obplayer.Config.setting('live_assist_monitor_jack_name',True) %>">
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6 col-sm-12">
+                <button class="btn btn-primary save_btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

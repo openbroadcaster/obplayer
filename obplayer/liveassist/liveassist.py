@@ -30,11 +30,8 @@ import traceback
 import json
 
 from obplayer.httpadmin import httpserver
-import obplayer.httpadmin
 
 from . import microphone
-
-import requests
 
 
 class ObLiveAssist (httpserver.ObHTTPServer):
@@ -51,7 +48,7 @@ class ObLiveAssist (httpserver.ObHTTPServer):
         obplayer.Log.log('serving live assist http on port ' + str(sa[1]), 'liveassist')
 
     def log(self, message):
-        if not "POST /info/levels" in message and not "POST /command/station_count":
+        if not "POST /info/levels" in message:
             obplayer.Log.log(message, 'debug')
 
     def shutdown(self):
@@ -85,9 +82,6 @@ class ObLiveAssist (httpserver.ObHTTPServer):
         elif request.path == '/info/liveassist_groups':
             groups = obplayer.Scheduler.get_current_groups()
             return groups
-
-        elif request.path == '/info/server_url':
-            return obplayer.Config.setting('sync_url').replace('remote.php', '')
 
         elif request.path == '/command/play':
             if obplayer.Scheduler.unpause_show() == True:
@@ -123,6 +117,7 @@ class ObLiveAssist (httpserver.ObHTTPServer):
                 return { 'status' : False }
 
         elif request.path == '/command/playlist_seek':
+            print(request.args)
             try:
                 track_num = int(request.args['track_num'][0])
                 position = float(request.args['position'][0])
@@ -133,32 +128,6 @@ class ObLiveAssist (httpserver.ObHTTPServer):
                 return { 'status' : True }
             else:
                 return { 'status' : False }
-
-        elif request.path == '/command/station_count':
-            mount = obplayer.Config.setting('station_override_server_mountpoint')
-            req = requests.get("http://{0}:{1}/status-json.xsl".format(obplayer.Config.setting('station_override_server_ip'), obplayer.Config.setting('station_override_server_port')))
-            if req.status_code == 200:
-                data = req.json()
-                # check if source exists.
-                if data['icestats'].get('source') == None:
-                    return 'not live...'
-                # more than one stream on server.
-                if isinstance(data['icestats']['source'], (list)):
-                    for stream in data['icestats']['source']:
-                        stream_mount = stream['listenurl'].split('/')[-1]
-                        if stream_mount == mount:
-                            return stream['listeners']
-                # if only one stream on server.
-                else:
-                    if data['icestats']['source']['listenurl'].split('/')[-1] == mount:
-                        return data['icestats']['source']['listeners']
-            return 'error...'
-        elif request.path == '/inter_station_ctrl/start':
-            obplayer.httpadmin.httpadmin.inter_station_ctrl_toggle(True)
-        elif request.path == '/inter_station_ctrl/stop':
-            obplayer.httpadmin.httpadmin.inter_station_ctrl_toggle(False)
-        elif request.path == '/inter_station_ctrl/is_live':
-            return obplayer.httpadmin.httpadmin.inter_station_ctrl_is_live()
 
 
     def handle_websocket(self, conn, path):
@@ -228,3 +197,4 @@ class ObLiveAssist (httpserver.ObHTTPServer):
             return
         msg['type'] = 'mic-status'
         conn.websocket_write_message(httpserver.WS_OP_TEXT, json.dumps(msg))
+

@@ -89,8 +89,9 @@ class ObGstStreamer (object):
         if message.type == Gst.MessageType.ERROR:
             err, debug = message.parse_error()
             obplayer.Log.log("gstreamer error: %s, %s, %s" % (err, debug, err.code), 'error')
-            obplayer.Log.log("attempting to restart {0} pipeline".format(self.name), 'info')
-            GObject.timeout_add(5000, self.restart_pipeline)
+            if err.code == 1:
+              obplayer.Log.log("attempting to restart {0} pipeline".format(self.name), 'info')
+              GObject.timeout_add(5000, self.restart_pipeline)
 
         elif message.type == Gst.MessageType.WARNING:
             err, debug = message.parse_warning()

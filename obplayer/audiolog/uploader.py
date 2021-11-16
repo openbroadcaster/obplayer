@@ -27,7 +27,7 @@ class LogUploader(obplayer.ObThread):
                     obplayer.Log.log("Audio log uploaded failed due to a media not supported error. Please enable ogg support in the server.", 'audiolog')
                     return None
                 log_date = time.strftime("%c", time.localtime())
-                metadata = {"media": [{"local_id":"2", "artist": "OBPlayer logs", "title": "Station Audio Log ({0} Local)".format(log_date), "album":"Station audio log", "year": time.strftime("%Y", time.localtime()), "country_id":"231","category_id":"10","language_id":"54","genre_id":"999","comments":"","is_copyright_owner":"0","is_approved":"1","status":"public","dynamic_select":"0","file_id": data['file_id'],"file_key": data['file_key'],"advanced_permissions_users":[],"advanced_permissions_groups":[]}]}
+                metadata = {"media": [{"local_id":"2", "artist": "OBPlayer logs", "title": "Station Audio Log ({0} Local)".format(log_date), "album":"Station audio log", "year": time.strftime("%Y", time.localtime()), "country_id":"231","category_id":"10","language_id":"54","genre_id":"999","comments":"","is_copyright_owner":"0","is_approved":"1","status":"private","dynamic_select":"0","file_id": data['file_id'],"file_key": data['file_key'],"advanced_permissions_users":[],"advanced_permissions_groups":[]}]}
                 file_data = json.dumps(metadata)
                 req = session.post('{0}/api.php'.format(server_url), data={'appkey':obplayer.Config.setting('audiolog_upload_appkey', True), 'c':'media', 'a': 'save', 'd': file_data})
                 if req.status_code == 200:

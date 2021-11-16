@@ -23,6 +23,7 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 import obplayer
 
 import os
+import os.path as path
 import sys
 import time
 import traceback
@@ -33,7 +34,6 @@ import json
 import base64
 import struct
 import random
-import hashlib
 
 if sys.version.startswith('3'):
     from urllib.parse import parse_qs,urlparse,quote,unquote
@@ -155,10 +155,10 @@ class ObHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             #username = authdata.split(':')[0]
             #password = authdata.split(':')[1]
 
-            if username == self.server.readonly_username and password == self.server.readonly_password:
+            if username == self.server.readonly_username and obplayer.Password_System.login_check(password.encode('utf-8'), self.server.readonly_password_hash):
                 self.admin_access = False
                 self.authenticated = True
-            elif username == self.server.username and password == self.server.password:
+            elif username == self.server.username and obplayer.Password_System.login_check(password.encode('utf-8'), self.server.password_hash):
                 self.admin_access = True
                 self.authenticated = True
 
