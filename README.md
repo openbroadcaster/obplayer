@@ -53,6 +53,6 @@ Restart:  sudo service obplayer restart
 OpenBroadcaster Player
 https://openbroadcaster.com/
 
-Copyright 2012-2020 OpenBroadcaster, Inc.
+Copyright 2012-2021 OpenBroadcaster, Inc.
 
 Licensed under GNU AGPLv3. See COPYING.
