@@ -156,10 +156,10 @@ class ObHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             #username = authdata.split(':')[0]
             #password = authdata.split(':')[1]
 
-            if username == self.server.readonly_username and obplayer.Password_System.login_check(password.encode('utf-8'), self.server.readonly_password_hash):
+            if username == self.server.readonly_username and password == self.server.readonly_password:
                 self.admin_access = False
                 self.authenticated = True
-            elif username == self.server.username and obplayer.Password_System.login_check(password.encode('utf-8'), self.server.password_hash):
+            elif username == self.server.username and password == self.server.password:
                 self.admin_access = True
                 self.authenticated = True
 
