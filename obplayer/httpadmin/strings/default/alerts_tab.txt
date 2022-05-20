@@ -46,6 +46,7 @@ Alerts Tab
   alerts_trigger_serial_file: RS-232 Device Filename
   alerts_trigger_serial_file_tooltip: The device filename of the serial port on which to set the DTR line to signal when an alert cycle is under way.
   alerts_trigger_serial_file_invalid: The RS-232 device filename does not appear to be valid.
+  alerts_trigger_serial_mode: Serial DTR MOde
 
   alerts_trigger_streamer: Trigger Icecast Stream on Alerts
   alerts_trigger_streamer_tooltip: If checked, the streamer module (configured on the 'Streaming' tab) will be started when an alert cycle starts, and stopped when it completes.  Make sure to uncheck the 'Play Stream on Startup' option on the 'Streaming' tab so that it only doesn't automatically start when the program first starts.

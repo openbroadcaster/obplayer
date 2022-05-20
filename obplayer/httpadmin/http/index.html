@@ -703,6 +703,10 @@
   	    <td data-t>alerts_trigger_serial_file</td>
   	    <td><%= obplayer.Config.setting('alerts_trigger_serial_file') %></td>
   	  </tr>
+      <tr>
+  	    <td data-t>alerts_trigger_serial_mode</td>
+  	    <td><%= obplayer.Config.setting('alerts_trigger_serial_mode') %></td>
+  	  </tr>
   	  <tr>
   	    <td data-t>alerts_trigger_streamer</td>
   	    <td><%= obplayer.Config.setting('alerts_trigger_streamer') %></td>
@@ -966,7 +970,7 @@
                 <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('admin');" data-tns="Common" data-t>Save</button></td>
               </tr>
               <td colspan="2">
-                <button type="button" id="icecast_config_editor_open_btn">Icecast confing editor</button>
+                <button type="button" id="icecast_config_editor_open_btn">Icecast config editor</button>
               </td>
             </tbody>
           </table>
@@ -2131,30 +2135,66 @@
             </tbody>
           </table>
 
-          <h4 data-t>YouTube Streaming</h4>
+          <h4 data-t>RTMP Streaming</h4>
 
           <table class="settings">
             <tbody>
               <tr>
-                <td data-t>streamer_youtube_enable</td>
-                <td><input type="checkbox" name="streamer_youtube_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_youtube_enable') %> title="streamer_youtube_enable_tooltip" data-t></td>
+                <td data-t>streamer_rtmp_enable</td>
+                <td><input type="checkbox" name="streamer_rtmp_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_rtmp_enable') %> title="streamer_rtmp_tooltip" data-t></td>
               </tr>
               <tr>
-                <td data-t>streamer_youtube_key</td>
-                <td><input type="text" name="streamer_youtube_key" value="<%= obplayer.Config.setting('streamer_youtube_key',True) %>"></td>
+                <td data-t>streamer_rtmp_key</td>
+                <td><input type="text" name="streamer_rtmp_key" value="<%= obplayer.Config.setting('streamer_rtmp_key',True) %>"></td>
               </tr>
               <tr>
-                <td data-t>streamer_youtube_mode</td>
-                <td><select name="streamer_youtube_mode">
-                    <option value="240p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','240p') %>>240p</option>
-                    <option value="360p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','360p') %>>360p</option>
-                    <option value="480p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','480p') %>>480p</option>
-                    <option value="720p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_youtube_mode','720p') %>>720p</option>
+                <td data-t>streamer_rtmp_url</td>
+                <td><input type="text" name="streamer_rtmp_url" value="<%= obplayer.Config.setting('streamer_rtmp_url',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>streamer_rtmp_mode</td>
+                <td><select name="streamer_rtmp_mode">
+                    <option value="240p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_mode','240p') %>>240p</option>
+                    <option value="360p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_mode','360p') %>>360p</option>
+                    <option value="480p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_mode','480p') %>>480p</option>
+                    <option value="720p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_mode','720p') %>>720p</option>
+                    <option value="1080p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_mode','1080p') %>>1080p</option>
                 </select></td>
               </tr>
+              <tr>
+                <td data-t>streamer_rtmp_encoder_preset</td>
+                <td><select name="streamer_rtmp_encoder_preset">
+                    <option value="ultrafast"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','ultrafast') %>>ultrafast</option>
+                    <option value="superfast"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','superfast') %>>superfast</option>
+                    <option value="veryfast"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','veryfast') %>>veryfast</option>
+                    <option value="faster"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','faster') %>>faster</option>
+                    <option value="fast"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','fast') %>>fast</option>
+                    <option value="medium"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','medium') %>>medium</option>
+                    <option value="slow"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','slow') %>>slow</option>
+                    <option value="slower"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','slower') %>>slower</option>
+                    <option value="veryslow"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','veryslow') %>>veryslow</option>
+                </select></td>
+              </tr>
+                <td data-t>streamer_rtmp_encoder_profile</td>
+                <td><select name="streamer_rtmp_encoder_profile">
+                    <option value="baseline"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_profile','baseline') %>>Baseline</option>
+                    <option value="main"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_profile','main') %>>Main</option>
+                    <option value="high"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_profile','high') %>>High</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td data-t>streamer_rtmp_encoder_tune</td>
+                <td><select name="streamer_rtmp_encoder_tune">
+                    <option value="film"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','film') %>>Film</option>
+                    <option value="animation"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','animation') %>>Animation</option>
+                    <option value="stillimage"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','stillimage') %>>Still Image</option>
+                    <option value="fastdecode"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','fastdecode') %>>Fast Decode</option>
+                    <option value="zerolatency"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','zerolatency') %>>Zero Latency</option>
+                </select></td>
+              </tr>
+              <tr>
             </tbody>
           </table>
-
           <table class="settings">
             <tbody>
               <tr>
@@ -12441,6 +12481,15 @@
                 <tr id="alerts_trigger_serial_file_row">
                   <td data-t>alerts_trigger_serial_file</td>
                   <td><input type="text" name="alerts_trigger_serial_file" value="<%= obplayer.Config.setting('alerts_trigger_serial_file',True) %>" title="alerts_trigger_serial_file_tooltip" data-t></td>
+                </tr>
+                <tr>
+                  <td data-t>alerts_trigger_serial_mode</td>
+                  <td>
+                    <select name="alerts_trigger_serial_mode">
+                      <option value="normal" <%= obplayer.HTTPAdmin.form_item_selected('alerts_trigger_serial_mode','normal') %>>Normal</option>
+                      <option value="reverse" <%= obplayer.HTTPAdmin.form_item_selected('alerts_trigger_serial_mode','reverse') %>>Reversed</option>
+                    </select>
+                  </td>
                 </tr>
                 <tr>
                   <td data-t>alerts_trigger_streamer</td>

@@ -37,6 +37,7 @@ class ObLog:
     def __init__(self):
         self.datadir = obplayer.ObData.get_datadir()
         self.logbuffer = []
+        self.recent_msgs = []
         self.debug = False
 
         self.logdate = False
@@ -47,6 +48,11 @@ class ObLog:
 
     def set_debug(self, flag):
         self.debug = flag
+
+    def clear_recent_msgs(self):
+        for item in self.recent_msgs:
+            if ((int(item['time']) - 60)) > 0:
+                self.recent_msgs.remove(item)
 
     def format_logs(self, log_level=None):
         output = []
@@ -113,7 +119,12 @@ class ObLog:
         return output
 
     def log(self, message, mtype='error', alert_data=None):
-
+        # only log the same error message once every minute to keep logs small.
+        for item in self.recent_msgs:
+            if item == item['msg'] and mtype == 'error':
+                return None
+        self.clear_recent_msgs()
+        self.recent_msgs.append({'msg': message, 'time': time.time()})
         mstring = '[' + time.strftime('%b %d %Y %H:%M:%S', time.gmtime()) + ' UTC] [' + mtype + '] ' + message
 
         self.lock.acquire()

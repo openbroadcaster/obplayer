@@ -38,14 +38,14 @@ output_settings = {
     '240p': (426, 240, 700),
     '360p': (640, 360, 1000),
     '480p': (854, 480, 2000),
-    '720p': (1280, 720, 4000),
+    '720p': (1280, 720, 10000),
 }
 
-class ObYoutubeStreamer (ObGstStreamer):
+class ObRTMPStreamer (ObGstStreamer):
     def __init__(self):
-        ObGstStreamer.__init__(self, 'youtube')
+        ObGstStreamer.__init__(self, 'rtmp')
 
-        self.mode = output_settings[obplayer.Config.setting('streamer_youtube_mode')]
+        self.mode = output_settings[obplayer.Config.setting('streamer_rtmp_mode')]
 
         obplayer.Player.add_inter_tap(self.name)
 
@@ -112,11 +112,39 @@ class ObYoutubeStreamer (ObGstStreamer):
         #self.videopipe.append(Gst.ElementFactory.make("vp9enc"))
         #self.videopipe.append(Gst.ElementFactory.make("theoraenc"))
         self.videopipe.append(Gst.ElementFactory.make("x264enc"))
-        self.videopipe[-1].set_property('bitrate', self.mode[2])
-        self.videopipe[-1].set_property('bframes', 2)
-        self.videopipe[-1].set_property('tune', 0x4)
+        
+        # ! nvv4l2h264enc ! h264parse ! splitmuxsink
+
+        
+        #self.videopipe[-1].set_property('resolution', obplayer.Config.setting('streamer_rtmp_mode'))
+        #self.videopipe[-1].set_property('preset', obplayer.Config.setting('streamer_rtmp_encoder_preset'))
+        
+        # self.videopipe[-1].set_property('profile', 'baseline')
+        # self.videopipe[-1].set_property('level', 3.2)
+        # these are not properties but a pad settings
+
+        # ALPHABIT ZEROLATENCY HACK
+        self.videopipe[-1].set_property('bitrate', 10000)
         self.videopipe[-1].set_property('key-int-max', 60)
-        self.videopipe[-1].set_property('speed-preset', 'veryfast')
+        #self.videopipe[-1].set_property('speed-preset', 'veryfast')
+        self.videopipe[-1].set_property('speed-preset', 'veryslow')
+        self.videopipe[-1].set_property('psy-tune', 'none')
+        self.videopipe[-1].set_property('cabac', False)
+        self.videopipe[-1].set_property('ref', 1)
+        self.videopipe[-1].set_property('bframes', 0)
+        #self.videopipe[-1].set_property('direct', 'spatial')
+        #self.videopipe[-1].set_property('deblock', '3:2')
+        self.videopipe[-1].set_property('mb-tree', 0)
+        self.videopipe[-1].set_property('me', 'umh')
+        self.videopipe[-1].set_property('subme', 2)
+        #self.videopipe[-1].set_property('sync-lookahead', 0)
+        self.videopipe[-1].set_property('rc-lookahead', 0)
+        self.videopipe[-1].set_property('trellis', 0)
+        #self.videopipe[-1].set_property('weightp', 0)
+        #self.videopipe[-1].set_property('aq-mode', 1)
+        #self.videopipe[-1].set_property('aq-strength', 1.10)
+        self.videopipe[-1].set_property('threads', 3)
+        self.videopipe[-1].set_property('sliced-threads', True)
 
         self.videopipe.append(Gst.ElementFactory.make("queue2"))
 
@@ -133,7 +161,7 @@ class ObYoutubeStreamer (ObGstStreamer):
         self.commonpipe.append(Gst.ElementFactory.make("queue2"))
 
         self.commonpipe.append(Gst.ElementFactory.make("rtmpsink"))
-        self.commonpipe[-1].set_property('location', obplayer.Config.setting('streamer_rtmp_url') + obplayer.Config.setting('streamer_youtube_key'))
+        self.commonpipe[-1].set_property('location', obplayer.Config.setting('streamer_rtmp_url') + obplayer.Config.setting('streamer_rtmp_key'))
 
         """
         self.shout2send = Gst.ElementFactory.make("shout2send", "shout2send")

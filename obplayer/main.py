@@ -33,6 +33,7 @@ import argparse
 
 import gi
 from gi.repository import GObject
+import os.path
 
 GObject.threads_init()
 
@@ -63,8 +64,6 @@ class ObMainApp:
         obplayer.Config = obplayer.ObConfigData()
 
         obplayer.Config.args = self.args
-        
-        obplayer.Password_System = obplayer.password_system
 
         if self.args.headless is True:
             obplayer.Config.headless = self.args.headless
@@ -128,6 +127,9 @@ class ObMainApp:
             #alert = obplayer.alerts.parse_alert_file("/media/work/Projects/OpenBroadcaster/Information/2014-08 Pelmorex Tie-In/CAP Examples/2example_CAPCP_with_Embedded_Large_Audio_File(2).xml")
             #alert = obplayer.alerts.parse_alert_file("/media/work/Projects/OpenBroadcaster/Information/2014-08 Pelmorex Tie-In/CAP Examples/4example_CAPCP_with_External_Large_Audio_File(2).xml")
             #obplayer.alerts.Processor.dispatch(alert)
+            if os.path.exists(os.path.expanduser('~/.openbroadcaster') + "/bg.jpg"):
+                ctrl = obplayer.Player.create_controller('bg_source', 60)
+                ctrl.add_request(media_type='image', start_time=time.time(), uri="file://" + os.path.expanduser('~/.openbroadcaster') + "/bg.jpg", duration=3600)
 
             #ctrl = obplayer.Player.create_controller('testsource', 60, default_play_mode='overlap')
             #ctrl.add_request(media_type='break', duration=40)

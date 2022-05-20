@@ -81,6 +81,11 @@ def init():
         obplayer.ObRTPStreamer = ObRTPStreamer()
         obplayer.ObRTPStreamer.start()
 
+    if obplayer.Config.setting('streamer_rtmp_enable'):
+        from .rtmp import ObRTMPStreamer
+        obplayer.RTMPStreamer = ObRTMPStreamer()
+        obplayer.RTMPStreamer.start()
+
     if obplayer.Config.setting('streamer_youtube_enable'):
         from .youtube import ObYoutubeStreamer
         obplayer.YoutubeStreamer = ObYoutubeStreamer()

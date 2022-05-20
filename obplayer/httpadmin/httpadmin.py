@@ -70,9 +70,9 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.root = 'obplayer/httpadmin/http'
 
         self.username = obplayer.Config.setting('http_admin_username')
-        self.password_hash = obplayer.Config.setting('http_admin_password_hash')
+        self.password = obplayer.Config.setting('http_admin_password')
         self.readonly_username = obplayer.Config.setting('http_readonly_username')
-        self.readonly_password_hash = obplayer.Config.setting('http_readonly_password_hash')
+        self.readonly_password = obplayer.Config.setting('http_readonly_password')
         self.readonly_allow_restart = obplayer.Config.setting('http_readonly_allow_restart')
         self.title = obplayer.Config.setting('http_admin_title')
 
@@ -154,6 +154,7 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.route('/inter_station_ctrl/stop', self.req_stop_inter_station_ctrl, 'admin')
         self.route('/inter_station_ctrl/is_live', self.req_is_live_inter_station_ctrl, 'admin')
         self.route('/logs/alert_log', self.req_export_alert_log, 'admin')
+        self.route('/rtmp_services', self.req_rtmp_services)
 
     def req_status_info(self, request):
         proc = subprocess.Popen([ "uptime", "-p" ], stdout=subprocess.PIPE)
@@ -389,6 +390,18 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         else:
             ctrl.enable()
         return { 'enabled': ctrl.enabled }
+
+    def req_rtmp_services(self, request):
+        try:
+            with open("obplayer/httpadmin/resources/RTMP.json", "r") as file:
+                #print(file.read())
+                #res = httpserver.Response()
+                #res.send_content('application/json', file.read())
+                return { 'data': file.read() }
+        except Exception as e:
+            print(e)
+            # Return nothing if we get a error opening the file.
+            return { 'data': 'TEST' }
 
     def req_alert_inject(self, request):
         if not hasattr(obplayer, 'alerts'):

@@ -37,8 +37,6 @@ Dependencies are Debian/Ubuntu package names.
 - ubuntu-restricted-addons
 - ubuntu-restricted-extras
 
-- pip3 install passlib[bcrypt]
-
 
 Recommended if using for CATV:
 

@@ -20,8 +20,6 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from ast import Try
-import signal
 import obplayer
 
 import apsw
@@ -176,24 +174,9 @@ class ObConfigData (ObData):
             self.settings_cache[row['name']] = value
             self.settings_type[row['name']] = datatype
 
-        password_system_move = False
-        
-        if self.setting("http_admin_password_hash", False) == False:
-            self.add_setting("http_admin_password_hash", obplayer.password_system.create_password_hash("admin"), "text")
-            password_system_move = True
-
-        if self.setting("http_readonly_password_hash", False) == False:
-            self.add_setting("http_readonly_password_hash", obplayer.password_system.create_password_hash("user"), "text")
-            password_system_move = True
-
         # keep track of settings as they have been edited.
         # they don't take effect until restart, but we want to keep track of them for subsequent edits.
         self.settings_edit_cache = self.settings_cache.copy()
-
-        if password_system_move:
-            obplayer.Log.log(message="Your player has moved from the old password system. Your passwods for the\
-                                        readonly and admin users have been reset to the defaults. Your player will now restart.", mtype='config')
-            os.kill(os.getpid(), signal.SIGINT)
 
         if not self.setting("video_out_enable"):
             self.headless = True
@@ -395,9 +378,27 @@ class ObConfigData (ObData):
         self.add_setting('streamer_rtp_clock_rate', '48000', 'text')
         self.add_setting('streamer_rtp_enable_rtcp', '1', 'bool')
 
-        self.add_setting('streamer_youtube_enable', '0', 'bool')
-        self.add_setting('streamer_youtube_key', '', 'text')
-        self.add_setting('streamer_youtube_mode', '240p', 'text')
+        self.add_setting('streamer_rtmp_enable', '0', 'bool')
+        self.add_setting('streamer_rtmp_key', '', 'text')
+        self.add_setting('streamer_rtmp_url', '', 'text')
+        self.add_setting('streamer_rtmp_mode', '240p', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'ultrafast', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'superfast', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'veryfast', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'faster', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'fast', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'medium', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'slow', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'slower', 'text')
+        self.add_setting('streamer_rtmp_encoder_preset', 'veryslow', 'text')
+        self.add_setting('streamer_rtmp_encoder_profile', 'baseline', 'text')
+        self.add_setting('streamer_rtmp_encoder_profile', 'main', 'text')
+        self.add_setting('streamer_rtmp_encoder_profile', 'high', 'text')
+        self.add_setting('streamer_rtmp_encoder_tune', 'film', 'text')
+        self.add_setting('streamer_rtmp_encoder_tune', 'animation', 'text')
+        self.add_setting('streamer_rtmp_encoder_tune', 'stillimage', 'text')
+        self.add_setting('streamer_rtmp_encoder_tune', 'fastdecode', 'text')
+        self.add_setting('streamer_rtmp_encoder_tune', 'zerolatency', 'text')
 
         self.add_setting('station_override_server_ip', '', 'text')
         self.add_setting('station_override_server_port', '', 'text')
@@ -443,6 +444,9 @@ class ObConfigData (ObData):
         self.add_setting('audio_in_enable_time', '1', 'int')
         self.add_setting('audio_in_disable_time', '10', 'int')
         self.add_setting('audio_in_threshold', '-28', 'int')
+        self.add_setting('audiolog_quality', '0.0', 'str')
+        self.add_setting('audiolog_enable_upload', '0', 'bool')
+        self.add_setting('audiolog_upload_appkey', '', 'text')
 
         self.add_setting('aoip_in_enable', '0', 'bool')
         self.add_setting('aoip_in_uri', '', 'text')
@@ -525,6 +529,7 @@ class ObConfigData (ObData):
         self.add_setting('alerts_play_moderates', '0', 'bool')
         self.add_setting('alerts_play_tests', '0', 'bool')
         self.add_setting('alerts_trigger_serial', '0', 'bool')
+        self.add_setting('alerts_trigger_serial_mode', 'normal', 'text')
         self.add_setting('alerts_trigger_serial_file', '/dev/ttyS0', 'text')
         self.add_setting('alerts_trigger_streamer', '0', 'bool')
         self.add_setting('alerts_purge_files', '1', 'bool')
@@ -561,11 +566,13 @@ class ObConfigData (ObData):
 
         self.row_addedit('settings', data)
 
-    def setting(self, name, use_edit_cache=False):
+    def setting(self, name, use_edit_cache=False, default=None):
         settings = self.settings_edit_cache if use_edit_cache else self.settings_cache
         try:
             return settings[name]
         except:
+            if default != None:
+                return default
             return False
 
     # save our settings into the database. update settings_edit_cache to handle subsequent edits.

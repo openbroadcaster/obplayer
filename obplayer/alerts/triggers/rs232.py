@@ -30,16 +30,17 @@ class SerialTrigger (object):
     def __init__(self):
         self.trigger_serial = obplayer.Config.setting('alerts_trigger_serial')
         self.trigger_serial_file = obplayer.Config.setting('alerts_trigger_serial_file')
+        self.serial_mode = obplayer.Config.setting('alerts_trigger_serial_mode', default='normal')
         self.trigger_serial_fd = None
         self.initialize()
 
     def initialize(self):
         try:
             obplayer.Log.log("initializing serial trigger on port " + self.trigger_serial_file, 'alerts')
-
-            #serial_fd = serial.Serial(self.trigger_serial_file, baudrate=9600)
-            #serial_fd.setDTR(False)
-            #serial_fd.close()
+            if self.serial_mode == "reverse":
+                serial_fd = serial.Serial(self.trigger_serial_file, baudrate=9600)
+                serial_fd.setDTR(True)
+                #serial_fd.close()
         except:
             obplayer.Log.log("failed to initalize serial trigger", 'alerts')
             obplayer.Log.log(traceback.format_exc(), 'error')
@@ -56,7 +57,10 @@ class SerialTrigger (object):
             if self.trigger_serial_fd:
                 self.trigger_serial_fd.close()
             self.trigger_serial_fd = serial.Serial(self.trigger_serial_file, baudrate=9600)
-            self.trigger_serial_fd.setDTR(True)
+            if self.serial_mode == "normal":
+                self.trigger_serial_fd.setDTR(True)
+            elif self.serial_mode == "reverse":
+                self.trigger_serial_fd.setDTR(False)
         except:
             obplayer.Log.log("failed to assert DTR on serial port " + self.trigger_serial_file, 'alerts')
             obplayer.Log.log(traceback.format_exc(), 'error')
@@ -65,9 +69,10 @@ class SerialTrigger (object):
         try:
             obplayer.Log.log("resetting DTR on serial port " + self.trigger_serial_file, 'alerts')
             if self.trigger_serial_fd:
-                self.trigger_serial_fd.setDTR(False)
-                self.trigger_serial_fd.close()
-                self.trigger_serial_fd = None
+                if self.serial_mode == "normal":
+                    self.trigger_serial_fd.setDTR(False)
+                elif self.serial_mode == "reverse":
+                    self.trigger_serial_fd.setDTR(True)
         except:
             obplayer.Log.log("failed to assert DTR on serial port " + self.trigger_serial_file, 'alerts')
             obplayer.Log.log(traceback.format_exc(), 'error')

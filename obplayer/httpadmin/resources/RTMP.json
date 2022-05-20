@@ -1,0 +1,39 @@
+{
+    "RTMP": [
+        {
+            "_README": "The number of sizes and bitrate should be the same number of items and indxes.",
+            "name": "YouTUbe",
+            "url": "rtmp://a.rtmp.youtube.com/live2/x/",
+            "video_sizes": ["240p", "360p", "480p", "720p", "1080p"],
+            "bitrates": ["700", "1000", "2000", "4000", "6000"]
+        },
+        {
+            "_README": "",
+            "name": "Facebook",
+            "url": "rtmp://live-api-s.facebook.com:443/rtmp/",
+            "video_sizes": ["240p", "360p", "480p", "720p", "1080p"],
+            "bitrates": ["700", "1000", "2000", "4000", "6000"]
+        },
+        {
+            "_README": "",
+            "name": "Restream",
+            "url": "rtmp://live.restream.io/live/",
+            "video_sizes": ["240p", "360p", "480p", "720p", "1080p"],
+            "bitrates": ["700", "1000", "2000", "4000", "6000"]
+        },
+        {
+            "_README": "",
+            "name": "Trovo Live",
+            "url": "rtmp://livepush.trovo.live/live/",
+            "video_sizes": ["240p", "360p", "480p", "720p", "1080p"],
+            "bitrates": ["700", "1000", "2000", "4000", "6000"]
+        },
+        {
+            "_README": "",
+            "name": "Mobcrush",
+            "url": "rtmp://live.mobcrush.net/stream/",
+            "video_sizes": ["240p", "360p", "480p", "720p", "1080p"],
+            "bitrates": ["700", "1000", "2000", "3000", "6000"]
+        }
+    ]
+}
