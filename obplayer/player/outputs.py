@@ -72,16 +72,16 @@ class ObAudioOutputBin (ObOutputBin):
         caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2"))
         self.elements.append(caps)
 
-        # create filter elements
-        level = Gst.ElementFactory.make('level', 'audio-out-level')
-        level.set_property('interval', int(0.5 * Gst.SECOND))
-        self.elements.append(level)
-
         #add volume sink
         self.volume = Gst.ElementFactory.make('volume', 'volumesink')
         self.volume.set_property('volume', obplayer.Config.setting('audio_output_volume'))
 
         self.elements.append(self.volume)
+
+        # create filter elements
+        level = Gst.ElementFactory.make('level', 'audio-out-level')
+        level.set_property('interval', int(0.5 * Gst.SECOND))
+        self.elements.append(level)
 
         self.tee = Gst.ElementFactory.make('tee', 'audio-out-interlink-tee')
         self.elements.append(self.tee)
