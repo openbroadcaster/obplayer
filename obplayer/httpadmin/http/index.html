@@ -1383,7 +1383,7 @@
                     <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','test') %> data-t>No Output</option>
                   </select></td>
               </tr>
-              <% if obplayer.Config.setting('audio_output_volume') == 'pulse': %>
+              <% if obplayer.Config.setting('audio_out_mode') != 'pulse': %>
               <tr>
                 <td data-t>audio_output_volume</td>
                 <td><input type="range" name="audio_output_volume" value="<%= obplayer.Config.setting('audio_output_volume',True) %>" min="0.0" max="1.0" step="0.1"></td>
