@@ -132,7 +132,11 @@ class ObGstPipeline (object):
         if message.get_structure() is None:
             return Gst.BusSyncReply.PASS
         if message.get_structure().get_name() == 'prepare-window-handle':
-            message.src.set_window_handle(obplayer.Gui.gst_xid)
+            if obplayer.Gui.gst_xid != "Wayland":
+                message.src.set_window_handle(obplayer.Gui.gst_xid)
+            else:
+                obplayer.Log.log(message="The player doesn't support Wayland due to limited python support. The player will now restart under X11.")
+                obplayer.Main.quit()
         return Gst.BusSyncReply.PASS
 
     # message handler (handles gstreamer messages posted to the bus)

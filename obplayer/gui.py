@@ -81,8 +81,13 @@ class ObGui:
         self.gui_gst_area.add_events(Gdk.EventMask.POINTER_MOTION_MASK)
         self.gui_gst_area.modify_bg(Gtk.StateFlags.NORMAL, gtk_black)
         self.gui_gst_area.realize()
-        self.gst_xid = self.gui_gst_area.get_window().get_xid()
-
+        
+        try:
+            # Test for X11 session.
+            self.gst_xid = self.gui_gst_area.get_window().get_xid()
+        except AttributeError:
+            # Set as wayland session.
+            self.gst_xid = "Wayland"
         """
         # TODO note, you changed these to refer to the drawing area instead of the viewport, so it's now a misnomer
         #self.gui_drawing_area_viewport = builder.get_object('drawingarea_slideshow')

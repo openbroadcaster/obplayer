@@ -1,13 +1,14 @@
 #!/bin/bash
 
 RESET=""
+WAYLAND_VIDEO="false"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
 while [ 1 ]
 do
-	./obplayer_check $@ $RESET
+	    GDK_BACKEND=x11 ./obplayer_check $@ $RESET 
 
         if [ $? -eq 37 ]
         then
@@ -17,5 +18,11 @@ do
         else
             RESET=""
         fi
+
+        if [ $WAYLAND_VIDEO == "true" ]; then
+            echo "Wayland not supported! Playing now running under X11 mode."
+            GDK_BACKEND=x11
+        fi
+
 	sleep 4
 done
