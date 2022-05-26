@@ -1,0 +1,12 @@
+- name: OpenBroadcaster Player
+  github: https://github.com/openbroadcaster/OBPlayer
+  brief: The Player Platform
+
+- name: OpenBroadcaster Server
+  github: https://github.com/openbroadcaster/OBServer
+  brief: The Server Platform
+
+- name: eBusker
+  github: https://github.com/openbroadcaster/eBuskerApp.git
+  brief: Application development with production ready code - APIs and more.
+
