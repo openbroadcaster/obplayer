@@ -385,6 +385,13 @@ LA.showNotConnected = function ()
   $('#info-status').attr('data-status','not-connected');
   $('#info-vu-meter').css('width', '0%');
   LA.playing = false;
+  setTimeout(() => {
+    $.post('/info/current_time',{},function(response) {
+      location.reload();
+    }).fail(() => {
+      console.log('TEST'); 
+    });
+  }, 5000);
 }
 
 
