@@ -128,7 +128,7 @@ class ObRTMPStreamer (ObGstStreamer):
         self.videopipe[-1].set_property('bitrate', 10000)
         self.videopipe[-1].set_property('key-int-max', 60)
         #self.videopipe[-1].set_property('speed-preset', 'veryfast')
-        self.videopipe[-1].set_property('speed-preset', 'veryslow')
+        self.videopipe[-1].set_property('speed-preset', obplayer.Config.setting('streamer_rtmp_encoder_preset'))
         self.videopipe[-1].set_property('psy-tune', 'none')
         self.videopipe[-1].set_property('cabac', False)
         self.videopipe[-1].set_property('ref', 1)
