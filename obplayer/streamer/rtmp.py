@@ -162,7 +162,7 @@ class ObRTMPStreamer (ObGstStreamer):
         self.commonpipe.append(Gst.ElementFactory.make("queue2"))
 
         self.commonpipe.append(Gst.ElementFactory.make("rtmpsink"))
-        self.commonpipe[-1].set_property('location', obplayer.Config.setting('streamer_rtmp_url') + obplayer.Config.setting('streamer_rtmp_key'))
+        self.commonpipe[-1].set_property('location', 'RTMP://' + obplayer.Config.setting('streamer_rtmp_url') + '/' + obplayer.Config.setting('streamer_rtmp_key'))
 
         """
         self.shout2send = Gst.ElementFactory.make("shout2send", "shout2send")
