@@ -432,6 +432,9 @@ LA.tick = function()
     LA.updateShow();
     LA.updateStatus();
 
+    // Stop gap fix for the LA not clearing right after a show ends. A reload fixes this.
+    location.reload();
+
     return;
   }
 
