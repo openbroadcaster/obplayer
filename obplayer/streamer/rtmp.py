@@ -75,6 +75,7 @@ class ObRTMPStreamer (ObGstStreamer):
         self.audiopipe.append(caps)
 
         self.encoder = Gst.ElementFactory.make("voaacenc")
+        self.encoder.set_property("bitrate", 200) # Lets lock the audio bitrate.
         #self.encoder = Gst.ElementFactory.make("lamemp3enc")
         #self.encoder = Gst.ElementFactory.make("opusenc")
         #self.encoder = Gst.ElementFactory.make("vorbisenc")
@@ -105,7 +106,7 @@ class ObRTMPStreamer (ObGstStreamer):
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=100,height=75,framerate=15/1"))
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=384,height=288,framerate=15/1"))
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=320,height=200,framerate=24/1,pixel-aspect-ratio=1/1"))
-        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate=30/1,pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1])))
+        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2}/1,pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], obplayer.Config.setting('streamer_rtmp_framerate'))))        
         self.videopipe.append(caps)
 
         #self.videopipe.append(Gst.ElementFactory.make("vp8enc"))

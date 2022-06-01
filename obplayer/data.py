@@ -399,6 +399,7 @@ class ObConfigData (ObData):
         self.add_setting('streamer_rtmp_encoder_tune', 'stillimage', 'text')
         self.add_setting('streamer_rtmp_encoder_tune', 'fastdecode', 'text')
         self.add_setting('streamer_rtmp_encoder_tune', 'zerolatency', 'text')
+        self.add_setting('streamer_rtmp_framerate', '24p', 'text')
 
         self.add_setting('station_override_server_ip', '', 'text')
         self.add_setting('station_override_server_port', '', 'text')

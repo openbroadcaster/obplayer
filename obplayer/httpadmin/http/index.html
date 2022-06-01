@@ -2162,6 +2162,16 @@
                 </select></td>
               </tr>
               <tr>
+                <td data-t>streamer_rtmp_framerate</td>
+                <td><select name="streamer_rtmp_framerate">
+                    <option value="24p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','24p') %>>24p</option>
+                    <option value="25p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','25p') %>>25p</option>
+                    <option value="30p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','30p') %>>30p</option>
+                    <option value="50p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','50p') %>>50p</option>
+                    <option value="60p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','60p') %>>60p</option>
+                </select></td>
+              </tr>
+              <tr>
                 <td data-t>streamer_rtmp_encoder_preset</td>
                 <td><select name="streamer_rtmp_encoder_preset">
                     <option value="ultrafast"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','ultrafast') %>>ultrafast</option>

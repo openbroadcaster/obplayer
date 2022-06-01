@@ -83,6 +83,7 @@ Streamer Tab
   streamer_rtmp_key: RTMP Streaming Key
   streamer_rtmp_url: RTMP Streaming URL
   streamer_rtmp_mode: RTMP Output Mode (Resolution)
+  streamer_rtmp_framerate: RTMP Output Framerate
   streamer_rtmp_encoder_preset: RTMP h.264 CPU Usage Preset
   streamer_rtmp_encoder_profile: RTMP h.264 Profile
   streamer_rtmp_encoder_tune: RTMP h.264 Tune
