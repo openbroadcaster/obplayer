@@ -70,8 +70,8 @@ class ObRTMPStreamer (ObGstStreamer):
         self.audiopipe.append(Gst.ElementFactory.make("audioresample"))
 
         caps = Gst.ElementFactory.make('capsfilter')
-        caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100"))
-        #caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=48000"))
+        #caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100"))
+        caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=48000"))
         self.audiopipe.append(caps)
 
         self.encoder = Gst.ElementFactory.make("voaacenc")
