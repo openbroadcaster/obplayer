@@ -51,7 +51,7 @@ class ObLog:
 
     def clear_recent_msgs(self):
         for item in self.recent_msgs:
-            if ((int(item['time']) - 60)) > 0:
+            if item['time'] != time.strftime('%H', time.gmtime()):
                 self.recent_msgs.remove(item)
 
     def format_logs(self, log_level=None):
@@ -121,14 +121,14 @@ class ObLog:
     def log(self, message, mtype='error', alert_data=None):
         # only log the same error message once every minute to keep logs small.
         for item in self.recent_msgs:
-            if item['msg'] == message:
+            # if item['msg'] == message:
+            #     return None
+            if item['msg'] == message and mtype == 'error':
                 return None
-            # if item['msg'] == message and mtype == 'error':
-            #     return None
-            # if item['msg'] == message and mtype == 'warning':
-            #     return None
-        #self.clear_recent_msgs()
-        self.recent_msgs.append({'msg': message, 'time': time.time()})
+            if item['msg'] == message and mtype == 'warning':
+                return None
+        self.recent_msgs.append({'msg': message, 'time': time.strftime('%H', time.gmtime())})
+        self.clear_recent_msgs()
         mstring = '[' + time.strftime('%b %d %Y %H:%M:%S', time.gmtime()) + ' UTC] [' + mtype + '] ' + message
 
         self.lock.acquire()
