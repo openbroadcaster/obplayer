@@ -123,6 +123,8 @@ class ObLog:
         for item in self.recent_msgs:
             if item == item['msg'] and mtype == 'error':
                 return None
+            if item == item['msg'] and mtype == 'warning':
+                return None
         self.clear_recent_msgs()
         self.recent_msgs.append({'msg': message, 'time': time.time()})
         mstring = '[' + time.strftime('%b %d %Y %H:%M:%S', time.gmtime()) + ' UTC] [' + mtype + '] ' + message
