@@ -321,7 +321,8 @@ class ObShow (object):
 
 class ObLiveAssistShow (ObShow):
     def start_show(self, present_time):
-        self.ctrl.stop_requests()
+        # Already changed in another branch. Should be here too.
+        # self.ctrl.stop_requests()
 
         # if we start the show less than 30 seconds in, then start it, otherwise start paused
         if present_time - self.show_data['start_time'] < 30:
