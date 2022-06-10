@@ -1,4 +1,0 @@
-paginate: 5
-exclude:
-  - README.md
-project_title: foo-bar
