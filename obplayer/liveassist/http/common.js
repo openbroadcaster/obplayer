@@ -198,7 +198,6 @@ LA.updateShow = function()
 
       $(response).each(function(index,group)
       {
-
         $('#main-buttons > div').append('<ul class="column" id="group-'+group_count+'"></ul>');
 
         var $group = $('#group-'+group_count);
