@@ -34,15 +34,10 @@ class ObGui:
         pass
 
     def create_window(self):
-
-        if obplayer.Config.headless:
-            return
-
-        else:
-            global Gtk, Gdk, GdkX11, GdkPixbuf, cairo
-            gi.require_version('Gtk', '3.0')
-            gi.require_version('GdkX11', '3.0')
-            from gi.repository import Gtk, Gdk, GdkX11, GdkPixbuf, cairo
+        global Gtk, Gdk, GdkX11, GdkPixbuf, cairo
+        gi.require_version('Gtk', '3.0')
+        gi.require_version('GdkX11', '3.0')
+        from gi.repository import Gtk, Gdk, GdkX11, GdkPixbuf, cairo
 
         builder = Gtk.Builder()
         builder.add_from_file('obplayer/ui.glade')
@@ -119,8 +114,7 @@ class ObGui:
             self.fullscreen_toggle(None)
 
         # show main window.
-        if obplayer.Config.headless == False:
-            self.gui_window.show()
+        self.gui_window.show()
 
     def application_shutdown(self, widget):
         obplayer.Main.quit()
@@ -145,9 +139,6 @@ class ObGui:
     """
 
     def fullscreen_toggle(self, widget):
-        if obplayer.Config.headless:
-            return
-
         if self.gui_window_fullscreen == False:
             self.gui_window.fullscreen()
             self.gui_window_fullscreen = True

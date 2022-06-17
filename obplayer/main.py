@@ -83,7 +83,8 @@ class ObMainApp:
             self.loop = GObject.MainLoop()
 
             obplayer.Gui = obplayer.ObGui()
-            obplayer.Gui.create_window()
+            if obplayer.Config.headless == False:
+                obplayer.Gui.create_window()
 
             self.load_module('player')
             self.load_module('httpadmin')
