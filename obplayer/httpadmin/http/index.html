@@ -1798,6 +1798,33 @@
                 <td data-t>overlay_enable</td>
                 <td><input type="checkbox" name="overlay_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('overlay_enable') %>></td>
               </tr>
+              <tr>
+                <td data-t>bug_overlay_enable</td>
+                <td><input type="checkbox" name="bug_overlay_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('bug_overlay_enable') %>></td>
+              </tr>
+              <tr>
+                <td data-t>bug_overlay_offset_x</td>
+                <td><input type="text" name="bug_overlay_offset_x" value="<%= obplayer.Config.setting('bug_overlay_offset_x',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>bug_overlay_offset_y</td>
+                <td><input type="text" name="bug_overlay_offset_y" value="<%= obplayer.Config.setting('bug_overlay_offset_y',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>bug_overlay_image</td>
+                <td>
+                  <form id="bug_overlay_image" method="post" action="/import_bug_image" enctype="multipart/form-data">
+                    <input name="bug_overlay_image" type="file">
+                    <br>
+                    <button type="submit">Import</button>
+                    <form>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p>The station bug is a logo that displays normally a conner of video signal.</p>
+                </td>
+              </tr>
             </tbody>
           </table>
 
