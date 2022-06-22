@@ -342,8 +342,8 @@ class ObConfigData (ObData):
         self.add_setting('overlay_enable', '0', 'bool')
 
         self.add_setting('bug_overlay_enable', '0', 'bool')
-        self.add_setting('bug_overlay_offset_x', '0', 'int')
-        self.add_setting('bug_overlay_offset_y', '0', 'int')
+        self.add_setting('bug_overlay_offset_x', '100', 'int')
+        self.add_setting('bug_overlay_offset_y', '100', 'int')
         self.add_setting('bug_overlay_image', self.datadir + '/bug.png', 'text')
 
         self.add_setting('streamer_enable', '0', 'bool')
