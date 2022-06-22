@@ -230,6 +230,20 @@ class ObVideoOutputBin (ObOutputBin):
             self.overlaybin = ObVideoOverlayBin()
             self.elements.append(self.overlaybin.get_bin())
 
+        # bug file location
+        bug_image = obplayer.Config.setting('bug_overlay_image')
+
+        if os.path.exists(bug_image):
+            if obplayer.Config.setting('bug_overlay_enable') == False:
+                # Adds the network/station logo over the video playout signal.
+                self.elements.append(Gst.ElementFactory.make('gdkpixbufoverlay', 'bug-overlay'))
+                self.elements[-1].set_property('location', bug_image)
+                self.elements[-1].set_property('offset-x', obplayer.Config.setting('bug_overlay_offset_x'))
+                self.elements[-1].set_property('offset-y', obplayer.Config.setting('bug_overlay_offset_y'))
+        else:
+            # Pass for now. Later we can add a log message about this error.
+            pass
+
         """
         ## create caps filter element to set the output video parameters
         caps_filter = Gst.ElementFactory.make('capsfilter', 'video-out-post-overlay-capsfilter')
