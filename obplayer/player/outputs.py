@@ -234,7 +234,7 @@ class ObVideoOutputBin (ObOutputBin):
         bug_image = obplayer.Config.setting('bug_overlay_image')
 
         if os.path.exists(bug_image):
-            if obplayer.Config.setting('bug_overlay_enable') == False:
+            if obplayer.Config.setting('bug_overlay_enable'):
                 # Adds the network/station logo over the video playout signal.
                 self.elements.append(Gst.ElementFactory.make('gdkpixbufoverlay', 'bug-overlay'))
                 self.elements[-1].set_property('location', bug_image)
