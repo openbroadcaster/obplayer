@@ -48,7 +48,7 @@ Outputs Tab
 
   Video Overlay Settings: Video Overlay Settings
 
-  overlay_enable: Enable Video Overlay
+  overlay_enable: Enable Alert Crawl Video Overlay
   bug_overlay_enable: Enable The Station Bug Overlay
   bug_overlay_offset_x: Station Bug X Offset
   bug_overlay_offset_y: Station Bug Y Offset
