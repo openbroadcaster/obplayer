@@ -146,6 +146,7 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.route('/pulse/mute', self.req_pulse_mute, 'admin')
         self.route('/pulse/select', self.req_pulse_select, 'admin')
         self.route('/import_leadin_audio', self.req_import_leadin_audio, 'admin')
+        self.route('/import_bug_image', self.req_import_bug_image, 'admin')
         self.route('/inter_station_ctrl/start', self.req_start_inter_station_ctrl, 'admin')
         self.route('/inter_station_ctrl/stop', self.req_stop_inter_station_ctrl, 'admin')
         self.route('/inter_station_ctrl/is_live', self.req_is_live_inter_station_ctrl, 'admin')
@@ -337,6 +338,40 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
             obplayer.Log.log("importing audio file {0}".format(audio_path), 'config')
             if file_ok:
                 return { 'status' : True, 'notice' : "settings-imported-leadin-audio" }
+            else:
+                return { 'status' : False, 'error' : errors }
+
+    def req_import_bug_image(self, request):
+        obplayer.Log.log("importing bug image file {0}.", 'config')
+        file_ok = False
+        file_type = None
+
+        errors = 'settings-imported-bug-image-error'
+
+        content = request.args.getvalue('bug_overlay_image')
+
+        if content != None:
+            tmp_image_path = os.path.join('/tmp/', 'bug')
+            with open(tmp_image_path, "wb") as file:
+                file.write(content)
+
+            ffmpeg_proc = subprocess.Popen(['ffmpeg', '-i', tmp_image_path, '-hide_banner'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            data = ffmpeg_proc.communicate(None, None)
+            print(data)
+            for image_format in ['jpg', 'png']:
+                format_data = data[1].decode()
+                if image_format in format_data and 'could not find codec parameters' not in format_data:
+                    file_ok = True
+                    file_type = image_format
+
+            if file_ok:
+                image_path = os.path.join(obplayer.ObData.get_datadir(), 'bug.' + file_type)
+                file = open(image_path, 'wb')
+                file.write(content)
+                file.close()
+
+                return { 'status' : True, 'notice' : "settings-imported-bug-image" }
             else:
                 return { 'status' : False, 'error' : errors }
 

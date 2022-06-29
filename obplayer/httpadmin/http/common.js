@@ -678,6 +678,26 @@ $(document).ready(function()
     });
   });
 
+  $('#bug_overlay_image').submit(function (event)
+  {
+    event.preventDefault();
+    console.log(this);
+    $.ajax( {
+      url: '/import_bug_image',
+      type: 'POST',
+      data: new FormData(this),
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        $('#notice').hide();
+        $('#error').hide();
+
+        if(response.status) $('#notice').html(Site.t('Responses', response.notice)).show();
+        else $('#error').html(Site.t('Responses', response.error)).show();
+      }
+    });
+  });
+
   // Check for button click to open icecast config dialog.
   $('#icecast_config_editor_open_btn').click(function (e) {
     $('#icecast_config_modal').show();
