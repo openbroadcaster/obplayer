@@ -698,6 +698,33 @@ $(document).ready(function()
     });
   });
 
+  document.getElementById('signal_test_btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    // Pull user selected value.
+
+    let signal_volume = document.getElementById('alerts_attention_signal_volume').value;
+  
+    // Get ref to audio element for playback.
+    let audio_player = document.getElementById('test_player');
+
+  });
+
+  document.getElementById('tts_test_btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    // Pull user selected value.
+    let alerts_voice_volume = document.getElementById('alerts_voice_volume').value;
+    // Get ref to audio element for playback.
+    let audio_player = document.getElementById('test_player');
+
+    $.post('/alerts/tts_test', {}, function (response) {
+      response = response.slice(1);
+      response = response.slice(0,-1);
+      //console.log(response);
+      player = new Audio("data:audio/mp3;base64," + response);
+      player.play();
+    });
+  });
+
   // Check for button click to open icecast config dialog.
   $('#icecast_config_editor_open_btn').click(function (e) {
     $('#icecast_config_modal').show();

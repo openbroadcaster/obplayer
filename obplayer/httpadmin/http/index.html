@@ -12389,6 +12389,32 @@
   	      </td>
               </tr>
               <tr>
+                <td data-t>alerts_attention_signal_volume</td>
+                <td>
+                  <input type="range" start="0" stop="100" id="alerts_attention_signal_volume" name="alerts_attention_signal_volume" value="<%= obplayer.Config.setting('alerts_attention_signal_volume', True) %>">
+  	            </td>
+              </tr>
+              <tr>
+                <!-- Hidden td for layout. -->
+                <td></td>
+                <td>
+                  <button id="signal_test_btn">Test</button>
+                </td>
+              </tr>
+              <tr>
+                <td data-t>alerts_voice_volume</td>
+                <td>
+                  <input type="range" start="0" stop="100" id="alerts_voice_volume" name="alerts_voice_volume" value="<%= obplayer.Config.setting('alerts_voice_volume', True) %>">
+  	            </td>
+              </tr>
+              <tr>
+                <!-- Hidden td for layout. -->
+                <td></td>
+                <td>
+                  <button id="tts_test_btn">Test</button>
+                </td>
+              </tr>
+              <tr>
                 <td data-t>alerts_repeat_interval</td>
                 <td><input type="text" name="alerts_repeat_interval" value="<%= obplayer.Config.setting('alerts_repeat_interval', True) %>" title="alerts_repeat_interval_tooltip" data-t></td>
               </tr>

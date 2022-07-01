@@ -31,6 +31,7 @@ import os.path
 import traceback
 import subprocess
 import re
+import base64
 
 
 from obplayer.httpadmin import httpserver
@@ -142,6 +143,7 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.route('/alerts/replay', self.req_alert_replay, 'admin')
         self.route('/alerts/geocodes_list', self.req_geocodes_list)
         self.route('/alerts/indigenous_languages', self.req_indigenous_languages_list)
+        self.route('/alerts/tts_test', self.req_tts_test)
         self.route('/pulse/volume', self.req_pulse_volume, 'admin')
         self.route('/pulse/mute', self.req_pulse_mute, 'admin')
         self.route('/pulse/select', self.req_pulse_select, 'admin')
@@ -438,6 +440,27 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
                 obplayer.alerts.Processor.cancel_alert(identifier)
             return { 'status' : True }
         return { 'status' : False, 'error' : "alerts-disabled-error" }
+
+    def req_tts_test(self, request):
+        # clear old files if they are found.
+        file = '/tmp/tts.txt'
+        if os.path.exists(file):
+            os.remove(file)
+        file = '/tmp/tts.wav'
+        if os.path.exists(file):
+            os.remove(file)
+        file = '/tmp/tts.mp3'
+        if os.path.exists(file):
+            os.remove(file)
+        # Create TTS message to speak.
+        with open('/tmp/tts.txt', 'w') as file:
+            file.write('O, B player T, T, S Demo. Testing 1, 2, 3, 4.')
+
+        os.system('espeak -s 150 -f /tmp/tts.txt -w /tmp/tts.wav')
+        os.system('ffmpeg -i /tmp/tts.wav /tmp/tts.mp3')
+        with open('/tmp/tts.mp3', 'rb') as file:
+            data = file.read()
+        return str(base64.urlsafe_b64encode(data))
 
     def req_pulse_volume(self, request):
         if not hasattr(obplayer, 'pulse'):

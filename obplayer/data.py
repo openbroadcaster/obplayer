@@ -492,6 +492,8 @@ class ObConfigData (ObData):
         self.add_setting('alerts_language_secondary', 'french', 'text')
         self.add_setting('alerts_voice_primary', 'en', 'text')
         self.add_setting('alerts_voice_secondary', 'fr', 'text')
+        self.add_setting('alerts_voice_volume', 100, 'int')
+        self.add_setting('alerts_attention_signal_volume', 100, 'int')
         self.add_setting('alerts_geocode', '10,11,12,13,24,35,46,47,48,59,60,61,62', 'text')
         self.add_setting('alerts_broadcast_message_in_indigenous_languages', '0', 'bool')
         self.add_setting('alerts_selected_indigenous_languages', '', 'text')

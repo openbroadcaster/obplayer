@@ -460,7 +460,7 @@ class ObAlert (object):
                 # if aws errors use espeak
                 obplayer.Log.log('AWS error such as network outage, or invaild aws ids/keys in use. error: {0}\nUsing local tts as backup audio.', 'error'.format(e))
                 voice = 'en'
-                proc = subprocess.Popen([ 'espeak', '-m', '-v', voice, '-s', '140', '--stdout' ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+                proc = subprocess.Popen([ 'espeak', '-m', '-v', voice, '-s', '140', '-a', str(obplayer.Config.setting('alerts_voice_volume')), '--stdout' ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
                 message_text = html.escape(message_text).encode('utf-8')
                 (stdout, stderr) = proc.communicate(b"...<break time=\"1s\" /> " + message_text)
                 proc.wait()
@@ -468,7 +468,7 @@ class ObAlert (object):
                 with open(path, 'wb') as f:
                     f.write(stdout)
         else:
-            proc = subprocess.Popen([ 'espeak', '-m', '-v', voice, '-s', '140', '--stdout' ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+            proc = subprocess.Popen([ 'espeak', '-m', '-v', voice, '-s', '140',  '-a', str(obplayer.Config.setting('alerts_voice_volume')), '--stdout' ], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
             message_text = html.escape(message_text).encode('utf-8')
             (stdout, stderr) = proc.communicate(b"...<break time=\"1s\" /> " + message_text)
             proc.wait()
