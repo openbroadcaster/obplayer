@@ -120,7 +120,7 @@ class ObHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
                     return view(request)
                 else:
                     raise HTTPError("view object is invalid type: " + str(view))
-        raise HTTPNotFoundError(str(path) + " not found")
+        raise HTTPNotFoundError(str(request.path) + " not found")
 
 
 class ObHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
