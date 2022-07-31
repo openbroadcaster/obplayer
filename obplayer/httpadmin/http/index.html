@@ -23,7 +23,6 @@
     <body>
 
       <h1><img src="/oblogo.svg" width="150" /><%= obplayer.HTTPAdmin.title %></h1>
-      <pre><%= obplayer.SUPPORTED %></pre>
       <% if obplayer.SUPPORTED == False: %>
           <div class="error">This system isn't a ML350/Raspberry Pi. This is a unsupported system, so your results may very.</div>
       <% end %>
