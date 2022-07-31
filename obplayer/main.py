@@ -63,6 +63,9 @@ class ObMainApp:
 
         obplayer.Config.args = self.args
 
+        if os.environ['HOME'] != None:
+            obplayer.SUPPORTED = bool(int(os.environ['OBPLAYER_SUPPORTED']))
+
         if self.args.headless is True:
             obplayer.Config.headless = self.args.headless
 

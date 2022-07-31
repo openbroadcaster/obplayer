@@ -23,6 +23,10 @@
     <body>
 
       <h1><img src="/oblogo.svg" width="150" /><%= obplayer.HTTPAdmin.title %></h1>
+      <pre><%= obplayer.SUPPORTED %></pre>
+      <% if obplayer.SUPPORTED == False: %>
+          <div class="error">This system isn't a ML350/Raspberry Pi system. This is a unsupported this system, so your results may very.</div>
+      <% end %>
 
       <% if obplayer.Config.setting('http_admin_password',True) == 'admin': %>
           <div class="error">The admin password is set to the default.  Please go to the HTTP(S) Admin tab and change it.</div>
