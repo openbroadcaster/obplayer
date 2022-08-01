@@ -106,7 +106,7 @@ class ObRTMPStreamer (ObGstStreamer):
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=100,height=75,framerate=15/1"))
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=384,height=288,framerate=15/1"))
         #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=320,height=200,framerate=24/1,pixel-aspect-ratio=1/1"))
-        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2}/1,pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], obplayer.Config.setting('streamer_rtmp_framerate'))))        
+        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2}/1,pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], obplayer.Config.setting('streamer_rtmp_framerate')[:-1])))        
         self.videopipe.append(caps)
 
         #self.videopipe.append(Gst.ElementFactory.make("vp8enc"))
@@ -162,7 +162,13 @@ class ObRTMPStreamer (ObGstStreamer):
         self.commonpipe.append(Gst.ElementFactory.make("queue2"))
 
         self.commonpipe.append(Gst.ElementFactory.make("rtmpsink"))
-        self.commonpipe[-1].set_property('location', 'rtmp://' + obplayer.Config.setting('streamer_rtmp_url') + '/' + obplayer.Config.setting('streamer_rtmp_key'))
+
+        rtmp_str = obplayer.Config.setting('streamer_rtmp_url') + '/' + obplayer.Config.setting('streamer_rtmp_key')
+
+        if rtmp_str.startswith("rtmp://") or rtmp_str.startswith("rtmps://"):
+            self.commonpipe[-1].set_property('location', rtmp_str)
+        else:
+            self.commonpipe[-1].set_property('location', 'rtmp://' + rtmp_str)
 
         """
         self.shout2send = Gst.ElementFactory.make("shout2send", "shout2send")
