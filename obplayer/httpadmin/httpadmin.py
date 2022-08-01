@@ -168,8 +168,8 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         for stream in requests.keys():
             data[stream] = { key: requests[stream][key] for key in requests[stream].keys() if key in select_keys }
         data['audio_levels'] = obplayer.Player.get_audio_levels()
-        if obplayer.scheduler.first_sync == False:
-            if hasattr(obplayer, 'scheduler'):
+        if hasattr(obplayer, 'Scheduler'):
+            if obplayer.scheduler.first_sync == False:
                 data['show'] = obplayer.Scheduler.get_show_info()
         else:
             data['show'] = None
