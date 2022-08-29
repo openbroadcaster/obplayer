@@ -35,10 +35,11 @@ from .base import ObGstStreamer
 
 
 output_settings = {
-    '240p': (426, 240, 700),
-    '360p': (640, 360, 1000),
-    '480p': (854, 480, 2000),
-    '720p': (1280, 720, 10000),
+    '240p': (426, 240),
+    '360p': (640, 360),
+    '480p': (854, 480),
+    '720p': (1280, 720),
+    '1080p': (1920, 1080),
 }
 
 class ObRTMPStreamer (ObGstStreamer):
@@ -75,7 +76,7 @@ class ObRTMPStreamer (ObGstStreamer):
         self.audiopipe.append(caps)
 
         self.encoder = Gst.ElementFactory.make("voaacenc")
-        self.encoder.set_property("bitrate", 200) # Lets lock the audio bitrate.
+        self.encoder.set_property("bitrate", obplayer.Config.setting('streamer_rtmp_audio_bitrate'))
         #self.encoder = Gst.ElementFactory.make("lamemp3enc")
         #self.encoder = Gst.ElementFactory.make("opusenc")
         #self.encoder = Gst.ElementFactory.make("vorbisenc")
@@ -102,11 +103,8 @@ class ObRTMPStreamer (ObGstStreamer):
         self.videopipe.append(Gst.ElementFactory.make("videoscale"))
 
         caps = Gst.ElementFactory.make('capsfilter', "videocapsfilter")
-        #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=384,height=288,framerate=15/1"))
-        #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=100,height=75,framerate=15/1"))
-        #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=384,height=288,framerate=15/1"))
-        #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=320,height=200,framerate=24/1,pixel-aspect-ratio=1/1"))
-        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2}/1,pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], obplayer.Config.setting('streamer_rtmp_framerate')[:-1])))        
+
+        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2}/1,pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], obplayer.Config.setting('streamer_rtmp_framerate'))))
         self.videopipe.append(caps)
 
         #self.videopipe.append(Gst.ElementFactory.make("vp8enc"))
@@ -116,29 +114,29 @@ class ObRTMPStreamer (ObGstStreamer):
         
         # ! nvv4l2h264enc ! h264parse ! splitmuxsink
 
-        
-        #self.videopipe[-1].set_property('resolution', obplayer.Config.setting('streamer_rtmp_mode'))
-        #self.videopipe[-1].set_property('preset', obplayer.Config.setting('streamer_rtmp_encoder_preset'))
-        
-        # self.videopipe[-1].set_property('profile', 'baseline')
-        # self.videopipe[-1].set_property('level', 3.2)
-        # these are not properties but a pad settings
+        # !! these are not properties but pad settings !!
+        # self.videopipe[-1].set_property('level', 3.2)        
+        # self.videopipe[-1].set_property('profile', obplayer.Config.setting('streamer_rtmp_encoder_profile')) # e.g. baseline, main etc
 
-        # ALPHABIT ZEROLATENCY HACK
-        self.videopipe[-1].set_property('bitrate', 10000)
-        self.videopipe[-1].set_property('key-int-max', 60)
-        #self.videopipe[-1].set_property('speed-preset', 'veryfast')
+        self.videopipe[-1].set_property('bitrate', obplayer.Config.setting('streamer_rtmp_bitrate'))
+        self.videopipe[-1].set_property('key-int-max', 60) # some automation on this for different frame rates could be good
         self.videopipe[-1].set_property('speed-preset', obplayer.Config.setting('streamer_rtmp_encoder_preset'))
-        self.videopipe[-1].set_property('psy-tune', 'none')
+        self.videopipe[-1].set_property('tune', obplayer.Config.setting('streamer_rtmp_encoder_tune'))
+        self.videopipe[-1].set_property('psy-tune', obplayer.Config.setting('streamer_rtmp_encoder_psytune'))
+                
+        # ALPHABIT LOW LATENCY PRESET
+        #self.videopipe[-1].set_property('speed-preset', 'veryfast') # to be moved to preset collection when implemented
+        #self.videopipe[-1].set_property('complexity', 2) # !! for use with openh264enc, not x264enc !! Low Complexity/High Speed = 0, Medium = 1, High Complexity/Low Speed = 2
         self.videopipe[-1].set_property('cabac', False)
         self.videopipe[-1].set_property('ref', 1)
         self.videopipe[-1].set_property('bframes', 0)
         #self.videopipe[-1].set_property('direct', 'spatial')
         #self.videopipe[-1].set_property('deblock', '3:2')
+        #self.videopipe[-1].set_property('deblocking', 0) # !! for use with openh264enc, not x264enc !! 0 = on, 1 = off, 2 = on except for slice boundaries
         self.videopipe[-1].set_property('mb-tree', 0)
         self.videopipe[-1].set_property('me', 'umh')
         self.videopipe[-1].set_property('subme', 2)
-        #self.videopipe[-1].set_property('sync-lookahead', 0)
+        self.videopipe[-1].set_property('sync-lookahead', 0)
         self.videopipe[-1].set_property('rc-lookahead', 0)
         self.videopipe[-1].set_property('trellis', 0)
         #self.videopipe[-1].set_property('weightp', 0)
@@ -146,6 +144,9 @@ class ObRTMPStreamer (ObGstStreamer):
         #self.videopipe[-1].set_property('aq-strength', 1.10)
         self.videopipe[-1].set_property('threads', 3)
         self.videopipe[-1].set_property('sliced-threads', True)
+
+		# CUSTOM PRESET
+        # TODO: Build custom presets into json files in a new subdir, player to autopopulate list of options to GUI
 
         self.videopipe.append(Gst.ElementFactory.make("queue2"))
 
@@ -163,8 +164,10 @@ class ObRTMPStreamer (ObGstStreamer):
 
         self.commonpipe.append(Gst.ElementFactory.make("rtmpsink"))
 
+		# Flexible RTMP URL input handling
         rtmp_str = obplayer.Config.setting('streamer_rtmp_url') + '/' + obplayer.Config.setting('streamer_rtmp_key')
 
+		# TODO: create regex function to make check ignore case
         if rtmp_str.startswith("rtmp://") or rtmp_str.startswith("rtmps://"):
             self.commonpipe[-1].set_property('location', rtmp_str)
         else:
