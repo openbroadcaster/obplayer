@@ -2164,15 +2164,39 @@
               <tr>
                 <td data-t>streamer_rtmp_framerate</td>
                 <td><select name="streamer_rtmp_framerate">
-                    <!-- This needs to be fixed. Broadcasters, and other users who need to output 29.97 cann't as gstreamer throws a error when using the disabbled fframerates. -->
-                    <!-- <option value="23.976p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','23.976p') %>>23.976p</option> -->
-                    <option value="24p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','24p') %>>24p</option>
-                    <option value="25p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','25p') %>>25p</option>
+                	<!-- This needs to be fixed. Broadcasters, and other users who need to output 29.97 cann't as gstreamer throws a error when using the disabbled fframerates. -->
+                	<!-- <option value="23.976p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','23.976p') %>>23.976p</option> -->
+                    <option value="24"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','24') %>>24</option>
+                    <option value="25"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','25') %>>25</option>
                     <!-- <option value="29.97p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','29.97p') %>>29.97p</option> -->
-                    <option value="30p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','30p') %>>30p</option>
-                    <option value="50p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','50p') %>>50p</option>
+                    <option value="30"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','30') %>>30</option>
+                    <option value="50"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','50') %>>50</option>
                     <!-- <option value="59.94p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','59.94p') %>>59.94p</option> -->
-                    <option value="60p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','60p') %>>60p</option>
+                    <option value="60"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','60') %>>60</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td data-t>streamer_rtmp_bitrate</td>
+                <td><input type="text" name="streamer_rtmp_bitrate" value="<%= obplayer.Config.setting('streamer_rtmp_bitrate',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>streamer_rtmp_audio_bitrate</td>
+                <td><select name="streamer_rtmp_audio_bitrate">
+                    <option value="64"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_audio_bitrate','64') %>>64 kbps</option>
+                    <option value="96"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_audio_bitrate','96') %>>96 kbps</option>
+                    <option value="128"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_audio_bitrate','128') %>>128 kbps</option>
+                    <option value="160"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_audio_bitrate','160') %>>160 kbps</option>
+                    <option value="192"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_audio_bitrate','192') %>>192 kbps</option>
+                    <option value="256"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_audio_bitrate','256') %>>256 kbps</option>
+                    <option value="320"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_audio_bitrate','320') %>>320 kbps</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td data-t>streamer_rtmp_preset_collection</td>
+                <td><select name="streamer_rtmp_preset_collection">
+                    <option value="custom"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_preset_collection','none') %>>None</option>
+                    <option value="alphabitll"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_preset_collection','alphabitll') %>>Alphabit Low Latency</option>
+                    <option value="custom"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_preset_collection','custom') %>>Custom</option>
                 </select></td>
               </tr>
               <tr>
@@ -2184,11 +2208,12 @@
                     <option value="faster"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','faster') %>>faster</option>
                     <option value="fast"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','fast') %>>fast</option>
                     <option value="medium"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','medium') %>>medium</option>
-                    <option value="slow"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','slow') %>>slow</option>
-                    <option value="slower"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','slower') %>>slower</option>
-                    <option value="veryslow"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','veryslow') %>>veryslow</option>
+					<!-- <option value="slow"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','slow') %>>slow</option> -->
+                    <!-- <option value="slower"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','slower') %>>slower</option> -->
+                    <!-- <option value="veryslow"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_preset','veryslow') %>>veryslow</option> -->
                 </select></td>
               </tr>
+              <tr>
                 <td data-t>streamer_rtmp_encoder_profile</td>
                 <td><select name="streamer_rtmp_encoder_profile">
                     <option value="baseline"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_profile','baseline') %>>Baseline</option>
@@ -2199,11 +2224,20 @@
               <tr>
                 <td data-t>streamer_rtmp_encoder_tune</td>
                 <td><select name="streamer_rtmp_encoder_tune">
-                    <option value="film"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','film') %>>Film</option>
-                    <option value="animation"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','animation') %>>Animation</option>
                     <option value="stillimage"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','stillimage') %>>Still Image</option>
                     <option value="fastdecode"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','fastdecode') %>>Fast Decode</option>
                     <option value="zerolatency"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_tune','zerolatency') %>>Zero Latency</option>
+                </select></td>
+              </tr>
+              <tr>
+                <td data-t>streamer_rtmp_encoder_psytune</td>
+                <td><select name="streamer_rtmp_encoder_psytune">
+                    <option value="none"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_psytune','none') %>>none</option>
+                    <option value="film"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_psytune','film') %>>film</option>
+                    <option value="animation"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_psytune','animation') %>>animation</option>
+                    <option value="grain"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_psytune','grain') %>>grain</option>
+                    <option value="psnr"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_psytune','psnr') %>>psnr</option>
+                    <option value="ssim"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_psytune','ssim') %>>ssim</option>
                 </select></td>
               </tr>
               <tr>

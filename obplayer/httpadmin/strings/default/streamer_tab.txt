@@ -84,6 +84,10 @@ Streamer Tab
   streamer_rtmp_url: RTMP Streaming URL
   streamer_rtmp_mode: RTMP Output Mode (Resolution)
   streamer_rtmp_framerate: RTMP Output Framerate
+  streamer_rtmp_bitrate: RTMP Video Output Bitrate (kbps)
+  streamer_rtmp_audio_bitrate: RTMP Audio Output Bitrate (kbps)
+  streamer_rtmp_preset_collection: RTMP Preset Collection (Not Currently Implemented)
   streamer_rtmp_encoder_preset: RTMP h.264 CPU Usage Preset
-  streamer_rtmp_encoder_profile: RTMP h.264 Profile
-  streamer_rtmp_encoder_tune: RTMP h.264 Tune
+  streamer_rtmp_encoder_profile: RTMP h.264 Profile (Not Currently Implemented)
+  streamer_rtmp_encoder_tune: RTMP h.264 Non-Psychovisual Tuning Option
+  streamer_rtmp_encoder_psytune: RTMP h.264 Psychovisual Tuning  Option
