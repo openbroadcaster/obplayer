@@ -35,7 +35,7 @@ class Site {
       this.logs_open_btn = document.getElementById('logs-open');
       this.logs_open_btn.addEventListener('click', () => this.Open_Window('logs.html'));
     }
-    if (typeof(document.getElementById('maintenance_btn')) != undefined) {
+    if (typeof(document.getElementById('maintenance_btn')) != undefined && document.getElementById('maintenance_btn') != null) {
         document.getElementById('maintenance_btn').addEventListener('click', e => {
         e.preventDefault();
         $.post('/toggle_scheduler',{},function(response) {
