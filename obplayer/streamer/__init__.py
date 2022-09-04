@@ -96,9 +96,6 @@ def quit():
         obplayer.RTSPStreamer.quit()
     if obplayer.RTPStreamer:
         obplayer.RTPStreamer.quit()
-    if obplayer.YoutubeStreamer:
-        obplayer.YoutubeStreamer.quit()
-
 
 """
 def start_streamer(name, clsname):
