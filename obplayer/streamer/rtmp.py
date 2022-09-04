@@ -119,7 +119,7 @@ class ObRTMPStreamer (ObGstStreamer):
         # self.videopipe[-1].set_property('profile', obplayer.Config.setting('streamer_rtmp_encoder_profile')) # e.g. baseline, main etc
 
         self.videopipe[-1].set_property('bitrate', obplayer.Config.setting('streamer_rtmp_bitrate'))
-        self.videopipe[-1].set_property('key-int-max', 60) # some automation on this for different frame rates could be good
+        self.videopipe[-1].set_property('key-int-max', int(obplayer.Config.setting('streamer_rtmp_framerate')[:-1]) * 2)
         self.videopipe[-1].set_property('speed-preset', obplayer.Config.setting('streamer_rtmp_encoder_preset'))
         self.videopipe[-1].set_property('tune', obplayer.Config.setting('streamer_rtmp_encoder_tune'))
         self.videopipe[-1].set_property('psy-tune', obplayer.Config.setting('streamer_rtmp_encoder_psytune'))
