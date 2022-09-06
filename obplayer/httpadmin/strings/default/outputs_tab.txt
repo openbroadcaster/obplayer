@@ -42,19 +42,14 @@ Outputs Tab
   offair_audiolog_icecast_bitrate: Streaming server bitrate
   offair_audiolog_icecast_password: Streaming server password
 
-
-  Video Output Settings: Video Output Settings
-
-  video_out_enable: Enable Video Output
-  video_out_mode: Video Output Mode
-  video_out_resolution: Video Output Resolution
-  default: default
-
-
   Video Overlay Settings: Video Overlay Settings
 
   overlay_enable: Enable Video Overlay
 
+  bug_overlay_enable: Enable The Station Bug Overlay
+  bug_overlay_offset_x: Station Bug X Offset
+  bug_overlay_offset_y: Station Bug Y Offset
+  bug_overlay_image: Station Logo Image
 
   LED Sign Settings: LED Sign Settings
 
