@@ -1,0 +1,9 @@
+[
+    {
+        "name": "Service Name Here",
+        "audio_bitrate": 160,
+        "video_bitrate": 60000,
+        "resolution": "1920x1080",
+        "rtmp_url": "rtmp://127.0.0.1:1935/TEST"
+    }
+]

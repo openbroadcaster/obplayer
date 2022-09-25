@@ -73,6 +73,9 @@ class ObData (object):
         if os.access(cls.datadir + '/news_feed_override', os.F_OK) == False:
             os.mkdir(cls.datadir + '/news_feed_override')
 
+        if os.access(cls.datadir + '/streaming_profiles', os.F_OK) == False:
+            os.mkdir(cls.datadir + '/streaming_profiles')
+
     @classmethod
     def get_datadir(cls, subdir=None):
         if subdir:
