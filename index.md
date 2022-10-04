@@ -327,9 +327,6 @@ __Pro Tip__ In the `Admin` menu set `Log Level` to only show heart beats and ale
 
 In Canada, a [Standard Geographical Classification](https://en.wikipedia.org/wiki/Standard_Geographical_Classification_code_%28Canada%29) uses a numeric code to identify discrete areas, based on census districts. Alerts will be filtered to include only those that match, contain, or are contained by the set Alerting District. 
 
-<div id="map" name="map">
-</div>
-
 <br/>
 
 # CAP Alerts Configuration Page
