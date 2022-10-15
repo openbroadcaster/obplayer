@@ -23,7 +23,7 @@ Dashboard access is for first time setup and advance troubleshooting. Once the P
 
 # Main Status  
 
-![Status Page Screenshot](/player/img/status_page.png ){: .screenshot}
+![Status Page Screenshot](/obplayer/img/status_page.png ){: .screenshot}
 	
 Displays real time information for the current state of the Player. If audio signal is present, a  signal level indicator will respond to output from both audio channels. All system operations are displayed on a real time Log displayed on the __Status Page. 
 
@@ -78,7 +78,7 @@ Mount points generated for Icecast monitoring enabled in the dashboard.
 
 # Administration 
 
-![ Admin Menu](/player/img/admin_tab.png ){: .screenshot}
+![ Admin Menu](/obplayer/img/admin_tab.png ){: .screenshot}
 
 Admin Menu is visible to the Admin user only.
 
@@ -96,7 +96,7 @@ __Settings file and passwords__  Passwords will not be exported or revealed.  Re
 
 ## Audio and Video Outputs
 
-![ Outputs Page](/player/img/outputs_tab.png ){: .screenshot}
+![ Outputs Page](/obplayer/img/outputs_tab.png ){: .screenshot}
 
 `Audio Output Settings` modes available to Select:
 
@@ -132,7 +132,7 @@ Video output `Resolution` is automatically detected and displays values when vid
 
 ## Audio and Video Sources
 
-![ Sources Page](/player/img/sources_tab.png ){: .screenshot}
+![ Sources Page](/obplayer/img/sources_tab.png ){: .screenshot}
 
 `Fallback Player Settings` Enables and specifies file location of Fall Back Media.  Fallback media directory and sub directory items are played at random, but all items will be played before any media items are played a second time. Default is 15 Seconds for image display.  
 
@@ -173,7 +173,7 @@ Enable `Audio Input Settings` External Sources and enables pass-thru and capture
 
 ## HTTP(s) Admin
 
-![ Security Page](/player/img/https-admin.png ){: .screenshot}
+![ Security Page](/obplayer/img/https-admin.png ){: .screenshot}
 
 Set Global language
 
@@ -189,7 +189,7 @@ Set Text to display in browser Tab and Bookmarks Shortcut
 
 ## Live Assist
 
-![ Live Assist Page](/player/img/live_tab.png ){: .screenshot}
+![ Live Assist Page](/obplayer/img/live_tab.png ){: .screenshot}
 
 Enable `Live Assist`
 
@@ -202,7 +202,7 @@ More info on using LIVE Assist [Here](https://support.openbroadcaster.com/live-a
 <br/>
 ## Location Map
 
-![ Location Page Screenshot](/player/img/map_tab.png ){: .screenshot}
+![ Location Page Screenshot](/obplayer/img/map_tab.png ){: .screenshot}
 
 Establishes geographic coordinates for an installation. Coordinates are reported back to an OpenBroadcaster Server, if Sync is enabled to display players and status on a geo map using the [Geo Mapping](/mapping) Module.
 	
@@ -210,7 +210,7 @@ Establishes geographic coordinates for an installation. Coordinates are reported
 
 ## Summary Page
 
-![ Summary Page Screenshot](/player/img/summary_tab.png ){: .screenshot}	
+![ Summary Page Screenshot](/obplayer/img/summary_tab.png ){: .screenshot}	
 
 Displays all current configuration settings and additional info; `Current Version\Branch, GPS Coordinates and Local Time`.
 
@@ -218,7 +218,7 @@ Displays all current configuration settings and additional info; `Current Versio
 
 ## Sync/Media
 
-![ Sync/Media Page](/player/img/sync_tab.png ){: .screenshot}
+![ Sync/Media Page](/obplayer/img/sync_tab.png ){: .screenshot}
 
 *Sync URL* should be in the format `http://server_ip_address/remote.php` or `https://server_ip_address/remote.php` Device ID and Password should match what was entered in server to provision player. These settings are ignored if Sync/Media settings are disabled such as configured for standalone alerting operation
 
@@ -242,13 +242,13 @@ Disables the scheduler's request queue, so the core player loop will ignore any 
 
 # Streaming Media
 
-![ Streaming Page](/player/img/stream_tab.png ){: .screenshot}
+![ Streaming Page](/obplayer/img/stream_tab.png ){: .screenshot}
 
 ## Icecast Streaming
 
 Main streaming mount point
 
-![ Icecast Configuration](/player/img/icecast_configuration.png ){: .screenshot}
+![ Icecast Configuration](/obplayer/img/icecast_configuration.png ){: .screenshot}
 
 Streaming of player output (audio and video) using Icecast
 
@@ -274,7 +274,7 @@ Allows creating a separate feed at a different quality to be sent to a STL.  ie 
    
 ## RTP Livewire Multicast Streaming  
 
-![ RTP Livewire Multicast Streaming ](/player/img/rtp-livewire-streaming.png ){: .screenshot}
+![ RTP Livewire Multicast Streaming ](/obplayer/img/rtp-livewire-streaming.png ){: .screenshot}
 
 Send and receive AoIP to RTP devices and AXIA Digital Consoles.
 
@@ -288,7 +288,7 @@ Select Encoding Format; 24-bit PCM Livewire, 16-bit PCM, Opus and Mp3
         
 ## YouTube Live Channel 
 
-![ YouTube Streaming ](/player/img/youtube-streaming.png ){: .screenshot}
+![ YouTube Streaming ](/obplayer/img/youtube-streaming.png ){: .screenshot}
 
 Create LIVE YouTube channel 
 
@@ -315,7 +315,7 @@ Please refer to the National Public Alerting System [Common Look and Feel Guidan
 
 ## Heart Beats
 
-![ System Heart Beats ](/player/img/heartbeats.png ){: .screenshot}
+![ System Heart Beats ](/obplayer/img/heartbeats.png ){: .screenshot}
 
 Pelmorex sends out keep alive heart beats that our player monitors to ensure connectivity to receive alerts.  A stable internet connection must be available to receive heart beats and CAP alert messages. 
 
@@ -331,7 +331,7 @@ In Canada, a [Standard Geographical Classification](https://en.wikipedia.org/wik
 
 # CAP Alerts Configuration Page
 
-![ Emergency Alerts Page ](/player/img/alert_tab.png ){: .screenshot}
+![ Emergency Alerts Page ](/obplayer/img/alert_tab.png ){: .screenshot}
 
 <br/>
 
@@ -361,11 +361,11 @@ Best possible solution for TTS.  Sounds very natural. Configured and enabled, wh
 
 1) Select `Enable AWS POLLY` enter the API key into the advanced menu in `Admin`.  Restart player.  
 
-![ Advanced Polly API Key ](/player/img/admin-advanced-polly.png ){: .screenshot}
+![ Advanced Polly API Key ](/obplayer/img/admin-advanced-polly.png ){: .screenshot}
 
 2) `Emergency Tab`now displays a selection of bilingual male and female voices to choose from:  Joanna, Matthew and Chantal (more to come)
 
-![ Polly Voices ](/player/img/polly-voices.png ){: .screenshot}
+![ Polly Voices ](/obplayer/img/polly-voices.png ){: .screenshot}
 
 ### Obtaining AWS Polly Key ###
 
@@ -381,11 +381,11 @@ Attach existing policies directly by scrolling through list and selecting with a
 
 Add POLLY policy to user
 
-![ AWS Management Console ](/player/img/polly-add-policy.png ){: .screenshot}
+![ AWS Management Console ](/obplayer/img/polly-add-policy.png ){: .screenshot}
 
 View POLLY service attached to user
 
-![ AWS Management Console ](/player/img/polly-iam-users.png ){: .screenshot}
+![ AWS Management Console ](/obplayer/img/polly-iam-users.png ){: .screenshot}
 
 View API Key.  It has 3 parts 
 
@@ -397,13 +397,13 @@ AWS Region should be set to the data centre closest to player.
 
 Once you enter the key and enable Polly, restarting player will populate the alerting voices with available voices.
 
-![ AWS User Key ](/player/img/polly-user-key.png ){: .screenshot}
+![ AWS User Key ](/obplayer/img/polly-user-key.png ){: .screenshot}
 
 <br/>
 
 ## Advanced Settings
 
-![ Advanced Emergency Settings ](/player/img/advanced_emergency.png ){: .screenshot}
+![ Advanced Emergency Settings ](/obplayer/img/advanced_emergency.png ){: .screenshot}
 
 Adjust the `Alert Repeat Interval` time between repeated plays of queued alert messages. Setting this value to 0 will cause an alert message to play until the Expiry time stated within that message has passed  
 
@@ -441,7 +441,7 @@ When an alert is received, audio is sent out for your systems to receive in seve
 
 • GPIO trigger reverses DTR voltage on pin 4 using RS232 DB9 when CAP message is played to switch an [External relay](/accessories#mechanical-rs232-switching-relay).
 
-• Using [BARIX exstreamer](/player#cap-alerts-with-barix-exstreamer) at transmitter to listen to a priority port of incoming stream of CAP message
+• Using [BARIX exstreamer](/obplayer#cap-alerts-with-barix-exstreamer) at transmitter to listen to a priority port of incoming stream of CAP message
 
 • Configuring ICECAST server to detect new mount point of on demand stream
 
@@ -502,9 +502,9 @@ __Pro Tip__ Try different text-to-speech voices when testing alerts, before plac
 
 In Canada, national tests are done every 6 months. Contact [Alert Ready](https://www.alertready.ca/) for more info on scheduled testing.
 
-![ Canadian Live testing of Alert Ready ](/player/img/Alert-Ready-Emergency-National-Tests-Nov-25-2020.png){: .screenshot}
+![ Canadian Live testing of Alert Ready ](/obplayer/img/Alert-Ready-Emergency-National-Tests-Nov-25-2020.png){: .screenshot}
 
-![ Alert Logging ](/player/img/alert-logging.png ){: .screenshot}
+![ Alert Logging ](/obplayer/img/alert-logging.png ){: .screenshot}
 
 ## Ad Hoc LIVE testing
 
@@ -520,7 +520,7 @@ __Pro Tip__ ` Admin` Menu has a button to export a text log of all Broadcast Int
 
 # Experimental Features
 
-![ Admin Advanced](/player/img/admin-advanced.png ){: .screenshot}
+![ Admin Advanced](/obplayer/img/admin-advanced.png ){: .screenshot}
 
 Use these at your own risk for experimenting with of new features that are not recommended for production environments. Enable the feature from `Admin` advanced menu and restart player. More info about experimental features is found [Here](https://wiki.openbroadcaster.com/experimental) 
 
