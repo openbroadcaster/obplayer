@@ -104,6 +104,10 @@ class ObRTMPStreamer (ObGstStreamer):
 
         caps = Gst.ElementFactory.make('capsfilter', "videocapsfilter")
 
+        # Convert the value to the internal gstreamer value.
+        # The input frame rates are stored as 23, 29, 59. Thpse actually mean
+        # 24.976, 29.97, and 59.94 FPS.
+
         gst_framerate = str(obplayer.Config.setting('streamer_rtmp_framerate')) + "/1"
 
         if obplayer.Config.setting('streamer_rtmp_framerate') == "23":
