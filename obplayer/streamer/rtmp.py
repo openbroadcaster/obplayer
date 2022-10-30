@@ -104,7 +104,16 @@ class ObRTMPStreamer (ObGstStreamer):
 
         caps = Gst.ElementFactory.make('capsfilter', "videocapsfilter")
 
-        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2}/1,pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], obplayer.Config.setting('streamer_rtmp_framerate'))))
+        gst_framerate = str(obplayer.Config.setting('streamer_rtmp_framerate')) + "/1"
+
+        if obplayer.Config.setting('streamer_rtmp_framerate') == "23":
+            gst_framerate = "24000/1001"
+        elif obplayer.Config.setting('streamer_rtmp_framerate') == "29":
+            gst_framerate = "30000/1001"
+        elif obplayer.Config.setting('streamer_rtmp_framerate') == "59":
+            gst_framerate = "60000/1001"
+
+        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2},pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], gst_framerate)))
         self.videopipe.append(caps)
 
         #self.videopipe.append(Gst.ElementFactory.make("vp8enc"))

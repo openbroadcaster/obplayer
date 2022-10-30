@@ -2185,14 +2185,13 @@
               <tr>
                 <td data-t>streamer_rtmp_framerate</td>
                 <td><select name="streamer_rtmp_framerate">
-                	<!-- This needs to be fixed. Broadcasters, and other users who need to output 29.97 cann't as gstreamer throws a error when using the disabbled fframerates. -->
-                	<!-- <option value="23.976p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','23.976p') %>>23.976p</option> -->
+                	<option value="23"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','23') %>>23.976</option>
                     <option value="24"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','24') %>>24</option>
                     <option value="25"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','25') %>>25</option>
-                    <!-- <option value="29.97p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','29.97p') %>>29.97p</option> -->
+                    <option value="29"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','29') %>>29.97</option>
                     <option value="30"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','30') %>>30</option>
                     <option value="50"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','50') %>>50</option>
-                    <!-- <option value="59.94p"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','59.94p') %>>59.94p</option> -->
+                    <option value="59"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_frame_rate','59') %>>59.94</option>
                     <option value="60"<%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_framerate','60') %>>60</option>
                 </select></td>
               </tr>
