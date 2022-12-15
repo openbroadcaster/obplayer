@@ -522,6 +522,6 @@ __Pro Tip__ ` Admin` Menu has a button to export a text log of all Broadcast Int
 
 ![ Admin Advanced](/obplayer/img/admin-advanced.png ){: .screenshot}
 
-Use these at your own risk for experimenting with of new features that are not recommended for production environments. Enable the feature from `Admin` advanced menu and restart player. More info about experimental features is found [Here](https://wiki.openbroadcaster.com/experimental) 
+Use these at your own risk for experimenting with of new features that are not recommended for production environments. Enable the feature from `Admin` advanced menu and restart player. More info about experimental features is found [Here](https://support.openbroadcaster.com/experimental)
 
 <br/>
