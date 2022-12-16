@@ -27,8 +27,8 @@ Sync Tab
   sync_freq_tooltip: The number of minutes between syncing of schedules and media content.
   sync_freq_invalid: The show sync frequency is not valid.
 
-  sync_freq_priority: Priority Alert Sync Frequency
-  sync_freq_priority_tooltip: The number of minutes between syncing of priority alerts.
+  sync_freq_priority: Priority Announcements Sync Frequency
+  sync_freq_priority_tooltip: The number of minutes between syncing of priority announcements.
   sync_freq_priority_invalid: The priority sync frequency is not valid.
 
   sync_playlog_enable: Enable Playlog Sync

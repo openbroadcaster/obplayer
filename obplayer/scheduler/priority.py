@@ -45,7 +45,7 @@ class ObPriorityBroadcaster:
 
                     if obplayer.Sync.check_media(broadcast):
 
-                        obplayer.Log.log('play priority broadcast', 'priority')
+                        obplayer.Log.log('play priority announcement', 'priority')
 
                         self.ctrl.add_request(
                             media_type = broadcast['media_type'],
