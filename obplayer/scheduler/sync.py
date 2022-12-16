@@ -433,7 +433,7 @@ class ObSync:
 
         syncfiles = {}
 
-        obplayer.Log.log('fetching priority broadcast data from server', 'sync')
+        obplayer.Log.log('fetching priority announcements data from server', 'sync')
 
         broadcasts_xml = self.sync_request('emerg')
 
@@ -444,7 +444,7 @@ class ObSync:
         try:
             broadcasts = xml.dom.minidom.parseString(broadcasts_xml)
         except:
-            obplayer.Log.log('unable to sync (priority broacasts) - possible configuration or server error', 'error')
+            obplayer.Log.log('unable to sync (priority announcements) - possible configuration or server error', 'error')
             return
 
         error = broadcasts.getElementsByTagName('error')
