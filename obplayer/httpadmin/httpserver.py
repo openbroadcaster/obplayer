@@ -94,7 +94,10 @@ class ObHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     daemon_threads = True
 
     def __init__(self, server_address, sslenable=False, sslreq=None, sslkey=None, sslcert=None, sslca=None):
-        BaseHTTPServer.HTTPServer.__init__(self, server_address, ObHTTPRequestHandler)
+        try:
+            BaseHTTPServer.HTTPServer.__init__(self, server_address, ObHTTPRequestHandler)
+        except BrokenPipeError:
+            pass
         if sslenable:
             import ssl
             sslreq = ssl.CERT_NONE if not sslca else ssl.CERT_OPTIONAL if not sslreq else ssl.CERT_REQUIRED
@@ -165,16 +168,21 @@ class ObHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return self.authenticated
 
     def send_content(self, code, mimetype, content, headers=None):
-        if sys.version.startswith('3') and isinstance(content, str):
-            content = bytes(content, 'utf-8')
-        self.send_response(code)
-        if headers:
-            for name, value in headers:
-                self.send_header(name, value)
-        self.send_header('Content-Type', mimetype)
-        self.send_header('Content-Length', len(content))
-        self.end_headers()
-        self.wfile.write(content)
+        try:
+            if sys.version.startswith('3') and isinstance(content, str):
+                content = bytes(content, 'utf-8')
+            self.send_response(code)
+            if headers:
+                for name, value in headers:
+                    self.send_header(name, value)
+            self.send_header('Content-Type', mimetype)
+            self.send_header('Content-Length', len(content))
+            self.end_headers()
+            self.wfile.write(content)
+        except BrokenPipeError:
+            # We aren't going to log everytime the web client is closed but if need
+            # to this is the place from what I can tell.
+            pass
 
     def send_404(self):
         self.send_content(404, 'text/plain', "404 Not Found")
