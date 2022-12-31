@@ -16,9 +16,9 @@ title: Player
 
 Player configuration and status monitoring is accomplished using a [Dashboard](#dashboard) interface. The Dashboard is available from any web browser, on default port 23233 of the Localhost IP address. For access to the Dashboard from outside the local area network, contact your network administrator to setup port forwarding on your router.
 
-The `Admin` user can change configuration settings of the Player as required for activation in a broadcast setting. The changes that are required in each case are reviewed in [Getting Started](/getting-started). Additional settings for each page are reviewed on this page.
+The `Admin` user can change configuration settings of the Player as required for activation in a broadcast setting as a standalone player.  OBPlayer can also be managed by a OBServere reviewed [Quick Start](/quick-start).
 
-Be sure to __Save__ any changes on each Page, waiting for a green confirmation message then restarting with the `Quit` button to take effect. If audio or video modes are changed, a reboot is recommended.
+Be sure to __Save__ any changes on each Page, waiting for a green confirmation message then restarting with the `Quit` button to take effect. If audio or video hardware modes are changed, a reboot is recommended.
 
 Dashboard access is for first time setup and advance troubleshooting. Once the Player is setup and configured it is typically entirely command and controlled from a managing OBServer.
 {: .alert .alert-info}
