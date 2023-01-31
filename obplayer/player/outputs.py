@@ -246,6 +246,23 @@ class ObVideoOutputBin (ObOutputBin):
             # Pass for now. Later we can add a log message about this error.
             pass
 
+        if os.path.exists(bug_image):
+            if obplayer.Config.setting('tv_rating_bug_overlay_enable'):
+                # Adds the program's rating over the video playout signal.
+                if obplayer.Config.setting('tv_rating_bug_overlay_system') != "US":
+                    # Pass for now. Update if a error message if it messages sense here later.
+                    pass
+                else:
+                    # TODO: Write code to fetch the program rating id from the records.
+                    self.elements.append(Gst.ElementFactory.make('gdkpixbufoverlay', 'ratings-bug-overlay'))
+                    self.elements[-1].set_property('location', ratings_bug_image)
+                    self.elements[-1].set_property('offset-x', obplayer.Config.setting('bug_overlay_offset_x'))
+                    self.elements[-1].set_property('offset-y', obplayer.Config.setting('bug_overlay_offset_y'))
+        else:
+            # Pass for now. Later we can add a log message about this error.
+            # If we get here the resources folder is missing or could have a permissons issue.
+            pass
+
         """
         ## create caps filter element to set the output video parameters
         caps_filter = Gst.ElementFactory.make('capsfilter', 'video-out-post-overlay-capsfilter')
