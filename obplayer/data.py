@@ -348,6 +348,11 @@ class ObConfigData (ObData):
         self.add_setting('bug_overlay_offset_x', '100', 'int')
         self.add_setting('bug_overlay_offset_y', '100', 'int')
         self.add_setting('bug_overlay_image', self.datadir + '/bug.png', 'text')
+        self.add_setting('tv_rating_bug_overlay_enable', '0', 'bool')
+        # Defaults to US's TV parental guidelines system since it's the only system supported for now.
+        self.add_setting('tv_rating_bug_overlay_system', 'US', 'text')
+        self.add_setting('tv_rating_bug_offset_x', '100', 'int')
+        self.add_setting('tv_rating_bug_offset_y', '100', 'int')
 
         self.add_setting('streamer_enable', '0', 'bool')
         self.add_setting('streamer_audio_in_mode', 'intersink', 'text')

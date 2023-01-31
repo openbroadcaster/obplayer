@@ -1860,6 +1860,33 @@
                   <form>
               </td>
             </tr>
+            <tr>
+              <td data-t>tv_rating_bug_overlay_enable</td>
+              <td>
+                  <input type="checkbox" name="tv_rating_bug_overlay_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('tv_rating_bug_overlay_enable') %>>
+              </td>
+            </tr>
+            <tr>
+              <td data-t>tv_rating_bug_overlay_system</td>
+              <td>
+                <select name="tv_rating_bug_overlay_system">
+                  <option value="Canada">Canadian TV Classification System</option>
+                  <option value="US">US TV parental guidelines </option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td data-t>tv_rating_bug_overlay_duration</td>
+              <td><input type="number" name="tv_rating_bug_overlay_duration" min="10" max="99" value="<%= obplayer.Config.setting('tv_rating_bug_overlay_duration',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>tv_rating_bug_offset_x</td>
+              <td><input type="number" name="tv_rating_bug_offset_x" value="<%= obplayer.Config.setting('tv_rating_bug_offset_x',True) %>"></td>
+            </tr>
+            <tr>
+              <td data-t>tv_rating_bug_offset_y</td>
+              <td><input type="number" name="tv_rating_bug_offset_y" value="<%= obplayer.Config.setting('tv_rating_bug_offset_y',True) %>"></td>
+            </tr>
             </tbody>
           </table>
 

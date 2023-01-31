@@ -51,6 +51,12 @@ Outputs Tab
   bug_overlay_offset_y: Station Bug Y Offset
   bug_overlay_image: Station Logo Image
 
+  tv_rating_bug_overlay_enable: Enable TV Ratings Video Overlay
+  tv_rating_bug_overlay_system: Ratings Type
+  tv_rating_bug_overlay_duration: Seconds Bug Displayed
+  tv_rating_bug_offset_x: Ratings Bug X Offset
+  tv_rating_bug_offset_y: Ratings Bug Y Offset
+
   LED Sign Settings: LED Sign Settings
 
   led_sign_enable: Enable LED Sign
