@@ -91,3 +91,9 @@ Streamer Tab
   streamer_rtmp_encoder_profile: RTMP h.264 Profile (Not Currently Implemented)
   streamer_rtmp_encoder_tune: RTMP h.264 Non-Psychovisual Tuning Option
   streamer_rtmp_encoder_psytune: RTMP h.264 Psychovisual Tuning  Option
+
+  mpeg_dash_output_enable: Enable MPEG Dash Output
+  mpeg_dash_output_folder: Output path
+  mpeg_dash_output_url: Web Endpoint URL
+  mpeg_dash_output_method: Web Endpoint HTTP Method
+  mpeg_dash_codecs: Video/Audio Codec
