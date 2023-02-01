@@ -23,6 +23,7 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 import obplayer
 
 import os
+import os.path
 import time
 import threading
 import traceback
@@ -262,11 +263,15 @@ class ObDashStreamer (ObGstStreamer):
 
         self.commonpipe.append(Gst.ElementFactory.make("queue2"))
 
-        self.hls_sink = Gst.ElementFactory.make("dashsink", "dash")
-        self.hls_sink.set_property('min-buffer-time', 2000)
-        self.hls_sink.set_property('mpd-root-path', obplayer.Config.setting('mpeg_dash_output_folder'))
-        self.hls_sink.set_property('mpd-filename', "live.mpd")
-        self.commonpipe.append(self.hls_sink)
+        self.dash_sink = Gst.ElementFactory.make("dashsink", "dash")
+        self.dash_sink.set_property('min-buffer-time', 2000)
+
+        if os.access(obplayer.Config.setting('mpeg_dash_output_folder')) == False:
+            os.mkdir(obplayer.Config.setting('mpeg_dash_output_folder'))
+
+        self.dash_sink.set_property('mpd-root-path', obplayer.Config.setting('mpeg_dash_output_folder'))
+        self.dash_sink.set_property('mpd-filename', "live.mpd")
+        self.commonpipe.append(self.dash_sink)
 
         #self.commonpipe.append(Gst.ElementFactory.make("filesink"))
         #self.commonpipe[-1].set_property('location', "/home/trans/test.webm")
