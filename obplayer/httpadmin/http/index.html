@@ -87,8 +87,8 @@
               <video data-dashjs-player src="dash/live.mpd" controls>Your system can't playback the live video feed!</video>
             </li>
             <% end %>
-            <% if obplayer.Config.setting('streamer_0_icecast_enable') == False and obplayer.Config.setting('streamer_1_icecast_enable') == False and obplayer.Config.setting('station_override_enabled') == False: %>
-            <p>No streams are enabled at this time. Go to the streaming tab to enable one of the icecast streams.</p>
+            <% if obplayer.Config.setting('streamer_0_icecast_enable') == False and obplayer.Config.setting('streamer_1_icecast_enable') == False and obplayer.Config.setting('station_override_enabled') == False and obplayer.Config.setting('mpeg_dash_output_enable') == False: %>
+            <p>No streams are enabled at this time. Go to the streaming tab to enable one of the icecast/MPEG Dash streams.</p>
             <% end %>
           </ul>
         </div>
