@@ -85,6 +85,11 @@ def init():
         obplayer.RTMPStreamer = ObRTMPStreamer()
         obplayer.RTMPStreamer.start()
 
+    if obplayer.Config.setting('hls_output_enable'):
+        from .hls import ObHLSStreamer
+        obplayer.HLSStreamer = ObHLSStreamer()
+        obplayer.HLSStreamer.start()
+
 def quit():
     if obplayer.Streamer_stream_1:
         obplayer.Streamer_stream_1.stop_title_streaming()
