@@ -404,6 +404,17 @@ class ObConfigData (ObData):
         self.add_setting('streamer_rtmp_encoder_tune', 'fastdecode', 'text')
         self.add_setting('streamer_rtmp_encoder_psytune', 'none', 'text')
 
+        self.add_setting('mpeg_dash_output_enable', '0', 'bool')
+        self.add_setting('mpeg_dash_output_folder', '/tmp/dash/', 'text')
+        self.add_setting('mpeg_dash_output_url', '', 'text')
+        self.add_setting('mpeg_dash_output_method', 'put', 'text')
+        self.add_setting('mpeg_dash_codecs', 'webm', 'text')
+
+        self.add_setting('hls_output_enable', '0', 'bool')
+        self.add_setting('hls_output_folder', '/tmp/hls/', 'text')
+        self.add_setting('hls_output_url', '', 'text')
+        self.add_setting('hls_output_method', 'put', 'text')
+
         self.add_setting('station_override_server_ip', '', 'text')
         self.add_setting('station_override_server_port', '', 'text')
         self.add_setting('station_override_server_password', '', 'text')
