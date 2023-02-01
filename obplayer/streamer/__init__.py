@@ -85,10 +85,19 @@ def init():
         obplayer.RTMPStreamer = ObRTMPStreamer()
         obplayer.RTMPStreamer.start()
 
+    obplayer.HLSStreamer = None
+
     if obplayer.Config.setting('hls_output_enable'):
         from .hls import ObHLSStreamer
         obplayer.HLSStreamer = ObHLSStreamer()
         obplayer.HLSStreamer.start()
+
+    obplayer.DashStreamer = None
+
+    if obplayer.Config.setting('mpeg_dash_output_enable'):
+        from .dash import ObDashStreamer
+        obplayer.DashStreamer = ObDashStreamer()
+        obplayer.DashStreamer.start()
 
 def quit():
     if obplayer.Streamer_stream_1:
