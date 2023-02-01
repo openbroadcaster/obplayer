@@ -1,9 +1,62 @@
 [
     {
-        "name": "Service Name Here",
+        "name": "YouTube",
         "audio_bitrate": 160,
         "video_bitrate": 60000,
         "resolution": "1920x1080",
-        "rtmp_url": "rtmp://127.0.0.1:1935/TEST"
+        "rtmp_urls": [{
+            "url": "rtmp://a.rtmp.youtube.com/live2",
+            "type": "main"
+        },{
+            "url": "rtmp://b.rtmp.youtube.com/live2?backup=1",
+            "type": "backup"
+        }]
+    },
+    {
+        "name": "Twitch",
+        "audio_bitrate": 160,
+        "video_bitrate": 60000,
+        "resolution": "1920x1080",
+        "rtmp_urls": [{
+            "name": "US East: Ashburn, VA (5)",
+            "url": "rtmp://iad05.contribute.live-video.net/app",
+            "type": "main"
+        },{
+            "name": "US East: Ashburn, VA (3)",
+            "url": "rtmp://iad03.contribute.live-video.net/app",
+            "type": "main"
+        },{
+            "name": "US East: New York, NY (50)",
+            "url": "rtmp://jfk50.contribute.live-video.net/app",
+            "type": "main"
+        },{
+            "name": "US East: New York, NY",
+            "url": "rtmp://jfk.contribute.live-video.net/app",
+            "type": "main"
+        },{
+            "name": "NA: Canada, Toronto",
+            "url": "rtmp://yto.contribute.live-video.net/app",
+            "type": "main"
+        },{
+            "name": "US East: Atlanta, GA",
+            "url": "rtmp://atl.contribute.live-video.net/app",
+            "type": "main"
+        },{
+            "name": "US East: Chicago, IL (3)",
+            "url": "rtmp://ord03.contribute.live-video.net/app",
+            "type": "main"  
+        },{
+            "name": "US East: Chicago, IL (56)",
+            "url": "rtmp://ord56.contribute.live-video.net/app",
+            "type": "main"
+        },{
+            "name": "US East: Miami, FL (5)",
+            "url": "rtmp://mia05.contribute.live-video.net/app",
+            "type": "main"
+        },{
+            "name": "US Central: Dallas, TX",
+            "url": "rtmp://dfw.contribute.live-video.net/app",
+            "type": "main"
+        }]
     }
 ]
