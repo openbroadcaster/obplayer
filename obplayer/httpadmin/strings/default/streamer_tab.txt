@@ -95,5 +95,10 @@ Streamer Tab
   mpeg_dash_output_enable: Enable MPEG Dash Output
   mpeg_dash_output_folder: Output path
   mpeg_dash_output_url: Web Endpoint URL
-  mpeg_dash_output_method: Web Endpoint HTTP Method
+  mpeg_dash_output_method: Dash Endpoint HTTP Method
   mpeg_dash_codecs: Video/Audio Codec
+
+  hls_output_enable: Enable HTTP Live Streaming
+  hls_output_folder: HLS Output path
+  hls_output_url: HLS Endpoint URL
+  hls_output_method: HLS Endpoint HTTP Method

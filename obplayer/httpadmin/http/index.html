@@ -2308,8 +2308,8 @@
                 <td data-t>mpeg_dash_output_method</td>
                 <td>
                   <select name="mpeg_dash_output_method">
-                    <option value="post">Post</option>
-                    <option value="put">Put</option>
+                    <option value="post" <%= obplayer.HTTPAdmin.form_item_selected('mpeg_dash_output_method','post') %>>Post</option>
+                    <option value="put" <%= obplayer.HTTPAdmin.form_item_selected('mpeg_dash_output_method','put') %>>Put</option>
                   </select>
                 </td>
               </tr>
@@ -2317,8 +2317,29 @@
                 <td data-t>mpeg_dash_codecs</td>
                 <td>
                   <select name="mpeg_dash_codecs">
-                    <option value="webm" <%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_psytune','webm') %>>Webm VP9/Opus</option>
-                    <option value="mp4" <%= obplayer.HTTPAdmin.form_item_selected('streamer_rtmp_encoder_psytune','mp4') %>>H.264/AAC</option>
+                    <option value="webm" <%= obplayer.HTTPAdmin.form_item_selected('mpeg_dash_codecs','webm') %>>Webm VP9/Opus</option>
+                    <option value="mp4" <%= obplayer.HTTPAdmin.form_item_selected('mpeg_dash_codecs','mp4') %>>H.264/AAC</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td data-t>hls_output_enable</td>
+                <td><input type="checkbox" name="hls_output_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('hls_output_enable') %></td>
+              </tr>
+              <tr>
+                <td data-t>hls_output_folder</td>
+                <td><input type="text" name="hls_output_folder" value="<%= obplayer.Config.setting('hls_output_folder',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>hls_output_url</td>
+                <td><input type="text" name="hls_output_url" value="<%= obplayer.Config.setting('hls_output_url',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>hls_output_method</td>
+                <td>
+                  <select name="hls_output_method">
+                    <option value="post" <%= obplayer.HTTPAdmin.form_item_selected('hls_output_method','post') %>>Post</option>
+                    <option value="put" <%= obplayer.HTTPAdmin.form_item_selected('hls_output_method','put') %>>Put</option>
                   </select>
                 </td>
               </tr>
