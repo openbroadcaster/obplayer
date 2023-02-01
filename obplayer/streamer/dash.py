@@ -40,7 +40,7 @@ class ObDashStreamer (ObGstStreamer):
     def __init__(self):
  
         ObGstStreamer.__init__(self, 'dash_' + uuid.uuid4().hex)
-        self.make_video_pipe(obplayer.Config.setting('streamer_0_icecast_mode'))
+        self.make_video_pipe()
 
     def make_audio_pipe(self):
         self.audiopipe = [ ]
@@ -63,7 +63,7 @@ class ObDashStreamer (ObGstStreamer):
 
         elif audio_input == 'pulse':
             self.audiosrc = Gst.ElementFactory.make('pulsesrc', 'audiosrc')
-            self.audiosrc.set_property('client-name', 'obplayer-streamer-to-icecast')
+            self.audiosrc.set_property('client-name', 'obplayer-streamer-to-Dash')
 
         elif audio_input == 'test':
             self.audiosrc = Gst.ElementFactory.make('fakesrc', 'audiosrc')
@@ -138,17 +138,17 @@ class ObDashStreamer (ObGstStreamer):
 
         self.build_pipeline(self.audiopipe)
 
-    def make_video_pipe(self, res):
-        if res == 'video320x200':
-            video_res = '320x200'
-        elif res == 'video640x480':
-            video_res = '640x480'
-        elif res == 'video1280x720':
-            video_res = '1280x720'
-        elif res == 'video1920x1080':
-            video_res = '1920x1080'
-        else:
-            video_res = '0x0'
+    def make_video_pipe(self):
+        # if res == 'video320x200':
+        #     video_res = '320x200'
+        # elif res == 'video640x480':
+        #     video_res = '640x480'
+        # elif res == 'video1280x720':
+        #     video_res = '1280x720'
+        # elif res == 'video1920x1080':
+        #     video_res = '1920x1080'
+        # else:
+        #     video_res = '0x0'
         obplayer.Player.add_inter_tap(self.name)
 
         self.audiopipe = [ ]
