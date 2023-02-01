@@ -110,6 +110,10 @@ def quit():
         obplayer.RTSPStreamer.quit()
     if obplayer.RTPStreamer:
         obplayer.RTPStreamer.quit()
+    if obplayer.DashStreamer:
+        obplayer.DashStreamer.quit()
+    if obplayer.HLSStreamer:
+        obplayer.HLSStreamer.quit()
 
 """
 def start_streamer(name, clsname):
