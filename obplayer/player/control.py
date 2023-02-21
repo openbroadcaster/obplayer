@@ -427,7 +427,7 @@ class ObPlayerController (object):
 
     def enable(self):
         self.enabled = True
-        self.call_player_request(time.time())
+        self.call_player_request(time.time(), None)
 
     def disable(self):
         self.enabled = False
