@@ -197,6 +197,10 @@ class ObMainApp:
         # wait for all threads to complete
         obplayer.ObThread.join_all()
 
+        # Removes the lock file
+        if os.access(self.lock_file, os.F_OK):
+            os.remove(self.lock_file) 
+
         # quit main thread.
         sys.exit(self.exit_code)
 
