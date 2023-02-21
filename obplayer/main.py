@@ -43,6 +43,7 @@ class ObMainApp:
     def __init__(self):
         self.modules = [ ]
         self.exit_code = 0
+        self.lock_file = "/tmp/obplayer.gui.lock"
 
         parser = argparse.ArgumentParser(prog='obplayer', formatter_class=argparse.ArgumentDefaultsHelpFormatter, description='OpenBroadcaster Player')
         parser.add_argument('-f', '--fullscreen', action='store_true', help='start fullscreen', default=False)
@@ -54,12 +55,21 @@ class ObMainApp:
         parser.add_argument('-c', '--configdir', nargs=1, help='specifies an alternate data directory', default=[ '~/.openbroadcaster' ])
         parser.add_argument('--disable-http', action='store_true', help='disables the http admin', default=False)
         parser.add_argument('--disable-updater', action='store_true', help='disables the OS updater', default=False)
+        parser.add_argument('--desktop', action='store_true', help='Handles desktop video output. This is only to prevent mutiple players with video playback.', default=False)
 
         self.args = parser.parse_args()
         obplayer.ObData.set_datadir(self.args.configdir[0])
 
         obplayer.Log = obplayer.ObLog()
         obplayer.Log.set_debug(self.args.debug)
+
+        if os.access(self.lock_file, os.F_OK) and self.args.desktop:
+            #print(self.args.desktop)
+            print("Another player is already running...")
+            exit(1)
+
+        with open(self.lock_file, "w") as file:
+            file.write("Please do not remove this file.")
 
         obplayer.Config = obplayer.ObConfigData()
 
@@ -184,6 +194,10 @@ class ObMainApp:
 
         # wait for all threads to complete
         obplayer.ObThread.join_all()
+
+        # Removes the lock file
+        if os.access(self.lock_file, os.F_OK):
+            os.remove(self.lock_file) 
 
         # quit main thread.
         sys.exit(self.exit_code)
