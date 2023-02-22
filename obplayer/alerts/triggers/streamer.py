@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -35,13 +34,13 @@ class StreamerTrigger (object):
         pass
 
     def alert_cycle_start(self):
-        if hasattr(obplayer, 'Streamer_stream_1'):
+        if hasattr(obplayer, 'Streamer'):
             obplayer.Log.log("starting icecast streamer for alert cycle", 'alerts')
-            obplayer.Streamer_stream_1.start()
+            obplayer.Streamer.start()
 
     def alert_cycle_stop(self):
-        if hasattr(obplayer, 'Streamer_stream_1'):
+        if hasattr(obplayer, 'Streamer'):
             obplayer.Log.log("stopping icecast streamer after alert cycle", 'alerts')
-            obplayer.Streamer_stream_1.stop()
+            obplayer.Streamer.stop()
 
 

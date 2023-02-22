@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -158,7 +157,7 @@ class ObShow (object):
         return self.groups
 
     def start_show(self, present_time):
-        #self.ctrl.stop_requests()
+        self.ctrl.stop_requests()
 
         # find the track that should play at the present time
         self.playlist.advance_to_current(present_time - self.show_data['start_time'])
@@ -196,8 +195,10 @@ class ObShow (object):
         media = self.playlist.current()
         if not media or not obplayer.Sync.check_media(media):
             obplayer.Log.log("media not found at position " + str(self.playlist.current_pos()) + ": " + str(media['filename']) if media else '??', 'scheduler')
+            next_start = self.playlist.next_start() if media else None
+            self.next_media_update = self.start_time() + next_start if next_start else self.end_time()
             #self.ctrl.stop_requests()
-            self.ctrl.add_request(media_type='break', duration=2, title="media not found break")
+            #self.ctrl.add_request(media_type='break', duration=2, title="media not found break")
             return False
 
         offset = present_time - self.show_data['start_time'] - media['offset']
@@ -326,7 +327,13 @@ class ObLiveAssistShow (ObShow):
         # Already changed in another branch. Should be here too.
         # self.ctrl.stop_requests()
 
-        obplayer.Log.log('starting live assist show', 'scheduler')
+        # if we start the show less than 30 seconds in, then start it, otherwise start paused
+        if present_time - self.show_data['start_time'] < 30:
+            obplayer.Log.log('starting live assist show', 'scheduler')
+        else:
+            obplayer.Log.log('starting live assist show paused', 'scheduler')
+            self.auto_advance = False
+            self.now_playing = self.playlist.current()
 
         self.play_current(present_time)
 
@@ -352,7 +359,7 @@ class ObLiveAssistShow (ObShow):
         if not media or not obplayer.Sync.check_media(media):
             obplayer.Log.log("media not found at position " + str(self.playlist.current_pos()) + ": " + str(media['filename']) if media else '??', 'scheduler')
             #self.ctrl.stop_requests()
-            self.ctrl.add_request(media_type='break', duration=2, title="media not found break")
+            #self.ctrl.add_request(media_type='break', duration=2, title="media not found break")
             return False
 
         self.play_media(media, 0, present_time)
@@ -400,7 +407,7 @@ class ObScheduler:
         self.lock = threading.Lock()
         self.first_sync = first_sync
 
-        self.ctrl = obplayer.Player.create_controller('scheduler', priority=50, default_play_mode='overlap', allow_overlay=False)
+        self.ctrl = obplayer.Player.create_controller('scheduler', priority=50, default_play_mode='overlap', allow_overlay=False)   
         self.ctrl.set_request_callback(self.do_player_request)
         self.ctrl.set_update_callback(self.do_player_update)
 
@@ -411,18 +418,19 @@ class ObScheduler:
         if self.first_sync == False:
             self.check_show(present_time)
 
+            if self.present_show is not None:
+                self.present_show.play_next(present_time, media_class)
+
+            self.set_next_update()
+
+    def do_player_update(self, ctrl, present_time):
+        if self.first_sync == False:
+            self.check_show(present_time)
+
             if self.present_show and present_time > self.present_show.next_media_update:
                 self.present_show.play_next(present_time)
 
-        self.set_next_update()
-
-    def do_player_update(self, ctrl, present_time):
-        self.check_show(present_time)
-
-        if self.present_show and present_time > self.present_show.next_media_update:
-            self.present_show.play_next(present_time)
-
-        self.set_next_update()
+            self.set_next_update()
 
     def set_next_update(self):
         if self.present_show and self.present_show.next_media_update < self.next_show_update:
@@ -505,7 +513,7 @@ class ObScheduler:
             for group in self.present_show.get_groups():
                 group_items = [ ]
                 for group_item in group['items']:
-                    data = { 'id' : group_item['id'], 'artist' : group_item['artist'], 'title' : group_item['title'], 'duration' : group_item['duration'], 'media_type' : group_item['media_type'], 'media_id': group_item['media_id'] }
+                    data = { 'id' : group_item['id'], 'artist' : group_item['artist'], 'title' : group_item['title'], 'duration' : group_item['duration'], 'media_type' : group_item['media_type'] }
                     group_items.append(data)
                 groups.append({ 'name' : group['name'], 'items' : group_items })
         return groups

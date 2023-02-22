@@ -1,4 +1,4 @@
-Dependencies for OpenBroadcaster OBPlayer.  This list may be incomplete.
+Dependencies for OpenBroadcaster Player.  This list may be incomplete.
 
 Dependencies are Debian/Ubuntu package names.
 
@@ -34,17 +34,15 @@ Dependencies are Debian/Ubuntu package names.
 
 - ffmpeg
 
-Ubuntu
-
 - ubuntu-restricted-addons
 - ubuntu-restricted-extras
 
-- pip3 install passlib[bcrypt]
 
-Recommended for CATV Video Playout:
+Recommended if using for CATV:
 
 - gstreamer1.0-vaapi
 - mesa-vdpau-drivers
+
 
 Include if using alerts module:
 
@@ -56,29 +54,25 @@ Include if using alerts module:
 - mbrola-us3
 - mbrola-fr1
 - mbrola-fr4
+- pip3 install boto3
 
-Include if using POLLY AWS Voices in the alerts module:
 
-- pip3 install boto3 
-
-Include if using RS-232 trigger option in the alerts module:
+Include if using RS-232 option in the alerts module:
 
 - python3-serial
+
 
 Include if sharing multiple OpenBroadcaster players with a local media library:
 
 - cifs-utils
 
-Command Line tool for PulseAudio:
+Include if using PulseAudio:
 
-- pip3 install pulsectl         
+- pip3 install pulsectl         (Note: pkg not included in apt-get; must be installed using pip3)
 
-Off-air audio log and SDR FM Receiver USB Dongle:
+Include if using Off-air audio log:
 
-- pip3 install pyrtlsdr         
+- pip3 install pyrtlsdr         (Note: pkg not included in apt-get; must be installed using pip3)
 
 Include if using the news feed override:
-
  - pip3 install inotify
- 
-Note: pip3 pkg not included in apt-get; must be installed using pip3

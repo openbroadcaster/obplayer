@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -37,8 +36,8 @@ class LiveAssistThread (obplayer.ObThread):
             obplayer.LiveAssist.shutdown()
 
 def init():
-    if not obplayer.Config.setting('scheduler_enable'):
-        obplayer.Log.log("error starting liveassist.  The scheduler must be enabled in order to use the liveassist interface, but it is currently disabled in the settings", 'error')
+    if not obplayer.Config.setting('maintenance_enable'):
+        obplayer.Log.log("error starting liveassist.  The scheduler must be enabled (Disable maintenance mode) in order to use the liveassist interface, but it is currently disabled in the settings", 'error')
         return
 
     if obplayer.Config.setting('live_assist_enable'):

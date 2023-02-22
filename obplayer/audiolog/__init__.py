@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -26,17 +25,12 @@ from __future__ import absolute_import
 import obplayer
 
 from .audiolog import ObAudioLog
-from .uploader import LogUploader
 
 def init():
     obplayer.AudioLog = ObAudioLog()
-    if obplayer.Config.setting('audiolog_enable_upload'):
-        obplayer.LogUploader = LogUploader()
-        obplayer.LogUploader.start()
 
 def quit():
     # stop the audio logger.
     if hasattr(obplayer, 'AudioLog'):
         obplayer.AudioLog.stop()
-    if hasattr(obplayer, 'LogUploader'):
-        obplayer.LogUploader.stop()
+

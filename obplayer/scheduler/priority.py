@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -46,7 +45,7 @@ class ObPriorityBroadcaster:
 
                     if obplayer.Sync.check_media(broadcast):
 
-                        obplayer.Log.log('play priority broadcast', 'priority')
+                        obplayer.Log.log('play priority announcement', 'priority')
 
                         self.ctrl.add_request(
                             media_type = broadcast['media_type'],

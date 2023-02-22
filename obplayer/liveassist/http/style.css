@@ -80,24 +80,12 @@ body
 
   #main-playlist .track
   {
-    display: flex;
-    justify-content: start;
-    align-items: center;
     margin-left: 30px;
     border: 1px solid #000;
     border-bottom: none;
     padding: 15px 65px 15px 15px;
     position: relative;
     cursor: pointer;
-    height: 100px;
-  }
-
-  .track img
-  {
-    width: auto;
-    height: 100%;
-    object-fit: cover;
-    margin-right: 12px;
   }
 
   #main-playlist .track:last-child
@@ -173,7 +161,9 @@ body
 
   #main-playlist .duration
   {
-    margin-left: 12px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
   }
 
 #main-buttons
@@ -194,7 +184,7 @@ body
   #main-buttons .column
   {
     float: left;
-    width: 340px;
+    width: 240px;
     padding-left: 40px;
     list-style-type: none;
   }
@@ -219,13 +209,6 @@ body
     position: relative;
     padding: 5px;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #main-buttons .button > * {
-    margin-left: 12px;
   }
 
   #main-buttons .button:last-child
@@ -244,13 +227,6 @@ body
     display: inline-block;
     line-height: normal;
     vertical-align: middle;
-    text-align: center;
-  }
-
-  .button img {
-    width: auto;
-    height: 100%;
-    object-fit: cover;
   }
 
 #main-mixer-toggle

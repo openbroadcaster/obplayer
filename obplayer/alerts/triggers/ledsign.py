@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
-
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 

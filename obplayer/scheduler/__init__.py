@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -44,6 +43,8 @@ def first_sync():
     obplayer.Scheduler.first_sync = False
     obplayer.Scheduler.start_show()
 
+    print("TEST")
+
 def init():
     #global Sync, Scheduler
 
@@ -61,19 +62,17 @@ def init():
         obplayer.RemoteData.empty_table('group_items')
         obplayer.RemoteData.empty_table('priority_broadcasts')
         obplayer.RemoteData.empty_table('alert_media')
+    else:
+        obplayer.Scheduler.first_sync = False
 
     # report the player version number to the server if possible
     VersionUpdateThread().start()
 
     # if resetting the databases, run our initial sync.  otherwise skip and setup other sync interval timers.
     if obplayer.Config.args.reset:
-        obplayer.Sync.sync_shows(True)
-        obplayer.Sync.sync_priority_broadcasts()
-        obplayer.Sync.sync_media()
-        obplayer.Scheduler.pause_show(syncing=True)
+        #obplayer.Scheduler.pause_show(syncing=True)
         threading.Thread(target=first_sync, args=()).start()
     else:
-        obplayer.Scheduler.first_sync = False
         # Start sync threads
         SyncShowsThread().start()
         SyncEmergThread().start()

@@ -24,3 +24,7 @@ Responses
   settings-imported-leadin-audio: successfully imported leadin audio
 
   settings-imported-leadin-audio-error: their was a error importing the leadin audio.
+
+  settings-imported-bug-image: successfully imported bug image.
+
+  settings-imported-bug-image-error: their was a error importing the bug image.

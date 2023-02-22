@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -51,7 +50,6 @@ class ObMainApp:
         parser.add_argument('-r', '--reset', action='store_true', help='reset show, media, and priority broadcast databases', default=False)
         parser.add_argument('-H', '--headless', action='store_true', help='run headless (audio only)', default=False)
         parser.add_argument('-d', '--debug', action='store_true', help='print log messages to stdout', default=False)
-        parser.add_argument('-p', '--http-port', nargs=1, help='Sets the port number used for the http server.', default=None)
         parser.add_argument('-c', '--configdir', nargs=1, help='specifies an alternate data directory', default=[ '~/.openbroadcaster' ])
         parser.add_argument('--disable-http', action='store_true', help='disables the http admin', default=False)
         parser.add_argument('--disable-updater', action='store_true', help='disables the OS updater', default=False)
@@ -60,35 +58,28 @@ class ObMainApp:
         self.args = parser.parse_args()
         obplayer.ObData.set_datadir(self.args.configdir[0])
 
-        obplayer.Log = obplayer.ObLog()
-        obplayer.Log.set_debug(self.args.debug)
-
-        print('self.args.desktop', self.args)
-
-        if os.access(self.lock_file, os.F_OK) and self.args.desktop and self.args.headless == False:
-            #print(self.args.desktop)
+        if os.access(self.lock_file, os.F_OK) and self.args.desktop:
+            print(self.args.desktop)
             print("Another player is already running...")
             exit(1)
 
         with open(self.lock_file, "w") as file:
             file.write("Please do not remove this file.")
 
+        obplayer.Log = obplayer.ObLog()
+        obplayer.Log.set_debug(self.args.debug)
+
         obplayer.Config = obplayer.ObConfigData()
 
         obplayer.Config.args = self.args
-        
-        obplayer.Password_System = obplayer.password_system
+
+        if os.environ['HOME'] != None:
+            obplayer.SUPPORTED = bool(int(os.environ['OBPLAYER_SUPPORTED']))
 
         if self.args.headless is True:
             obplayer.Config.headless = self.args.headless
 
         obplayer.Main = self
-
-        if self.args.http_port != None:
-            obplayer.custom_http_admin_port = self.args.http_port[0]
-        else:
-            obplayer.custom_http_admin_port = None
-
 
     def start(self):
         signal.signal(signal.SIGINT, self.sigint_handler)
@@ -118,7 +109,7 @@ class ObMainApp:
                 self.load_module('rtpin')
             if obplayer.Config.setting('audio_in_enable'):
                 self.load_module('linein')
-            if obplayer.Config.setting('scheduler_enable'):
+            if obplayer.Config.setting('maintenance_enable'):
                 self.load_module('scheduler')
             if obplayer.Config.setting('live_assist_enable'):
                 self.load_module('liveassist')
@@ -197,9 +188,8 @@ class ObMainApp:
         # wait for all threads to complete
         obplayer.ObThread.join_all()
 
-        # Removes the lock file
         if os.access(self.lock_file, os.F_OK):
-            os.remove(self.lock_file) 
+            os.remove(self.lock_file)
 
         # quit main thread.
         sys.exit(self.exit_code)

@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -39,12 +38,11 @@ from .metadata_updater import MetadataUpdater
 
 
 class ObIcecastStreamer (ObGstStreamer):
-    def __init__(self, streamer_icecast_ip, streamer_icecast_port, streamer_icecast_username, streamer_icecast_password,
+    def __init__(self, streamer_icecast_ip, streamer_icecast_port, streamer_icecast_password,
         streamer_icecast_mount, streamer_icecast_streamname, streamer_icecast_description,
         streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate, enable_title_streaming=False):
         self.icecast_ip = streamer_icecast_ip
         self.icecast_port = streamer_icecast_port
-        self.icecast_username = streamer_icecast_username
         self.icecast_password = streamer_icecast_password
         self.icecast_mount = streamer_icecast_mount
         self.icecast_streamname = streamer_icecast_streamname
@@ -58,7 +56,7 @@ class ObIcecastStreamer (ObGstStreamer):
 
         if obplayer.Config.setting('streamer_0_icecast_mode') == 'audio':
             if enable_title_streaming:
-                self._metadata_updater_thread = MetadataUpdater(host=self.icecast_ip, port=self.icecast_port, username=self.icecast_username,
+                self._metadata_updater_thread = MetadataUpdater(host=self.icecast_ip, port=self.icecast_port, username='source',
                                                                 password=self.icecast_password, mount=self.icecast_mount)
             self.make_audio_pipe()
         else:
@@ -148,7 +146,6 @@ class ObIcecastStreamer (ObGstStreamer):
         '''
         self.shout2send.set_property('ip', self.icecast_ip)
         self.shout2send.set_property('port', int(self.icecast_port))
-        self.shout2send.set_property('username', self.icecast_username)
         self.shout2send.set_property('password', self.icecast_password)
         self.shout2send.set_property('mount', self.icecast_mount)
         self.shout2send.set_property('streamname', self.icecast_streamname)

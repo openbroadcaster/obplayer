@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -32,6 +31,7 @@ import os.path
 import traceback
 import subprocess
 import re
+import base64
 
 
 from obplayer.httpadmin import httpserver
@@ -71,9 +71,9 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.root = 'obplayer/httpadmin/http'
 
         self.username = obplayer.Config.setting('http_admin_username')
-        self.password_hash = obplayer.Config.setting('http_admin_password_hash')
+        self.password = obplayer.Config.setting('http_admin_password')
         self.readonly_username = obplayer.Config.setting('http_readonly_username')
-        self.readonly_password_hash = obplayer.Config.setting('http_readonly_password_hash')
+        self.readonly_password = obplayer.Config.setting('http_readonly_password')
         self.readonly_allow_restart = obplayer.Config.setting('http_readonly_allow_restart')
         self.title = obplayer.Config.setting('http_admin_title')
 
@@ -83,11 +83,7 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         sslcert = obplayer.Config.setting('http_admin_sslcert')
         sslca = obplayer.Config.setting('http_admin_sslca')
 
-        if obplayer.custom_http_admin_port != None:
-            port = int(obplayer.custom_http_admin_port)
-        else:
-            port = obplayer.Config.setting('http_admin_port')
-        server_address = ('', port)  # (address, port)
+        server_address = ('', obplayer.Config.setting('http_admin_port'))  # (address, port)
 
         if sslenable:
             httpserver.ObHTTPServer.__init__(self, server_address, sslenable, sslreq, sslkey, sslcert, sslca if sslca else None)
@@ -147,10 +143,12 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         self.route('/alerts/replay', self.req_alert_replay, 'admin')
         self.route('/alerts/geocodes_list', self.req_geocodes_list)
         self.route('/alerts/indigenous_languages', self.req_indigenous_languages_list)
+        self.route('/alerts/tts_test', self.req_tts_test)
         self.route('/pulse/volume', self.req_pulse_volume, 'admin')
         self.route('/pulse/mute', self.req_pulse_mute, 'admin')
         self.route('/pulse/select', self.req_pulse_select, 'admin')
         self.route('/import_leadin_audio', self.req_import_leadin_audio, 'admin')
+        self.route('/import_bug_image', self.req_import_bug_image, 'admin')
         self.route('/inter_station_ctrl/start', self.req_start_inter_station_ctrl, 'admin')
         self.route('/inter_station_ctrl/stop', self.req_stop_inter_station_ctrl, 'admin')
         self.route('/inter_station_ctrl/is_live', self.req_is_live_inter_station_ctrl, 'admin')
@@ -170,8 +168,8 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         for stream in requests.keys():
             data[stream] = { key: requests[stream][key] for key in requests[stream].keys() if key in select_keys }
         data['audio_levels'] = obplayer.Player.get_audio_levels()
-        if obplayer.scheduler.first_sync == False:
-            if hasattr(obplayer, 'scheduler'):
+        if hasattr(obplayer, 'Scheduler'):
+            if obplayer.scheduler.first_sync == False:
                 data['show'] = obplayer.Scheduler.get_show_info()
         else:
             data['show'] = None
@@ -348,6 +346,40 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
             else:
                 return { 'status' : False, 'error' : errors }
 
+    def req_import_bug_image(self, request):
+        obplayer.Log.log("importing bug image file {0}.", 'config')
+        file_ok = False
+        file_type = None
+
+        errors = 'settings-imported-bug-image-error'
+
+        content = request.args.getvalue('bug_overlay_image')
+
+        if content != None:
+            tmp_image_path = os.path.join('/tmp/', 'bug')
+            with open(tmp_image_path, "wb") as file:
+                file.write(content)
+
+            ffmpeg_proc = subprocess.Popen(['ffmpeg', '-i', tmp_image_path, '-hide_banner'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            data = ffmpeg_proc.communicate(None, None)
+            print(data)
+            for image_format in ['jpg', 'png']:
+                format_data = data[1].decode()
+                if image_format in format_data and 'could not find codec parameters' not in format_data:
+                    file_ok = True
+                    file_type = image_format
+
+            if file_ok:
+                image_path = os.path.join(obplayer.ObData.get_datadir(), 'bug.' + file_type)
+                file = open(image_path, 'wb')
+                file.write(content)
+                file.close()
+
+                return { 'status' : True, 'notice' : "settings-imported-bug-image" }
+            else:
+                return { 'status' : False, 'error' : errors }
+
     def req_export(self, request):
         settings = ''
         for (name, value) in sorted(obplayer.Config.list_settings(hidepasswords=True).items()):
@@ -411,6 +443,27 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
                 obplayer.alerts.Processor.cancel_alert(identifier)
             return { 'status' : True }
         return { 'status' : False, 'error' : "alerts-disabled-error" }
+
+    def req_tts_test(self, request):
+        # clear old files if they are found.
+        file = '/tmp/tts.txt'
+        if os.path.exists(file):
+            os.remove(file)
+        file = '/tmp/tts.wav'
+        if os.path.exists(file):
+            os.remove(file)
+        file = '/tmp/tts.mp3'
+        if os.path.exists(file):
+            os.remove(file)
+        # Create TTS message to speak.
+        with open('/tmp/tts.txt', 'w') as file:
+            file.write('O, B player T, T, S Demo. Testing 1, 2, 3, 4.')
+
+        os.system('espeak -s 150 -f /tmp/tts.txt -w /tmp/tts.wav')
+        os.system('ffmpeg -i /tmp/tts.wav /tmp/tts.mp3')
+        with open('/tmp/tts.mp3', 'rb') as file:
+            data = file.read()
+        return str(base64.urlsafe_b64encode(data))
 
     def req_pulse_volume(self, request):
         if not hasattr(obplayer, 'pulse'):

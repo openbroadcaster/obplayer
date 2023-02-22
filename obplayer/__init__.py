@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -28,7 +27,6 @@ from obplayer.log import ObLog
 from obplayer.data import ObData, ObConfigData
 from obplayer.main import ObMainApp
 from obplayer.gui import ObGui
-import obplayer.password_system as password_system
 from obplayer.alert_counter import Alert_Counter
 
 Log = None

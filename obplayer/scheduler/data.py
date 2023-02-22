@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -255,8 +254,7 @@ class ObRemoteData (obplayer.ObData):
             media_item['file_size'],
             media_item['file_location'],
             media_item['approved'],
-            media_item['archived'],
-            )
+            media_item['archived'])
 
         self.execute(query, bindings)
         return self.db.last_insert_rowid()
@@ -269,7 +267,7 @@ class ObRemoteData (obplayer.ObData):
         rows = self.execute("SELECT filename,media_id,file_hash,file_location,approved,archived,file_size,media_type from shows_media GROUP by media_id")
 
         media_list = {}
- 
+
         for row in rows:
             media_row = self.get_media_from_row(row)
             media_list[media_row['filename']] = media_row

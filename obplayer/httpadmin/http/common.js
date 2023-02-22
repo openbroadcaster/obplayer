@@ -600,13 +600,8 @@ $(document).ready(function()
 
   $('#audiolog_enable').change(function()
   {
-    if($(this).is(':checked')) {
-      $('#audiolog_purge_files_row').show();
-      $('.audiolog_options').show();
-    } else {
-      $('#audiolog_purge_files_row').hide();
-      $('.audiolog_options').hide();
-    }
+    if($(this).is(':checked')) $('#audiolog_purge_files_row').show();
+    else $('#audiolog_purge_files_row').hide();
   });
   $('#audiolog_enable').change();
 
@@ -680,6 +675,53 @@ $(document).ready(function()
         if(response.status) $('#notice').html(Site.t('Responses', response.notice)).show();
         else $('#error').html(Site.t('Responses', response.error)).show();
       }
+    });
+  });
+
+  $('#bug_overlay_image').submit(function (event)
+  {
+    event.preventDefault();
+    console.log(this);
+    $.ajax( {
+      url: '/import_bug_image',
+      type: 'POST',
+      data: new FormData(this),
+      processData: false,
+      contentType: false,
+      success: function (response) {
+        $('#notice').hide();
+        $('#error').hide();
+
+        if(response.status) $('#notice').html(Site.t('Responses', response.notice)).show();
+        else $('#error').html(Site.t('Responses', response.error)).show();
+      }
+    });
+  });
+
+  document.getElementById('signal_test_btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    // Pull user selected value.
+
+    let signal_volume = document.getElementById('alerts_attention_signal_volume').value;
+  
+    // Get ref to audio element for playback.
+    let audio_player = document.getElementById('test_player');
+
+  });
+
+  document.getElementById('tts_test_btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    // Pull user selected value.
+    let alerts_voice_volume = document.getElementById('alerts_voice_volume').value;
+    // Get ref to audio element for playback.
+    let audio_player = document.getElementById('test_player');
+
+    $.post('/alerts/tts_test', {}, function (response) {
+      response = response.slice(1);
+      response = response.slice(0,-1);
+      //console.log(response);
+      player = new Audio("data:audio/mp3;base64," + response);
+      player.play();
     });
   });
 

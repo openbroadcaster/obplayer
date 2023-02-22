@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -86,9 +85,6 @@ class ObLiveAssist (httpserver.ObHTTPServer):
         elif request.path == '/info/liveassist_groups':
             groups = obplayer.Scheduler.get_current_groups()
             return groups
-
-        elif request.path == '/info/server_url':
-            return obplayer.Config.setting('sync_url').replace('remote.php', '')
 
         elif request.path == '/command/play':
             if obplayer.Scheduler.unpause_show() == True:

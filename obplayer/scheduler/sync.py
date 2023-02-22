@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -97,12 +96,7 @@ def xml_get_media_item(node):
     media_item['file_location'] = xml_get_tag_value(node, 'location')
     media_item['approved'] = xml_get_tag_value(node, 'approved')
     media_item['archived'] = xml_get_tag_value(node, 'archived')
-    media_item['thumbnail'] = xml_get_tag_value(node, 'thumbnail', 0)
 
-    if media_item['thumbnail'] == 0:
-        media_item['thumbnail'] = False
-    else:
-        media_item['thumbnail'] = True
     return media_item
 
 
@@ -439,7 +433,7 @@ class ObSync:
 
         syncfiles = {}
 
-        obplayer.Log.log('fetching priority broadcast data from server', 'sync')
+        obplayer.Log.log('fetching priority announcements data from server', 'sync')
 
         broadcasts_xml = self.sync_request('emerg')
 
@@ -450,7 +444,7 @@ class ObSync:
         try:
             broadcasts = xml.dom.minidom.parseString(broadcasts_xml)
         except:
-            obplayer.Log.log('unable to sync (priority broacasts) - possible configuration or server error', 'error')
+            obplayer.Log.log('unable to sync (priority announcements) - possible configuration or server error', 'error')
             return
 
         error = broadcasts.getElementsByTagName('error')
@@ -638,36 +632,9 @@ class ObSync:
                 self.sync_media_file = media['media_id']
                 self.fetch_media(media)
                 self.sync_media_file = False
-                # print(obplayer.RemoteData.datadir + "/thumbnails/" + media['thumbnail'][0] + "/" + media['thumbnail'][1])
-                # if os.path.isfile(obplayer.RemoteData.datadir + "/thumbnails/" + media['thumbnail'][0] + "/" + media['thumbnail'][1]):
-                #     print(obplayer.RemoteData.datadir + "/thumbnails/" + media['thumbnail'][0] + "/" + media['thumbnail'][1])
-                #     self.fetch_media_thumbnail(media)
 
         if delete_unused_media == True:
             self.remove_unused_media(obplayer.Config.setting('remote_media'), media_required)
-
-    def fetch_media_thumbnail(self, media):
-        postfields = {}
-
-        postfields['id'] = obplayer.Config.setting('sync_device_id')
-        postfields['pw'] = obplayer.Config.setting('sync_device_password')
-        postfields['media_id'] = media['media_id']
-
-        data_request = requests.post(obplayer.Config.setting('sync_url') + "?action=media", data=postfields)
-
-        if data_request.status_code != 200:
-            obplayer.Log.log('unable to download thumbnail media id: {0} at this time'.format(media['media_id']), 'error')
-        else:
-            data = data_request.content
-            try:
-                # build save path with language name.
-                print(obplayer.alert.ObAlert.lang_ref_to_language_name(media['language']))
-                save_path = obplayer.RemoteData.datadir + '/thumbnail/{0}/{1}/'.format(media['thumbnail'][0], media['thumbnail'][1], media['language'])
-                with open(save_path + media['filename'], 'wb') as file:
-                    file.write(data)
-            except FileNotFoundError as e:
-                obplayer.Log.log('unable to download alert media id: {0} at this time'.format(media['media_id']), 'error')
-
 
     def fetch_alert_media(self, media):
         postfields = {}

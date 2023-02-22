@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -21,11 +20,9 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from ssl import TLSVersion
 import obplayer
 
 import os
-import os.path as path
 import sys
 import time
 import traceback
@@ -36,6 +33,7 @@ import json
 import base64
 import struct
 import random
+import hashlib
 
 if sys.version.startswith('3'):
     from urllib.parse import parse_qs,urlparse,quote,unquote
@@ -101,7 +99,7 @@ class ObHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
             import ssl
             sslreq = ssl.CERT_NONE if not sslca else ssl.CERT_OPTIONAL if not sslreq else ssl.CERT_REQUIRED
             try:
-                self.socket = ssl.wrap_socket(self.socket, keyfile=sslkey, certfile=sslcert, cert_reqs=sslreq, ca_certs=sslca, server_side=True, ssl_version=TLSVersion.TLSv1_2)
+                self.socket = ssl.wrap_socket(self.socket, keyfile=sslkey, certfile=sslcert, cert_reqs=sslreq, ca_certs=sslca, server_side=True)
             except:
                 obplayer.Log.log("Error starting OpenSSL server. Falling back to normal HTTP", 'error')
                 obplayer.Log.log(traceback.format_exc(), 'error')
@@ -122,7 +120,7 @@ class ObHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
                     return view(request)
                 else:
                     raise HTTPError("view object is invalid type: " + str(view))
-        raise HTTPNotFoundError(str(path) + " not found")
+        raise HTTPNotFoundError(str(request.path) + " not found")
 
 
 class ObHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -157,10 +155,10 @@ class ObHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             #username = authdata.split(':')[0]
             #password = authdata.split(':')[1]
 
-            if username == self.server.readonly_username and obplayer.Password_System.login_check(password.encode('utf-8'), self.server.readonly_password_hash):
+            if username == self.server.readonly_username and password == self.server.readonly_password:
                 self.admin_access = False
                 self.authenticated = True
-            elif username == self.server.username and obplayer.Password_System.login_check(password.encode('utf-8'), self.server.password_hash):
+            elif username == self.server.username and password == self.server.password:
                 self.admin_access = True
                 self.authenticated = True
 

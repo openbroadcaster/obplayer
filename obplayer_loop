@@ -1,13 +1,26 @@
 #!/bin/bash
 
 RESET=""
+WAYLAND_VIDEO="false"
+PRODUCT_NAME=$(cat /sys/class/dmi/id/product_name)
+BITS=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+OBPLAYER_SUPPORTED="1"
+
+if [ $PRODUCT_NAME != "Alice Key" ]; then
+    if [ $BITS == "64" ]; then
+        # For now we just go with 32 bit could be a pi. This should be updated in time.
+        OBPLAYER_SUPPORTED="0"
+    fi
+fi
+
+export OBPLAYER_SUPPORTED
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
 while [ 1 ]
 do
-	./obplayer_check $@ $RESET
+	    GDK_BACKEND=x11 ./obplayer_check $@ $RESET 
 
         if [ $? -eq 37 ]
         then
@@ -17,5 +30,11 @@ do
         else
             RESET=""
         fi
+
+        if [ $WAYLAND_VIDEO == "true" ]; then
+            echo "Wayland not supported! Playing now running under X11 mode."
+            GDK_BACKEND=x11
+        fi
+
 	sleep 4
 done

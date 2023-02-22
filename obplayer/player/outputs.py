@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2023
- OpenBroadcaster, Inc.
+Copyright 2012-2015 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -73,16 +72,16 @@ class ObAudioOutputBin (ObOutputBin):
         caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2"))
         self.elements.append(caps)
 
-        # create filter elements
-        level = Gst.ElementFactory.make('level', 'audio-out-level')
-        level.set_property('interval', int(0.5 * Gst.SECOND))
-        self.elements.append(level)
-
         #add volume sink
         self.volume = Gst.ElementFactory.make('volume', 'volumesink')
         self.volume.set_property('volume', obplayer.Config.setting('audio_output_volume'))
 
         self.elements.append(self.volume)
+
+        # create filter elements
+        level = Gst.ElementFactory.make('level', 'audio-out-level')
+        level.set_property('interval', int(0.5 * Gst.SECOND))
+        self.elements.append(level)
 
         self.tee = Gst.ElementFactory.make('tee', 'audio-out-interlink-tee')
         self.elements.append(self.tee)
@@ -129,11 +128,9 @@ class ObAudioOutputBin (ObOutputBin):
             self.audiosink.set_property('enable-last-sample', False)
 
         elif audio_output == 'test':
-            self.elements.append(Gst.ElementFactory.make('queue2', 'audio-out-test-queue'))
             self.audiosink = Gst.ElementFactory.make('fakesink', 'audiosink')
 
         else:
-            self.elements.append(Gst.ElementFactory.make('queue2', 'audio-out-auto-queue'))
             self.audiosink = Gst.ElementFactory.make('autoaudiosink', 'audiosink')
 
         self.elements.append(self.audiosink)
@@ -233,6 +230,20 @@ class ObVideoOutputBin (ObOutputBin):
             self.overlaybin = ObVideoOverlayBin()
             self.elements.append(self.overlaybin.get_bin())
 
+        # bug file location
+        bug_image = obplayer.Config.setting('bug_overlay_image')
+
+        if os.path.exists(bug_image):
+            if obplayer.Config.setting('bug_overlay_enable'):
+                # Adds the network/station logo over the video playout signal.
+                self.elements.append(Gst.ElementFactory.make('gdkpixbufoverlay', 'bug-overlay'))
+                self.elements[-1].set_property('location', bug_image)
+                self.elements[-1].set_property('offset-x', obplayer.Config.setting('bug_overlay_offset_x'))
+                self.elements[-1].set_property('offset-y', obplayer.Config.setting('bug_overlay_offset_y'))
+        else:
+            # Pass for now. Later we can add a log message about this error.
+            pass
+
         """
         ## create caps filter element to set the output video parameters
         caps_filter = Gst.ElementFactory.make('capsfilter', 'video-out-post-overlay-capsfilter')
@@ -308,11 +319,9 @@ class ObVideoOutputBin (ObOutputBin):
             self.videosink.set_property('enable-last-sample', False)
 
         elif video_out_mode == 'test':
-            self.elements.append(Gst.ElementFactory.make('queue2', 'video-out-test-queue'))
             self.videosink = Gst.ElementFactory.make('fakesink', 'video-out-sink')
 
         else:
-            self.elements.append(Gst.ElementFactory.make('queue2', 'video-out-auto-queue'))
             self.videosink = Gst.ElementFactory.make('autovideosink', 'video-out-sink')
 
         self.elements.append(self.videosink)
