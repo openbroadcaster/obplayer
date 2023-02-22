@@ -1170,7 +1170,7 @@
               <tr>
                 <td data-t>Enable/Disable Maintenance Mode</td>
                 <td><button id="toggle-scheduler" type="button" data-t>Toggle</button></td>
-                <td id="toggle-scheduler-status"><%= '(refresh dashboard)' if not hasattr(obplayer, 'Scheduler') else 'Disabled' if obplayer.Scheduler.ctrl.enabled else 'Enabled'  %></td>
+                <td id="toggle-scheduler-status"><%= '(refresh dashboard)' if not hasattr(obplayer, 'Scheduler') else 'Enabled' if obplayer.Scheduler.ctrl.enabled else 'Disabled'  %></td>
               </tr>
             </tbody>
           </table>
