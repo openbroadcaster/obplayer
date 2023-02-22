@@ -58,8 +58,8 @@ class ObMainApp:
         self.args = parser.parse_args()
         obplayer.ObData.set_datadir(self.args.configdir[0])
 
-        if os.access(self.lock_file, os.F_OK) and self.args.desktop:
-            print(self.args.desktop)
+        if os.access(self.lock_file, os.F_OK) and self.args.desktop and self.args.headless == False:
+            #print(self.args.desktop)
             print("Another player is already running...")
             exit(1)
 
