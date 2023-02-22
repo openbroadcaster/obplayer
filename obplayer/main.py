@@ -63,7 +63,9 @@ class ObMainApp:
         obplayer.Log = obplayer.ObLog()
         obplayer.Log.set_debug(self.args.debug)
 
-        if os.access(self.lock_file, os.F_OK) and self.args.desktop:
+        print('self.args.desktop', self.args)
+
+        if os.access(self.lock_file, os.F_OK) and self.args.desktop and self.args.headless == False:
             #print(self.args.desktop)
             print("Another player is already running...")
             exit(1)
