@@ -55,3 +55,5 @@ Sync Tab
   Toggle: Toggle
   Enabled: Enabled
   Disabled: Disabled
+
+  maintenance_enable: Maintenance Enabled
