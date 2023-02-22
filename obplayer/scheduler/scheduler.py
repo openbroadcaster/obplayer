@@ -328,12 +328,8 @@ class ObLiveAssistShow (ObShow):
         # self.ctrl.stop_requests()
 
         # if we start the show less than 30 seconds in, then start it, otherwise start paused
-        if present_time - self.show_data['start_time'] < 30:
-            obplayer.Log.log('starting live assist show', 'scheduler')
-        else:
-            obplayer.Log.log('starting live assist show paused', 'scheduler')
-            self.auto_advance = False
-            self.now_playing = self.playlist.current()
+
+        obplayer.Log.log('starting live assist show', 'scheduler')
 
         self.play_current(present_time)
 
