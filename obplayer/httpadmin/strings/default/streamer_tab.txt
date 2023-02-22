@@ -83,3 +83,5 @@ Streamer Tab
   streamer_youtube_key: YouTube Streaming Key
 
   streamer_youtube_mode: YouTube Output Mode
+
+  station_override_enabled: Station Override Enabled
