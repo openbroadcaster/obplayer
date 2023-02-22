@@ -158,7 +158,7 @@ class ObShow (object):
         return self.groups
 
     def start_show(self, present_time):
-        self.ctrl.stop_requests()
+        #self.ctrl.stop_requests()
 
         # find the track that should play at the present time
         self.playlist.advance_to_current(present_time - self.show_data['start_time'])
@@ -196,8 +196,6 @@ class ObShow (object):
         media = self.playlist.current()
         if not media or not obplayer.Sync.check_media(media):
             obplayer.Log.log("media not found at position " + str(self.playlist.current_pos()) + ": " + str(media['filename']) if media else '??', 'scheduler')
-            next_start = self.playlist.next_start() if media else None
-            self.next_media_update = self.start_time() + next_start if next_start else self.end_time()
             #self.ctrl.stop_requests()
             self.ctrl.add_request(media_type='break', duration=2, title="media not found break")
             return False
@@ -277,13 +275,16 @@ class ObShow (object):
         self.auto_advance = False
         return True
 
-    def pause(self):
+    def pause(self, syncing=False):
         if not self.paused:
             self.paused = True
             self.pause_position = time.time() - self.media_start_time
             self.media_start_time = 0
             self.ctrl.stop_requests()
-            self.ctrl.add_request(media_type='break', end_time=self.end_time(), title="show paused break")
+            if syncing:
+                self.ctrl.stop_requests()
+            else:
+                self.ctrl.add_request(media_type='break', end_time=self.end_time(), title="show paused break")
 
     def unpause(self):
         if self.paused:
@@ -325,13 +326,7 @@ class ObLiveAssistShow (ObShow):
         # Already changed in another branch. Should be here too.
         # self.ctrl.stop_requests()
 
-        # if we start the show less than 30 seconds in, then start it, otherwise start paused
-        if present_time - self.show_data['start_time'] < 30:
-            obplayer.Log.log('starting live assist show', 'scheduler')
-        else:
-            obplayer.Log.log('starting live assist show paused', 'scheduler')
-            self.auto_advance = False
-            self.now_playing = self.playlist.current()
+        obplayer.Log.log('starting live assist show', 'scheduler')
 
         self.play_current(present_time)
 
@@ -401,8 +396,9 @@ class ObAdvancedShow (ObShow):
 
 
 class ObScheduler:
-    def __init__(self):
+    def __init__(self, first_sync=False):
         self.lock = threading.Lock()
+        self.first_sync = first_sync
 
         self.ctrl = obplayer.Player.create_controller('scheduler', priority=50, default_play_mode='overlap', allow_overlay=False)
         self.ctrl.set_request_callback(self.do_player_request)
@@ -412,10 +408,11 @@ class ObScheduler:
         self.next_show_update = 0
 
     def do_player_request(self, ctrl, present_time, media_class):
-        self.check_show(present_time)
+        if self.first_sync == False:
+            self.check_show(present_time)
 
-        if self.present_show is not None:
-            self.present_show.play_next(present_time, media_class)
+            if self.present_show and present_time > self.present_show.next_media_update:
+                self.present_show.play_next(present_time)
 
         self.set_next_update()
 
@@ -537,12 +534,12 @@ class ObScheduler:
             self.present_show.unpause()
         return True
 
-    def pause_show(self):
+    def pause_show(self, syncing=False):
         if self.present_show == None:
             return False
 
         with self.lock:
-            self.present_show.pause()
+            self.present_show.pause(syncing)
         return True
 
     def next_track(self):

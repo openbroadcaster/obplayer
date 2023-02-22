@@ -29,15 +29,26 @@ from .scheduler import ObScheduler
 from .sync import ObSync, VersionUpdateThread, SyncShowsThread, SyncEmergThread, SyncMediaThread, SyncPlaylogThread, Sync_Alert_Media_Thread
 from .priority import ObPriorityBroadcaster
 from .data import ObRemoteData
+import threading
 
 #Sync = None
 #Scheduler = None
+
+def first_sync():
+    obplayer.Sync.sync_shows(True)
+    obplayer.Sync.sync_priority_broadcasts()
+    obplayer.Sync.sync_media()
+    if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
+        obplayer.Sync.sync_alert_media()
+
+    obplayer.Scheduler.first_sync = False
+    obplayer.Scheduler.start_show()
 
 def init():
     #global Sync, Scheduler
 
     obplayer.Sync = ObSync()
-    obplayer.Scheduler = ObScheduler()
+    obplayer.Scheduler = ObScheduler(first_sync=True)
     obplayer.PriorityBroadcaster = ObPriorityBroadcaster()
     obplayer.RemoteData = ObRemoteData()
 
@@ -59,16 +70,17 @@ def init():
         obplayer.Sync.sync_shows(True)
         obplayer.Sync.sync_priority_broadcasts()
         obplayer.Sync.sync_media()
+        obplayer.Scheduler.pause_show(syncing=True)
+        threading.Thread(target=first_sync, args=()).start()
+    else:
+        obplayer.Scheduler.first_sync = False
+        # Start sync threads
+        SyncShowsThread().start()
+        SyncEmergThread().start()
+        SyncMediaThread().start()
+        SyncPlaylogThread().start()
         if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
-            obplayer.Sync.sync_alert_media()
-
-    # Start sync threads
-    SyncShowsThread().start()
-    SyncEmergThread().start()
-    SyncMediaThread().start()
-    SyncPlaylogThread().start()
-    if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
-        Sync_Alert_Media_Thread().start()
+            Sync_Alert_Media_Thread().start()
 
 def quit():
     # backup our main db to disk.
