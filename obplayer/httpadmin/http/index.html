@@ -1154,6 +1154,10 @@
                   <td data-t>sync_freq_playlog</td>
                   <td><input type="text" name="sync_freq_playlog" value="<%= obplayer.Config.setting('sync_freq_playlog', True) %>" title="sync_freq_playlog_tooltip" data-t></td>
                 </tr>
+                <tr>
+                  <td data-t>scheduler_skip_breakpoints</td>
+                  <td><input type="checkbox" name="scheduler_skip_breakpoints" id="" value="1"<%= obplayer.HTTPAdmin.form_item_checked('scheduler_skip_breakpoints') %>></td>
+                </tr>
               </tbody>
             </table>
           </div>
