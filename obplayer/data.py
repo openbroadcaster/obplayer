@@ -395,6 +395,7 @@ class ObConfigData (ObData):
         self.add_setting('station_override_enabled', '0', 'bool')
 
         self.add_setting('maintenance_enable', '0', 'bool')
+        self.add_setting('scheduler_enable', '0', 'bool')
         self.add_setting('scheduler_skip_breakpoints', '0', 'bool')
         self.add_setting('sync_device_id', '1', 'int')
         self.add_setting('sync_device_password', '', 'text')

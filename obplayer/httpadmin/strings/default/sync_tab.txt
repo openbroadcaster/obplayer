@@ -4,8 +4,9 @@ Sync Tab
   Sync/Media: Sync/Media
 
   maintenance_enable: Enable Maintenance Mode
-  maintenance_enable_tooltip: If enabled, the Player will attempt to connect to an OpenBroadcaster Manager Server and download schedules and media for playback.
 
+  scheduler_enable: Enable Scheduler/Sync
+  scheduler_enable_tooltip: If enabled, the Player will attempt to connect to an OpenBroadcaster Manager Server and download schedules and media for playback.
   sync_device_id: Device ID
   sync_device_id_invalid: The device ID is not valid.
 
