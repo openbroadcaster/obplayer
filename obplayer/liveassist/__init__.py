@@ -36,7 +36,7 @@ class LiveAssistThread (obplayer.ObThread):
             obplayer.LiveAssist.shutdown()
 
 def init():
-    if not obplayer.Config.setting('maintenance_enable'):
+    if not obplayer.Config.setting('scheduler_enable'):
         obplayer.Log.log("error starting liveassist.  The scheduler must be enabled (Disable maintenance mode) in order to use the liveassist interface, but it is currently disabled in the settings", 'error')
         return
 
