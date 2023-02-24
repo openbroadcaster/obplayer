@@ -109,7 +109,7 @@ class ObMainApp:
                 self.load_module('rtpin')
             if obplayer.Config.setting('audio_in_enable'):
                 self.load_module('linein')
-            if obplayer.Config.setting('maintenance_enable'):
+            if obplayer.Config.setting('scheduler_enable'):
                 self.load_module('scheduler')
             if obplayer.Config.setting('live_assist_enable'):
                 self.load_module('liveassist')
