@@ -254,6 +254,10 @@ class ObSync:
     def __init__(self):
         self.quit = False
         self.priority_sync_running = False
+        self.sync_done = False
+
+    def is_sync_done(self):
+        return self.sync_done
 
     def curl_progress(self, download_t, download_d, upload_t, upload_d):
         if self.quit:
@@ -618,6 +622,7 @@ class ObSync:
     def sync_media(self, delete_unused_media=True):
 
         if self.sync_media_required == False:
+            self.sync_done = True
             return
 
         self.sync_media_required = False
@@ -635,6 +640,8 @@ class ObSync:
 
         if delete_unused_media == True:
             self.remove_unused_media(obplayer.Config.setting('remote_media'), media_required)
+
+        self.sync_done = True
 
     def fetch_alert_media(self, media):
         postfields = {}

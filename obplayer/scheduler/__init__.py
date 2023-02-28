@@ -40,10 +40,12 @@ def first_sync():
     if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
         obplayer.Sync.sync_alert_media()
 
-    obplayer.Scheduler.first_sync = False
-    obplayer.Scheduler.start_show()
-
-    print("TEST")
+    #obplayer.Scheduler.first_sync = False
+    #obplayer.Scheduler.start_show()
+    if obplayer.Scheduler.first_sync:
+        if obplayer.Sync.is_sync_done():
+            obplayer.Scheduler.pause_show()
+            obplayer.Scheduler.unpause_show()
 
 def init():
     #global Sync, Scheduler
@@ -55,6 +57,7 @@ def init():
 
     # reset show/show_media tables, priority tables
     if obplayer.Config.args.reset:
+        obplayer.Scheduler.first_sync = True
         obplayer.Log.log('resetting show, media, and priority data', 'data')
         obplayer.RemoteData.empty_table('shows')
         obplayer.RemoteData.empty_table('shows_media')

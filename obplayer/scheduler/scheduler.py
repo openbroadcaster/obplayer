@@ -409,22 +409,20 @@ class ObScheduler:
         self.next_show_update = 0
 
     def do_player_request(self, ctrl, present_time, media_class):
-        if self.first_sync == False:
-            self.check_show(present_time)
+        self.check_show(present_time)
 
-            if self.present_show is not None:
-                self.present_show.play_next(present_time, media_class)
+        if self.present_show is not None:
+            self.present_show.play_next(present_time, media_class)
 
-            self.set_next_update()
+        self.set_next_update()
 
     def do_player_update(self, ctrl, present_time):
-        if self.first_sync == False:
-            self.check_show(present_time)
+        self.check_show(present_time)
 
-            if self.present_show and present_time > self.present_show.next_media_update:
-                self.present_show.play_next(present_time)
+        if self.present_show and present_time > self.present_show.next_media_update:
+             self.present_show.play_next(present_time)
 
-            self.set_next_update()
+        self.set_next_update()
 
     def set_next_update(self):
         if self.present_show and self.present_show.next_media_update < self.next_show_update:
