@@ -721,7 +721,6 @@ class ObSync:
             media_fullpath = obplayer.RemoteData.datadir + '/indigenous/{0}/'.format(alert_language) + media['filename']
         else:
             media_fullpath = obplayer.Config.setting('remote_media') + '/' + media['file_location'][0] + '/' + media['file_location'][1] + '/' + media['filename']
-
         # TODO provide file hash check (slow) as an option.
 
         if os.path.exists(media_fullpath):
