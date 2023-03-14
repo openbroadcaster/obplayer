@@ -1158,6 +1158,9 @@
                   <td data-t>scheduler_skip_breakpoints</td>
                   <td><input type="checkbox" name="scheduler_skip_breakpoints" id="" value="1"<%= obplayer.HTTPAdmin.form_item_checked('scheduler_skip_breakpoints') %>></td>
                 </tr>
+                <td data-t>Enable/Disable Maintenance Mode</td>
+                <td><button id="toggle-scheduler" type="button" data-t>Toggle</button></td>
+                <td id="toggle-scheduler-status"><%= '(refresh dashboard)' if not hasattr(obplayer, 'Scheduler') else 'Enabled' if obplayer.Scheduler.ctrl.enabled else 'Disabled'  %></td>
               </tbody>
             </table>
           </div>
