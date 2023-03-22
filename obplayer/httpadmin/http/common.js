@@ -725,16 +725,11 @@ $(document).ready(function()
     });
   });
 
-  document.getElementById('toggle-maintenance-btn').addEventListener('click', (e) => {
+  document.getElementById('toggle-scheduler-btn').addEventListener('click', (e) => {
     e.preventDefault();
-
-    $.post('/alerts/tts_test', {}, function (response) {
-      response = response.slice(1);
-      response = response.slice(0,-1);
-      //console.log(response);
-      player = new Audio("data:audio/mp3;base64," + response);
-      player.play();
-    });
+    $.post('/toggle_scheduler', {}, function (response) {
+      $('#toggle-scheduler-status').html(Site.t('Sync Tab', response.enabled ? 'Enabled' : 'Disabled'));
+    }, 'json');
   });
 
   // Check for button click to open icecast config dialog.
