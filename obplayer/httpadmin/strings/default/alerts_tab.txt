@@ -33,7 +33,8 @@ Alerts Tab
 
   alerts_play_moderates: Play Moderately Severe Alerts
   alerts_play_moderates_tooltip: Include alerts that are not marked 'Broadcast Immediately'.  Alerts marked 'Broadcast Immediately' will always be played.
-
+  alerts_attention_signal_volume: Attention Signal Volume
+  alerts_voice_volume: Attention Signal Volume
 
   Advanced Settings: Advanced Settings
 
