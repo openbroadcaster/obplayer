@@ -1,0 +1,66 @@
+
+Outputs Tab
+
+  Outputs: Outputs
+
+  Audio Output Settings: Audio Output Settings
+
+  audio_out_mode: Audio Output Mode
+  audio_output_volume: Audio Output Levels
+  audio_out_alsa_device: ALSA Device Name
+  audio_out_jack_name: Jack Port Name
+  audio_out_shout2send_ip_stream_one: Shoutcast IP (Stream one)
+  audio_out_shout2send_port_stream_one: Shoutcast Port (Stream one)
+  audio_out_shout2send_mount_stream_one: Shoutcast Mountpoint (Stream one)
+  audio_out_shout2send_password_stream_one: Shoutcast Password (Stream one)
+  audio_out_visualization: Enable Audio Visualization
+  station_override_tooltip: Stream linein to other stations
+  station_override_monitored_streams: Streams in order of priority to check for override audio. separate entrys using ','
+  station_override: Stream linein to other stations
+  station_override_server_ip: Streaming server ip
+  station_override_server_port: Streaming server port
+  station_override_server_password: Streaming server password
+  station_override_server_mountpoint: Streaming server mountpoint
+  station_override_server_bitrate: Streaming server bitrate
+  station_override_enabled: Enable other stations to take over this one.
+  station_override_monitored_streams_invalid: you must list one, or more streams!
+  gst_init_callback: Gstreamer Init Callback
+  audiolog_enable: Enable Audio Logging
+  offair_audiolog_enable: Enable Off Air Audio Logging
+  audiolog_purge_files: Purge Audio Logs After 90 days
+  audiolog_purge_files_tooltip: Delete audio log files after 90 days.
+  audiolog_bitrate: Audiolog bit rate
+  offair_audiolog_feq: Radio Station Frequency
+  offair_audiolog_icecast_ip: Streaming server ip
+  offair_audiolog_icecast_port: Streaming server port
+  offair_audiolog_icecast_mountpoint: Streaming server mountpoint
+  offair_audiolog_icecast_bitrate: Streaming server bitrate
+  offair_audiolog_icecast_password: Streaming server password
+
+
+  Video Output Settings: Video Output Settings
+
+  video_out_enable: Enable Video Output
+  video_out_mode: Video Output Mode
+  video_out_resolution: Video Output Resolution
+  default: default
+
+
+  Video Overlay Settings: Video Overlay Settings
+
+  overlay_enable: Enable Alert Crawl Video Overlay
+  bug_overlay_enable: Enable The Station Bug Overlay
+  bug_overlay_tooltip: The station bug is a logo that displays normally a corner of video signal.
+  bug_overlay_offset_x: Station Bug X Offset
+  bug_overlay_offset_y: Station Bug Y Offset
+  bug_overlay_image: Station Logo Image
+
+  LED Sign Settings: LED Sign Settings
+
+  led_sign_enable: Enable LED Sign
+
+  led_sign_serial_file: LED Device Filename
+  led_sign_serial_file_tooltip: The device filename of the serial port of the LED sign to which a message is sent while an alert cycle is under way.
+  led_sign_timedisplay: Enable LED Time
+  led_sign_init_message: LED Initialize Message
+  led_sign_init_message_tooltip: The message to display during initialization of LED sign.

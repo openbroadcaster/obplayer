@@ -1,0 +1,173 @@
+#!/usr/bin/python3
+
+import argparse
+import pycurl
+import os
+from urllib.parse import urlencode
+import json
+
+parser = argparse.ArgumentParser(prog='audiolog_upload', formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="Upload audio logs to OpenBroadcaster Server.")
+parser.add_argument('-u', '--username', type=str, help='Username', default='obplayer')
+parser.add_argument('-p', '--password', type=str, help='Password', default='obplayer')
+parser.add_argument('-s', '--source', type=str, help='Log file drectory', default='~/.openbroadcaster/lineinlogs')
+parser.add_argument('-d', '--destination', type=str, help='OpenBroadcaster Server URL', default='http://127.0.0.1/')
+parser.add_argument('-c', '--category', type=int, help='Category ID', default=1)
+parser.add_argument('-g', '--genre', type=int, help='Genre ID', default=1);
+
+args = parser.parse_args()
+args.source = os.path.expanduser(args.source)
+
+#
+# FRIENDLY CURL RESPONSE HELPER
+#
+
+class CurlResponse:
+    def __init__(self):
+        self.buffer = u''
+    def __call__(self, data):
+        self.buffer += data.decode('utf-8')
+
+#
+# LOGIN TO OPENBROADCASTER SERVER
+#
+
+curl = pycurl.Curl()
+curl_response = CurlResponse()
+
+postfields = {}
+postfields['c'] = 'account'
+postfields['a'] = 'login'
+postfields['d'] = json.dumps({'username': args.username, 'password': args.password})
+
+enc_postfields = urlencode(postfields)
+
+curl.setopt(pycurl.URL, args.destination+'/api.php')
+curl.setopt(pycurl.HEADER, False)
+curl.setopt(pycurl.POST, True)
+curl.setopt(pycurl.POSTFIELDS, enc_postfields)
+curl.setopt(pycurl.WRITEFUNCTION, curl_response)
+
+curl.perform()
+curl.close()
+
+if curl_response.buffer == '':
+    print('API access failed.')
+    exit()
+
+try:
+    login_response = json.loads(curl_response.buffer)
+except ValueError:
+    print('API access failed.')
+    exit()
+
+if login_response['status'] != True:
+    print('Login failed.')
+    exit()
+    
+#
+# LOOP THROUGH FILES
+#
+
+for filename in os.listdir(args.source):
+
+    if filename[-5:]=='.lock':
+        print('Skipping locked file: '+filename)
+        continue
+                
+    if filename[-9:]=='.uploaded':
+        print('Skipping uploaded file: '+filename)
+        continue
+        
+    filepath = os.path.expanduser(args.source+'/'+filename)
+    
+    #
+    # UPLOAD FILE
+    #
+
+    curl = pycurl.Curl()
+    curl_response = CurlResponse()
+
+    f = open(filepath, 'rb')
+    fs = os.path.getsize(filepath)
+
+    postfields = {}
+    postfields['i'] = login_response['data']['id']
+    postfields['k'] = login_response['data']['key']
+
+    enc_postfields = urlencode(postfields)
+
+    curl.setopt(pycurl.URL, args.destination+'/upload.php')
+    curl.setopt(pycurl.PUT, True)
+    curl.setopt(pycurl.INFILE,f)
+    curl.setopt(pycurl.INFILESIZE,fs)
+    curl.setopt(pycurl.HTTPHEADER, ['Expect:'])
+    curl.setopt(pycurl.WRITEFUNCTION, curl_response)
+
+    curl.perform()
+    curl.close()
+
+    if curl_response.buffer == '':
+        print('API access failed: '+filename)
+        continue
+
+    try:
+        upload_response = json.loads(curl_response.buffer)
+    except ValueError:
+        print('Upload failed: '+filename)
+        continue
+
+    if upload_response['media_supported'] != True:
+        print('Media not supported by server: '+filename)
+        continue
+
+    #
+    # ADD MEDIA ITEM FROM UPLOADED FILE
+    #
+
+    media = {}
+    media['file_id'] = upload_response['file_id']
+    media['file_key'] = upload_response['file_key']
+    media['artist'] = 'Audio Log'
+    media['title'] = os.path.splitext(filename)[0]
+    media['category_id'] = args.category
+    media['genre_id'] = args.genre
+    media['status'] = 'public'
+    media['local_id'] = 1
+
+    curl = pycurl.Curl()
+    curl_response = CurlResponse()
+
+    postfields = {}
+    postfields['i'] = login_response['data']['id']
+    postfields['k'] = login_response['data']['key']
+    postfields['c'] = 'media'
+    postfields['a'] = 'edit'
+    postfields['d'] = json.dumps({'media': [media]})
+
+    enc_postfields = urlencode(postfields)
+
+    curl.setopt(pycurl.URL, args.destination+'/api.php')
+    curl.setopt(pycurl.HEADER, False)
+    curl.setopt(pycurl.POST, True)
+    curl.setopt(pycurl.POSTFIELDS, enc_postfields)
+    curl.setopt(pycurl.WRITEFUNCTION, curl_response)
+
+    curl.perform()
+    curl.close()
+
+    if curl_response.buffer == '':
+        print('Media save failed: '+filename)
+        continue
+
+    try:
+        save_response = json.loads(curl_response.buffer)
+    except ValueError:
+        print('Media save failed: '+filename)
+        continue
+
+    if save_response['status'] != True:
+        print('Media save failed: '+filename)
+        continue
+
+    os.rename(filepath, filepath+'.uploaded')
+    print('Success: '+filename)

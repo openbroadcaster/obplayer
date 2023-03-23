@@ -1,0 +1,62 @@
+
+Sources Tab
+
+  Sources: Sources
+
+
+  Fallback Player Settings: Fallback Player Settings
+
+  fallback_enable: Enable Fallback Media Player
+  fallback_enable_tooltip: If enabled, and the scheduler is unable to played scheduled content, then content from the fallback media directory will be played until scheduled content is available.
+
+  fallback_media: Fallback Media
+  fallback_media_invalid: The fallback media directory you have specified does not exist.
+
+
+  Audio Input Settings: Audio Input Settings
+
+  audio_in_enable: Enable Audio In Source
+  audio_in_mode: Audio Input Mode
+  audio_in_alsa_device: ALSA Device Name
+  audio_in_jack_name: Jack Port Name
+
+  audio_in_disable_on_silence: Disable When Silence Is Detected?
+  audio_in_prioritize_above_scheduler: Prioritize Above Scheduler?
+  audio_in_threshold: Silence/Signal Threshold (dB)
+  audio_in_disable_time: Time Before Disabling Input (s)
+  audio_in_enable_time: Time Before Enabling Input (s)
+  audio_in_log: Enable Audio Input Logging
+
+  AoIP Input Settings: AoIP Input Settings
+
+  aoip_in_enable: Enable AoIP Input
+  aoip_in_uri: AoIP Source URI
+  aoip_in_uri_tooltip: URI of source audio stream to use.  This can either be an rtsp:// uri or an sdp:/// file reference.
+
+
+  RTP/Livewire Audio Input Settings: RTP/Livewire Audio Input Settings
+
+  rtp_in_enable: RTP Input Enable
+  rtp_in_port: RTP Input Port
+  rtp_in_address: Multicast Address
+  rtp_in_address_tooltip: The multicast IP address to receive audio data from.  Leave blank to receive unicast data.
+  rtp_in_encoding: Audio Encoding Format
+  rtp_in_encoding_tooltip: Audio encoding format to use.  Opus requires a clock-rate of 48000Hz.
+  rtp_in_clock_rate: Audio Clock Rate
+  rtp_in_enable_rtcp: Use RTCP?
+  rtp_in_enable_rtcp_tooltip: If enabled, this will listen for RTCP synchronization packets on the next port number. (ie. if input port is set to 5004, RTCP will listen on port 5005).
+
+
+  Image Display Settings: Image Display Settings
+
+  images_transitions_enable: Enable Image Transitions
+  images_width: Fixed Width
+  images_height: Fixed Height
+  images_framerate: Fixed Framerate
+
+
+  Test Signal Settings: Test Signal Settings
+
+  testsignal_enable: Enable Test Signal
+
+

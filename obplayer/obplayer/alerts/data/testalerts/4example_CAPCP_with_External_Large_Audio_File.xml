@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>DF03-E0B7-DF65-975C-9559-B074</identifier>
+  <sender>obplayer@localhost</sender>
+  <sent>2021-02-18T17:13:00-05:00</sent>
+  <status>Actual</status>
+  <msgType>Alert</msgType>
+  <scope>Public</scope>
+  <code>profile:CAP-CP:0.4</code>
+  <code>layer:SOREM:1.0</code>
+  <info>
+    <language>en-CA</language>
+    <category>Met</category>
+    <event>testMessage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <eventCode>
+      <valueName>profile:CAP-CP:Event:0.4</valueName>
+      <value>testMessage</value>
+    </eventCode>
+    <senderName>OB self test</senderName>
+    <headline>Sample Alert Message with a URL Link to a Large Audio File</headline>
+    <description>This example contains an Alert Message with NAAD System Signature and a URL inserted by Issuer, specifying the location of an attachment of an audio file in MP3 format.</description>
+    <parameter>
+      <valueName>layer:SOREM:1.0:Broadcast_Immediately</valueName>
+      <value>Yes</value>
+    </parameter>
+    <resource>
+      <resourceDesc>https://eng.demo.openbroadcaster.pro/CAP/en-remote-player-alert-test-msg.mp3</resourceDesc>
+      <mimeType>application/x-url</mimeType>
+      <uri>https://eng.demo.openbroadcaster.pro/CAP/en-remote-player-alert-test-msg.mp3</uri>
+    </resource>
+    <area>
+      <areaDesc>Tsiigehtchic, Northwest Territories</areaDesc>
+      <polygon>51.502849,-99.263657 51.498802,-99.26395 51.497321,-99.266635 51.49194,-99.264386 51.490075,-99.266247 51.479374,-99.262484 51.473999,-99.265706 51.474256,-99.204523 51.503636,-99.204828 51.503875,-99.193096 51.532352,-99.192697 51.535124,-99.19768 51.537876,-99.19726 51.553234,-99.202605 51.549832,-99.209311 51.548486,-99.207949 51.543869,-99.209961 51.545245,-99.215015 51.551858,-99.217815 51.551656,-99.215103 51.55781,-99.218074 51.576399,-99.220862 51.571719,-99.223234 51.559342,-99.225395 51.552488,-99.236193 51.538291,-99.244281 51.529917,-99.245778 51.528724,-99.256742 51.523192,-99.261972 51.516722,-99.263953 51.510717,-99.263414 51.507501,-99.265974 51.504579,-99.265929 51.502849,-99.263657</polygon>
+      <geocode>
+        <valueName>profile:CAP-CP:Location:0.3</valueName>
+        <value>4619068</value>
+      </geocode>
+    </area>
+  </info>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#" Id="NAADS Signature">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <DigestValue>CkkUubYeEL3qFascYHf8Eb3p5/M=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>vHXTDe8a+IXg8a4CUBFTaVg1MuqFjdkHnVO6+SJm8Hlgp1p2BYhKxHy5PtT+objnQPDbfPXGr15LWJkoYJfk9QA3/chRsSnwtv+PUYYS8KGDwIsqKo6WRVv1ao7PuCoAljkm3bjX8GK4jFWDYxTMJUGZE+8Mu6u0kXf8EVWgceh2i/hWq0VOr5STaONjFnRf1F+8wJP92alJYGsPq94yqxMwMMduHJtp95eeOwCoyrrYB7y0CcDeBMB7jADb5UdvRwDgT2qLcKcwQo1zbfxEBl2kspNbvYz1Zp2nDbbOoBKXwwIDoz5f06J91T5s5PAGq9BJpKatwT2rX4dazeNdzg==</SignatureValue>
+    <KeyInfo>
+      <X509Data>
+        <X509Certificate>MIIF0jCCBLqgAwIBAgIQQ4q3qW4WAZEmJ2Y55X+ovjANBgkqhkiG9w0BAQUFADCBtTELMAkGA1UEBhMCVVMxFzAVBgNVBAoTDlZlcmlTaWduLCBJbmMuMR8wHQYDVQQLExZWZXJpU2lnbiBUcnVzdCBOZXR3b3JrMTswOQYDVQQLEzJUZXJtcyBvZiB1c2UgYXQgaHR0cHM6Ly93d3cudmVyaXNpZ24uY29tL3JwYSAoYykxMDEvMC0GA1UEAxMmVmVyaVNpZ24gQ2xhc3MgMyBTZWN1cmUgU2VydmVyIENBIC0gRzMwHhcNMTIwNTI5MDAwMDAwWhcNMTgwNTMwMjM1OTU5WjCBvjELMAkGA1UEBhMCQ0ExEDAOBgNVBAgTB09udGFyaW8xETAPBgNVBAcUCE9ha3ZpbGxlMRwwGgYDVQQKFBNQZWxtb3JleCBNZWRpYSBJbmMuMRswGQYDVQQLFBJOZXR3b3JrIE9wZXJhdGlvbnMxMzAxBgNVBAsUKlRlcm1zIG9mIHVzZSBhdCB3d3cudmVyaXNpZ24uY29tL3JwYSAoYykwNTEaMBgGA1UEAxQRZHNzMS5wZWxtb3JleC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDhBfGX2hawqJR+ZJqLOgHYJw+/dy3VBeAEkGMvC8Gk0sOsPLzc+4mPLSpy9ufOM7EHrZAGh10ZQPWQTUhC6hzJgEhEA5SXTGVM4cDJjyqtKZcPcvFr0rA9Meq1nX7yfquBF0jcjWISa1H5w48MeTjppcpEYYrLXXKrP76+kuStFy9KyvTXiDAYW+zSLKqSWp83diM3BlDYUUeB9VZPBRqgmZbmudJmAfMhN676/uNbEDcLOmTpp68nh68U6HkjFUJD1Mm8ko3pmcpBOBuxsaTbYWJX7cTG6MUU/y45zS6NJ+7+zTv+crojy3mMeQswKdtKqNxgjWMC2asEpSJLbTARAgMBAAGjggHRMIIBzTAJBgNVHRMEAjAAMAsGA1UdDwQEAwIFoDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8vU1ZSU2VjdXJlLUczLWNybC52ZXJpc2lnbi5jb20vU1ZSU2VjdXJlRzMuY3JsMEQGA1UdIAQ9MDswOQYLYIZIAYb4RQEHFwMwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly93d3cudmVyaXNpZ24uY29tL3JwYTAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwHwYDVR0jBBgwFoAUDURcFlNEwYJ+HSCrJfQBY9i+eaUwdgYIKwYBBQUHAQEEajBoMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC52ZXJpc2lnbi5jb20wQAYIKwYBBQUHMAKGNGh0dHA6Ly9TVlJTZWN1cmUtRzMtYWlhLnZlcmlzaWduLmNvbS9TVlJTZWN1cmVHMy5jZXIwbgYIKwYBBQUHAQwEYjBgoV6gXDBaMFgwVhYJaW1hZ2UvZ2lmMCEwHzAHBgUrDgMCGgQUS2u5KJYGDLvQUjibKaxLB4shBRgwJhYkaHR0cDovL2xvZ28udmVyaXNpZ24uY29tL3ZzbG9nbzEuZ2lmMA0GCSqGSIb3DQEBBQUAA4IBAQA1+UEbk18WrNlP635nBmjjpZOrgwVRwOFUd/29bm9UkCmwS6R2N5OBflKLFSY6wCy8LBg5wZWAJbI/mQ8LQyzDUe+oIpLcMnuoji05NKgSkmEvJ01NTQKki/hlueUN6FTciiVCkMXJ8XdStH9RflKBqZX9IEZzE/b16Cp3MgnxjdFyW1o3l41T0+FucdLE/zvj5CZ6siefw813nTtMGzMu2/jEx6vUJDGBvx2m5Af4CA5924Mfh2xsCLYulSKaHkNV8P+gKdV0+zjrajosbOSDiVWY34Qmvj24JEKLETZFI+AVOSWN559PKKEvT7SirDdFqP0OaD1HV05bes65M+LJ</X509Certificate>
+      </X509Data>
+    </KeyInfo>
+    <Object xmlns="">
+      <SignatureProperties>
+        <SignatureProperty Id="NAADS-DSS1" Target="http://dss1.naad-adna.pelmorex.com">
+          <xc:value xmlns:xc="http://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2.xsd"/>
+        </SignatureProperty>
+        <SignatureProperty Id="NAADS-DSS2" Target="http://dss2.naad-adna.pelmorex.com">
+          <xc:value xmlns:xc="http://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2.xsd"/>
+        </SignatureProperty>
+      </SignatureProperties>
+    </Object>
+  </Signature>
+</alert>

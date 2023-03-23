@@ -1,0 +1,9 @@
+v=0
+s=Local Streamer
+t=0 0
+a=recvonly
+a=sync-time:0 
+a=type:unicast
+c=IN IP4 0.0.0.0
+m=audio 5004 RTP/AVP 96
+a=rtpmap:96 OPUS/48000/2

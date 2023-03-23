@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -e
+
+# log message
+function log() {
+  message=$1
+  #print to the shell incase someone ran this manually.'
+  DATE=$(date)
+  echo "$DATE: $message"
+  echo "$DATE: $message" > $LOG_FILE
+}
+
+function run_upgrade() {
+  log "*** Upgrading OS packages... ***"
+  apt upgrade -y
+  log "*** OS updating complete. System should reboot now. ***"
+  #reboot
+}
+
+UPDATE_FILE="/tmp/obplayer.update"
+LOG_FILE=$1
+
+if [[ -f "$UPDATE_FILE" ]]; then
+  log "*** Checking for OS updates... ***"
+  DATA=$(apt update)
+  # echo $DATA
+  # check for updates.
+  if [[ $DATA =~ "packages can be upgraded" ]]; then
+    run_upgrade
+  fi
+  log "*** Exiting and removing $UPDATE_FILE ***"
+  rm $UPDATE_FILE
+fi
+
+log "*** Exiting... ***"

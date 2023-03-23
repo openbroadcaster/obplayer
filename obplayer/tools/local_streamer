@@ -1,0 +1,296 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import time
+import argparse
+
+import gi
+gi.require_version('Gst', '1.0')
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk, Gdk, Gst
+
+GObject.threads_init()
+Gst.init(None)
+
+
+class ObLocalStreamer (object):
+    def __init__(self):
+        parser = argparse.ArgumentParser(prog='local_streamer', formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="Stream local audio to an RTP receiver.")
+        parser.add_argument('-a', '--audio', type=str, help='Audio mode to use (alsa/pulse/jack/auto/etc).', default='auto')
+        parser.add_argument('-D', '--alsa-device', type=str, help='Name of the ALSA device to monitor.', default='default')
+        parser.add_argument('-J', '--jack-port', type=str, help='Name of the jack port to monitor.', default='default')
+        parser.add_argument('-i', '--ip', type=str, help='RTP receiver IP address.', default='127.0.0.1')
+        parser.add_argument('-p', '--port', type=str, help='RTP receiver port number.', default='5004')
+        parser.add_argument('-e', '--encoding', type=str, help='Audio encoding format: OPUS, MPA, L16, or L24.', default='OPUS')
+        parser.add_argument('-c', '--clockrate', type=str, help='Audio clock rate: 48000 or 44100', default='48000')
+
+        self.args = parser.parse_args()
+
+        self.create_pipeline()
+
+    def create_pipeline(self):
+        self.pipeline = Gst.Pipeline()
+
+        self.elements = [ ]
+
+        audio_input = self.args.audio
+        if audio_input == 'alsa':
+            self.audiosrc = Gst.ElementFactory.make('alsasrc', 'audiosrc')
+            alsa_device = self.args.alsa_device
+            if alsa_device != '':
+                self.audiosrc.set_property('device', alsa_device)
+
+        elif audio_input == 'jack':
+            self.audiosrc = Gst.ElementFactory.make('jackaudiosrc', 'audiosrc')
+            self.audiosrc.set_property('connect', 0)  # don't autoconnect ports.
+            self.audiosrc.set_property('client-name', self.args.port)
+
+        elif audio_input == 'oss':
+            self.audiosrc = Gst.ElementFactory.make('osssrc', 'audiosrc')
+
+        elif audio_input == 'pulse':
+            self.audiosrc = Gst.ElementFactory.make('pulsesrc', 'audiosrc')
+
+        elif audio_input == 'test':
+            self.audiosrc = Gst.ElementFactory.make('fakesrc', 'audiosrc')
+
+        else:
+            self.audiosrc = Gst.ElementFactory.make('autoaudiosrc', 'audiosrc')
+
+        self.elements.append(self.audiosrc)
+
+        """
+        self.level = Gst.ElementFactory.make("level", "level")
+        self.level.set_property('message', True)
+        self.level.set_property('interval', int(1.0 * Gst.SECOND))
+        self.elements.append(self.level)
+
+        self.selector = Gst.ElementFactory.make("valve", "selector")
+        self.elements.append(self.selector)
+        """
+
+        """
+        self.encoder = Gst.ElementFactory.make("lamemp3enc", "lamemp3enc")
+        self.elements.append(self.encoder)
+
+        self.shout2send = Gst.ElementFactory.make("shout2send", "shout2send")
+        self.shout2send.set_property('ip', self.args.ip)
+        self.shout2send.set_property('port', int(self.args.port))
+        self.shout2send.set_property('password', self.args.password)
+        self.shout2send.set_property('mount', self.args.mount)
+        self.elements.append(self.shout2send)
+        """
+
+        clockrate = self.args.clockrate
+
+        self.capsfilter = Gst.ElementFactory.make('capsfilter', "audiocapsfilter")
+        #self.capsfilter.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100,format=S16LE,layout=interleaved"))
+        #self.capsfilter.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=48000"))
+        self.capsfilter.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=" + str(clockrate)))
+        self.elements.append(self.capsfilter)
+
+        self.prequeue = Gst.ElementFactory.make("queue2")
+        self.elements.append(self.prequeue)
+
+        self.audioresample = Gst.ElementFactory.make("audioresample")
+        self.audioresample.set_property('quality', 6)
+        self.elements.append(self.audioresample)
+        self.audioconvert = Gst.ElementFactory.make("audioconvert")
+        self.elements.append(self.audioconvert)
+
+        encoding = self.args.encoding.upper()
+        if encoding == 'OPUS':
+            self.encoder = Gst.ElementFactory.make("opusenc")
+            self.elements.append(self.encoder)
+            self.payloader = Gst.ElementFactory.make("rtpopuspay")
+            self.elements.append(self.payloader)
+
+        elif encoding == 'MPA':
+            self.encoder = Gst.ElementFactory.make("lamemp3enc")
+            self.elements.append(self.encoder)
+            self.payloader = Gst.ElementFactory.make("rtpmpapay")
+            self.payloader.set_property('pt', 96)
+            self.elements.append(self.payloader)
+
+        elif encoding == 'L16':
+            self.payloader = Gst.ElementFactory.make("rtpL16pay")
+            self.elements.append(self.payloader)
+
+        elif encoding == 'L24':
+            self.payloader = Gst.ElementFactory.make("rtpL24pay")
+            self.elements.append(self.payloader)
+
+        else:
+            print("Invalid encoding format: " + str(encoding))
+            return
+
+        self.payloader.set_property('max-ptime', 1000000000)        # maximum 1sec of audio per packet
+
+
+        self.postqueue = Gst.ElementFactory.make("queue2")
+        self.elements.append(self.postqueue)
+
+        self.build_pipeline(self.elements)
+
+        self.rtpbin = Gst.ElementFactory.make("rtpbin", "rtpbin")
+        #self.rtpbin.set_property('latency', 0)
+        #self.rtpbin.set_property('latency', 1000)
+        #self.rtpbin.set_property('buffer-mode', 4)
+        #self.rtpbin.set_property('rtcp-sync-send-time', False)
+        self.pipeline.add(self.rtpbin)
+
+        self.udpsink_rtp = Gst.ElementFactory.make("udpsink")
+        self.udpsink_rtp.set_property('host', self.args.ip)
+        self.udpsink_rtp.set_property('port', int(self.args.port))
+        #self.elements.append(self.udpsink_rtp)
+        self.pipeline.add(self.udpsink_rtp)
+
+        self.udpsink_rtcp = Gst.ElementFactory.make("udpsink")
+        self.udpsink_rtcp.set_property('host', self.args.ip)
+        self.udpsink_rtcp.set_property('port', int(self.args.port) + 1)
+        #self.elements.append(self.udpsink_rtcp)
+        self.pipeline.add(self.udpsink_rtcp)
+
+        self.elements[-1].link_pads('src', self.rtpbin, 'send_rtp_sink_0')
+        self.rtpbin.link_pads('send_rtp_src_0', self.udpsink_rtp, 'sink')
+        self.rtpbin.link_pads('send_rtcp_src_0', self.udpsink_rtcp, 'sink')
+
+        """
+        self.is_dropping = True
+        self.selector.set_property('drop', True)
+
+        self.pipeline.get_bus().add_signal_watch()
+        self.pipeline.get_bus().connect('message::element', self.detect_silence)
+        """
+
+    def build_pipeline(self, elements):
+        for element in elements:
+            #print "adding element to bin: " + element.get_name()
+            self.pipeline.add(element)
+        for index in range(0, len(elements) - 1):
+            elements[index].link(elements[index + 1])
+
+    def start(self):
+        return self.wait_state(Gst.State.PLAYING)
+
+    def stop(self):
+        return self.wait_state(Gst.State.NULL)
+
+    def wait_state(self, target_state):
+        self.pipeline.set_state(target_state)
+        (statechange, state, pending) = self.pipeline.get_state(timeout=5 * Gst.SECOND)
+        if statechange != Gst.StateChangeReturn.SUCCESS:
+            print("gstreamer failed waiting for state change to " + str(pending))
+            return False
+        return True
+
+    def detect_silence(self, bus, message, *args):
+        peak = message.get_structure().get_value('peak')
+        if peak[0] < -28:
+            if not self.is_dropping:
+                self.is_dropping = True
+                self.selector.set_property('drop', True)
+                print("now dropping buffers")
+        else:
+            if self.is_dropping:
+                self.is_dropping = False
+                self.selector.set_property('drop', False)
+                print("now outputting buffers")
+        return True
+
+    def get_address(self):
+        return "(UDP) -> {0}:{1}".format(self.args.ip, self.args.port)
+
+
+class MainWindow (Gtk.Window):
+    def __init__(self, address):
+        Gtk.Window.__init__(self, title="Openbroadcaster Local Audio Streamer")
+        #win.resize(200, 200)
+
+        self.color_play = Gdk.color_parse('#007700')
+        self.color_stop = Gdk.color_parse('#770000')
+
+        self.set_border_width(10)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.add(vbox)
+
+        hbox = Gtk.Box(spacing=6)
+        vbox.pack_start(hbox, True, True, 0)
+
+        self.start_btn = Gtk.Button.new_with_label("Start")
+        self.start_btn.connect("clicked", self.on_start)
+        hbox.pack_start(self.start_btn, True, True, 0)
+
+        self.stop_btn = Gtk.Button.new_with_mnemonic("Stop")
+        self.stop_btn.set_sensitive(False)
+        self.stop_btn.connect("clicked", self.on_stop)
+        hbox.pack_start(self.stop_btn, True, True, 0)
+
+        self.status = Gtk.Label('Stopped')
+        self.status.modify_bg(Gtk.StateFlags.NORMAL, self.color_stop)
+        vbox.pack_start(self.status, True, True, 0)
+
+        self.address = Gtk.Label(address)
+        vbox.pack_start(self.address, False, False, 0)
+
+
+    def on_start(self, button):
+        global streamer
+        if streamer.start():
+            self.display_play()
+        else:
+            self.display_stop()
+            self.status.set_text("Error while trying to play")
+
+    def on_stop(self, button):
+        global streamer
+        if streamer.stop():
+            self.display_stop()
+        else:
+            self.display_play()
+            self.status.set_text("Error while trying to stop")
+
+    def display_play(self):
+        self.status.set_text("Playing")
+        self.status.modify_bg(Gtk.StateFlags.NORMAL, self.color_play)
+        self.start_btn.set_sensitive(False)
+        self.stop_btn.set_sensitive(True)
+
+    def display_stop(self):
+        self.status.set_text("Stopped")
+        self.status.modify_bg(Gtk.StateFlags.NORMAL, self.color_stop)
+        self.start_btn.set_sensitive(True)
+        self.stop_btn.set_sensitive(False)
+
+
+
+mainloop = None
+streamer = None
+
+def main():
+    global mainloop, streamer
+    mainloop = GObject.MainLoop()
+
+    streamer = ObLocalStreamer()
+    #streamer.start()
+
+    win = MainWindow(streamer.get_address())
+    win.connect("delete-event", quit)
+    win.show_all()
+
+    try:
+        mainloop.run()
+    except KeyboardInterrupt:
+        pass
+
+    streamer.stop()
+    sys.exit(0)
+
+def quit(self, widget):
+    global mainloop
+    mainloop.quit()
+
+main()
+

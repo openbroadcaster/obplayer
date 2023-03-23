@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C/DTD HTML 4.01//EN">
+<html>
+  <head>
+    <title><%= obplayer.HTTPAdmin.title %></title>
+    <meta charset="utf-8" />
+    <link href="/common.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="/extras/jquery.min.js"></script>
+    <script type="text/javascript" src="/common.js"></script>
+  </head>
+
+  <body>
+    <% alert = obplayer.alerts.Processor.get_alert(py.DATA('id')[0]) %>
+    <% alert_info = alert.get_first_info(obplayer.alerts.Processor.language_primary) %>
+
+    <div id="alert-details" data-tns="Alert Details">
+
+      <h2><span data-t>Details of</span>&nbsp;<%= alert.identifier %></h2>
+
+      <table>
+	<tr>
+	  <td><span data-t>Identifier</span>:</td>
+	  <td><%= alert.identifier %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Sender</span>:</td>
+	  <td><%= alert.sender %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Sent</span>:</td>
+	  <td><%= alert.sent %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Codes</span>:</td>
+	  <td><%= '<br />\n'.join(alert.codes) %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Status</span>:</td>
+	  <td><%= alert.status %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Message Type</span>:</td>
+	  <td><%= alert.msgtype %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Scope</span>:</td>
+	  <td><%= alert.scope %></td>
+	</tr>
+      </table>
+
+      <table>
+	<tr>
+	  <td><span data-t>Language</span>:</td>
+	  <td><%= alert_info.language %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Event</span>:</td>
+	  <td><%= alert_info.event %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Urgency</span>:</td>
+	  <td><%= alert_info.urgency %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Severity</span>:</td>
+	  <td><%= alert_info.severity %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Certainty</span>:</td>
+	  <td><%= alert_info.certainty %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Expires</span>:</td>
+	  <td><%= alert_info.expires %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Sender Name</span>:</td>
+	  <td><%= alert_info.sender %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Headline</span>:</td>
+	  <td style="text-decoration: underline;"><%= alert_info.headline %></td>
+	</tr>
+	<tr class="padding">
+	  <td><span data-t>Description</span>:</td>
+	  <td><%= alert_info.description.replace('\n', '<br />\n') if alert_info.description else '(none)' %></td>
+	</tr>
+	<tr class="padding">
+	  <td><span data-t>Instruction</span>:</td>
+	  <td><%= unicode(alert_info.instruction) if alert_info.instruction else '(none)' %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Parameters</span>:</td>
+	  <td><%= u'<br />\n'.join([ u"<i>" + unicode(name) + u"</i>: <b>" + unicode(val) + u"</b>" for (name, val) in alert_info.parameters ]) %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Event Codes</span>:</td>
+	  <td><%= u'<br />\n'.join([ u"<i>" + unicode(name) + u"</i>: <b>" + unicode(val) + u"</b>" for (name, val) in alert_info.eventcodes ]) %></td>
+	</tr>
+	<tr>
+	  <td><span data-t>Attached Resources</span>:</td>
+	  <td><%= u'<br />\n'.join([ unicode(resource.uri) + u" (" + unicode(resource.mimetype) + u": " + unicode(resource.size) + u")" for resource in alert_info.resources ]) %></td>
+	</tr>
+      </table>
+
+    </div>
+
+    <p style="font-size: 0.9em; padding-top: 1em;" data-tns="Footer">
+      <span data-t>footer_message</span> <a href="http://www.openbroadcaster.com/">openbroadcaster.com</a>.
+      <a href="http://www.gnu.org/licenses/agpl.html"><span data-t>footer_license</span>.</a>
+    </p>
+  </body>
+</html>

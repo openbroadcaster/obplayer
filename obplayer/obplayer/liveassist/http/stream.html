@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OpenBroadcaster Live Assist</title>
+  <meta charset="utf-8" />
+  <script src="jquery.min.js" type="text/javascript"></script>
+  <script src="jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
+  <script src="adapter.js" type="text/javascript"></script>
+  <script src="stream.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="jquery-ui-css/smoothness/jquery-ui-1.10.4.custom.min.css" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+
+<div id="main">
+
+<select id="mic-mode">
+  <option value="mic">Microphone Only</option>
+  <option value="monitor">Monitor Only</option>
+  <option value="mic+monitor">Microphone + Monitor</option>
+</select>
+
+<select id="mic-rate">
+  <option value="44100">44100</option>
+  <option value="22050">22050</option>
+  <option value="11025">11025</option>
+</select>
+
+<select id="mic-encoding">
+  <option value="pcm">PCM</option>
+  <option value="a-law">A-Law</option>
+</select>
+
+<button id="mic-connect">Connect</button>
+<button id="mic-disconnect">Disconnect</button>
+
+</div>
+
+</body>
+</html>

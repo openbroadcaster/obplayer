@@ -1,0 +1,13 @@
+
+Summary Tab
+
+  Summary: Summary
+  Current Configuration: Current Configuration
+
+  Version: Version
+  Local Time: Local Time:
+  Device Coordinates: Device Coordinates
+
+  Fixed Image Size &amp; Framerate: Fixed Image Size &amp; Framerate
+
+

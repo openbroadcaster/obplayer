@@ -1,0 +1,30 @@
+
+<div class="pulse-mixer">
+  <h5>PulseAudio Sinks</h5>
+
+  <table>
+    <tbody>
+    <% sinks = obplayer.pulse.sink_input_list() %>
+    <% if len(sinks) > 0: %>
+      <% for sink in sinks: %>
+        <% link = obplayer.pulse.sink_info(sink.sink) %>
+        <% appname = sink.proplist['application.name'] if 'application.name' in sink.proplist else sink.name %>
+        <tr>
+          <td><%= appname + " (" + sink.name + ")" %></td>
+          <td><input type="range" class="pulse-volume" name="pulse_sink_<%= appname %>" value="<%= sink.volume.values[0] * 100 %>" min="0" max="100"></td>
+          <td><input type="button" class="pulse-mute <%= ' mute' if sink.mute else '' %> " name="pulse_sink_<%= appname %>" value="Mute" /></td>
+          <td><select class="pulse-select" name="pulse_sink_select_<%= appname %>">
+            <% for output in obplayer.pulse.sink_list(): %>
+              <option value="<%= output.index %>" <%= ' selected' if output.index == sink.sink else '' %>><%= output.description %></option>
+            <% end %>
+          </select></td>
+        </tr>
+      <% end %>
+    <% else: %>
+      <tr><td>No PulseAudio Sinks Present</td></tr>
+    <% end %>
+    </tbody>
+  </table>
+
+</div>
+

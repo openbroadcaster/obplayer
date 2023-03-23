@@ -1,0 +1,30 @@
+
+<div class="pulse-mixer">
+  <h5>PulseAudio Sources</h5>
+
+  <table>
+    <tbody>
+      <% sources = [ source for source in obplayer.pulse.source_output_list() if 'application.id' not in source.proplist or not source.proplist['application.id'].startswith("org.PulseAudio.") ] %>
+      <% if len(sources) > 0: %>
+        <% for source in sources: %>
+          <% link = obplayer.pulse.source_info(source.source) %>
+          <% appname = source.proplist['application.name'] if 'application.name' in source.proplist else source.name %>
+          <tr>
+            <td><%= appname + " (" + source.name + ")" %></td>
+            <td><input type="range" class="pulse-volume" name="pulse_source_<%= appname %>" value="<%= source.volume.values[0] * 100 %>" min="0" max="100"></td>
+            <td><input type="button" class="pulse-mute <%= ' mute' if source.mute else '' %> " name="pulse_source_<%= appname %>" value="Mute" /></td>
+            <td><select class="pulse-select" name="pulse_source_select_<%= appname %>">
+              <% for output in obplayer.pulse.source_list(): %>
+                <option value="<%= output.index %>" <%= ' selected' if output.index == source.source else '' %>><%= output.description %></option>
+              <% end %>
+            </select></td>
+          </tr>
+        <% end %>
+      <% else: %>
+        <tr><td>No PulseAudio Sources Present</td></tr>
+      <% end %>
+    </tbody>
+  </table>
+
+</div>
+

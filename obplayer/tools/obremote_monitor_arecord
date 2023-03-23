@@ -1,0 +1,7 @@
+#!/bin/bash
+
+while true
+do
+	/usr/bin/arecord -Dplug:cjuc_monitor -f S32_LE -t raw | /usr/bin/oggenc - -r -R 8000 -C 2 --downmix -o /media/obdrive/cjuc_monitor/`date +%Y-%m-%d_%H:%M:%S`.ogg
+	sleep 1
+done

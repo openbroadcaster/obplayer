@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <alert xmlns:ns2="http://gov.fema.ipaws.services/caprequest" xmlns="urn:oasis:names:tc:emergency:cap:1.2" xmlns:ns4="http://gov.fema.ipaws.services/IPAWS_CAPService/" xmlns:ns3="http://gov.fema.ipaws.services/capresponse">
+    <identifier>NWS-IDP-PROD-3296165-2882593</identifier>
+    <sender>obplayer@localhost</sender>
+    <sent>2021-02-18T17:13:00-05:00</sent>
+    <status>Actual</status>
+    <msgType>Alert</msgType>
+    <scope>Public</scope>
+    <code>IPAWSv1.0</code>
+    <note>
+    </note>
+    <info>
+      <category>Met</category>
+      <event>Small Craft Advisory</event>
+      <responseType>Avoid</responseType>
+      <urgency>Expected</urgency>
+      <severity>Severe</severity>
+      <certainty>Likely</certainty>
+      <eventCode>
+        <valueName>SAME</valueName>
+        <value>NWS</value>
+      </eventCode>
+      <eventCode>
+        <valueName>NationalWeatherService</valueName>
+        <value>SCY</value>
+      </eventCode>
+      <effective>2019-01-02T15:44:00-05:00</effective>
+      <onset>2019-01-02T21:00:00-05:00</onset>
+      <senderName>NWS Cleveland OH</senderName>
+      <headline>Small Craft Advisory issued January 2 at 3:44PM EST expiring January 3 at 4:00PM EST by NWS Cleveland OH</headline>
+      <description>The National Weather Service in Cleveland has issued a Small
+Craft Advisory, which is in effect from 9 PM this evening to 4 PM
+EST Thursday.
+This is only a test.
+* WINDS...becoming southwest to west 15 to 20 knots with gusts up
+to 30 knots.
+This is only a test.
+* WAVES...building to 3 to 6 feet.
+</description>
+      <instruction>
+      This is only a test.
+      A Small Craft Advisory is issued when waves of 4 feet or more are
+expected or wind speeds reach 21 to 33 knots which may produce
+hazardous conditions to small craft. Inexperienced mariners...
+especially those operating smaller vessels...should stay in port
+during these conditions.
+
+</instruction>
+      <web>http://www.weather.gov</web>
+      <parameter>
+        <valueName>NWSheadline</valueName>
+        <value>SMALL CRAFT ADVISORY IN EFFECT FROM 9 PM THIS EVENING TO 4 PM EST THURSDAY</value>
+      </parameter>
+      <parameter>
+        <valueName>VTEC</valueName>
+        <value>/O.NEW.KCLE.SC.Y.0002.190103T0200Z-190103T2100Z/</value>
+      </parameter>
+      <parameter>
+        <valueName>PIL</valueName>
+        <value>CLEMWWCLE</value>
+      </parameter>
+      <parameter>
+        <valueName>BLOCKCHANNEL</valueName>
+        <value>CMAS</value>
+      </parameter>
+      <parameter>
+        <valueName>BLOCKCHANNEL</valueName>
+        <value>EAS</value>
+      </parameter>
+      <parameter>
+        <valueName>BLOCKCHANNEL</valueName>
+        <value>NWEM</value>
+      </parameter>
+      <parameter>
+        <valueName>eventEndingTime</valueName>
+        <value>2019-01-03T16:00:00-05:00</value>
+      </parameter>
+      <area>
+        <areaDesc>Avon Point to Willowick OH; Vermilion to Avon Point OH; Willowick to Geneva-on-the Lake OH</areaDesc>
+        <geocode>
+          <valueName>UGC</valueName>
+          <value>LEZ146</value>
+        </geocode>
+        <geocode>
+          <valueName>UGC</valueName>
+          <value>LEZ145</value>
+        </geocode>
+        <geocode>
+          <valueName>UGC</valueName>
+          <value>LEZ147</value>
+        </geocode>
+        <geocode>
+          <valueName>SAME</valueName>
+          <value>096146</value>
+        </geocode>
+        <geocode>
+          <valueName>SAME</valueName>
+          <value>096145</value>
+        </geocode>
+        <geocode>
+          <valueName>SAME</valueName>
+          <value>096147</value>
+        </geocode>
+      </area>
+    </info>
+  </alert>
