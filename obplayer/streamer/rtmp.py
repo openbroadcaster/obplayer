@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2015 OpenBroadcaster, Inc.
+Copyright 2012-2022 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -35,17 +35,18 @@ from .base import ObGstStreamer
 
 
 output_settings = {
-    '240p': (426, 240, 700),
-    '360p': (640, 360, 1000),
-    '480p': (854, 480, 2000),
-    '720p': (1280, 720, 4000),
+    '240p': (426, 240),
+    '360p': (640, 360),
+    '480p': (854, 480),
+    '720p': (1280, 720),
+    '1080p': (1920, 1080),
 }
 
-class ObYoutubeStreamer (ObGstStreamer):
+class ObRTMPStreamer (ObGstStreamer):
     def __init__(self):
-        ObGstStreamer.__init__(self, 'youtube')
+        ObGstStreamer.__init__(self, 'rtmp')
 
-        self.mode = output_settings[obplayer.Config.setting('streamer_youtube_mode')]
+        self.mode = output_settings[obplayer.Config.setting('streamer_rtmp_mode')]
 
         obplayer.Player.add_inter_tap(self.name)
 
@@ -70,11 +71,12 @@ class ObYoutubeStreamer (ObGstStreamer):
         self.audiopipe.append(Gst.ElementFactory.make("audioresample"))
 
         caps = Gst.ElementFactory.make('capsfilter')
-        caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100"))
-        #caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=48000"))
+        #caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100"))
+        caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=48000"))
         self.audiopipe.append(caps)
 
         self.encoder = Gst.ElementFactory.make("voaacenc")
+        self.encoder.set_property("bitrate", obplayer.Config.setting('streamer_rtmp_audio_bitrate'))
         #self.encoder = Gst.ElementFactory.make("lamemp3enc")
         #self.encoder = Gst.ElementFactory.make("opusenc")
         #self.encoder = Gst.ElementFactory.make("vorbisenc")
@@ -101,21 +103,46 @@ class ObYoutubeStreamer (ObGstStreamer):
         self.videopipe.append(Gst.ElementFactory.make("videoscale"))
 
         caps = Gst.ElementFactory.make('capsfilter', "videocapsfilter")
-        #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=384,height=288,framerate=15/1"))
-        #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=100,height=75,framerate=15/1"))
-        #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=384,height=288,framerate=15/1"))
-        #caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width=320,height=200,framerate=24/1,pixel-aspect-ratio=1/1"))
-        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate=30/1,pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1])))
+
+        # Convert the value to the internal gstreamer value.
+        # The input frame rates are stored as 23, 29, 59. These actually mean
+        # 24.976, 29.97, and 59.94 FPS.
+
+        gst_framerate = str(obplayer.Config.setting('streamer_rtmp_framerate')) + "/1"
+
+        if obplayer.Config.setting('streamer_rtmp_framerate') == "23":
+            gst_framerate = "24000/1001"
+        elif obplayer.Config.setting('streamer_rtmp_framerate') == "29":
+            gst_framerate = "30000/1001"
+        elif obplayer.Config.setting('streamer_rtmp_framerate') == "59":
+            gst_framerate = "60000/1001"
+
+        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2},pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], gst_framerate)))
         self.videopipe.append(caps)
 
         #self.videopipe.append(Gst.ElementFactory.make("vp8enc"))
         #self.videopipe.append(Gst.ElementFactory.make("vp9enc"))
         #self.videopipe.append(Gst.ElementFactory.make("theoraenc"))
         self.videopipe.append(Gst.ElementFactory.make("x264enc"))
-        self.videopipe[-1].set_property('bitrate', self.mode[2])
-        self.videopipe[-1].set_property('bframes', 2)
-        self.videopipe[-1].set_property('tune', 0x4)
-        self.videopipe[-1].set_property('key-int-max', 60)
+
+        self.videopipe[-1].set_property('bitrate', obplayer.Config.setting('streamer_rtmp_bitrate'))
+        self.videopipe[-1].set_property('key-int-max', int(obplayer.Config.setting('streamer_rtmp_framerate')[:-1]) * 2)
+        self.videopipe[-1].set_property('speed-preset', obplayer.Config.setting('streamer_rtmp_encoder_preset'))
+        self.videopipe[-1].set_property('tune', obplayer.Config.setting('streamer_rtmp_encoder_tune'))
+        self.videopipe[-1].set_property('psy-tune', obplayer.Config.setting('streamer_rtmp_encoder_psytune'))
+                
+        # ENCODER TWEAKS
+        self.videopipe[-1].set_property('cabac', False)
+        self.videopipe[-1].set_property('ref', 1)
+        self.videopipe[-1].set_property('bframes', 0)
+        self.videopipe[-1].set_property('mb-tree', 0)
+        self.videopipe[-1].set_property('me', 'umh')
+        self.videopipe[-1].set_property('subme', 2)
+        self.videopipe[-1].set_property('sync-lookahead', 0)
+        self.videopipe[-1].set_property('rc-lookahead', 0)
+        self.videopipe[-1].set_property('trellis', 0)
+        self.videopipe[-1].set_property('threads', 3)
+        self.videopipe[-1].set_property('sliced-threads', True)
 
         self.videopipe.append(Gst.ElementFactory.make("queue2"))
 
@@ -132,7 +159,15 @@ class ObYoutubeStreamer (ObGstStreamer):
         self.commonpipe.append(Gst.ElementFactory.make("queue2"))
 
         self.commonpipe.append(Gst.ElementFactory.make("rtmpsink"))
-        self.commonpipe[-1].set_property('location', "rtmp://a.rtmp.youtube.com/live2/x/" + obplayer.Config.setting('streamer_youtube_key'))
+
+		# Flexible RTMP URL input handling
+        rtmp_str = obplayer.Config.setting('streamer_rtmp_url') + '/' + obplayer.Config.setting('streamer_rtmp_key')
+
+		# TODO: create regex function to make check ignore case
+        if rtmp_str.startswith("rtmp://") or rtmp_str.startswith("rtmps://"):
+            self.commonpipe[-1].set_property('location', rtmp_str)
+        else:
+            self.commonpipe[-1].set_property('location', 'rtmp://' + rtmp_str)
 
         """
         self.shout2send = Gst.ElementFactory.make("shout2send", "shout2send")

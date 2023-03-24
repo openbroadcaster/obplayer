@@ -73,11 +73,18 @@ Streamer Tab
   streamer_rtp_enable_rtcp_tooltip: If enabled, this will send RTCP synchronization packets on the next port number. (ie. if output port is set to 5004, RTCP will send on port 5005).
 
 
-  YouTube Streaming: YouTube Streaming
+RTMP Streaming: RTMP Streaming
 
-  streamer_youtube_enable: Enable YouTube Live Streaming
-  streamer_youtube_enable_tooltip: Enable YouTube Live Streamer.  The audio/video output of the player will be sent to YouTube to be streamed lived.
+  streamer_rtmp_enable: Enable RTMP Live Streaming
+  streamer_rtmp_tooltip: Enable RTMP Live Streamer. The audio/video output of the player will be sent to the RTMP server to be streamed live.
 
-  streamer_youtube_key: YouTube Streaming Key
+  streamer_rtmp_key: RTMP Stream Key
+  streamer_rtmp_url: RTMP Stream URL
+  streamer_rtmp_mode: RTMP Video Output Mode
+  streamer_rtmp_framerate: RTMP Video Output Framerate
+  streamer_rtmp_bitrate: RTMP Video Output Bitrate (kbps)
+  streamer_rtmp_audio_bitrate: RTMP Audio Output Bitrate (kbps)
+  streamer_rtmp_encoder_preset: RTMP h.264 Encoder Preset
+  streamer_rtmp_encoder_psytune: RTMP h.264 Psychovisual Tuning
+  streamer_rtmp_encoder_tune: RTMP h.264 Non-Psychovisual Tuning
 
-  streamer_youtube_mode: YouTube Output Mode

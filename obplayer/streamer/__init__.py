@@ -33,7 +33,7 @@ def init():
     obplayer.Streamer_stream_2 = None
     obplayer.RTSPStreamer = None
     obplayer.RTPStreamer = None
-    obplayer.YoutubeStreamer = None
+    obplayer.RTMPStreamer = None
 
     from .icecast import ObIcecastStreamer
     def delaystart():
@@ -81,10 +81,10 @@ def init():
         obplayer.ObRTPStreamer = ObRTPStreamer()
         obplayer.ObRTPStreamer.start()
 
-    if obplayer.Config.setting('streamer_youtube_enable'):
-        from .youtube import ObYoutubeStreamer
-        obplayer.YoutubeStreamer = ObYoutubeStreamer()
-        obplayer.YoutubeStreamer.start()
+    if obplayer.Config.setting('streamer_rtmp_enable'):
+        from .rtmp import ObRTMPStreamer
+        obplayer.RTMPStreamer = ObRTMPStreamer()
+        obplayer.RTMPStreamer.start()
 
 def quit():
     if obplayer.Streamer_stream_1:
@@ -97,8 +97,8 @@ def quit():
         obplayer.RTSPStreamer.quit()
     if obplayer.RTPStreamer:
         obplayer.RTPStreamer.quit()
-    if obplayer.YoutubeStreamer:
-        obplayer.YoutubeStreamer.quit()
+    if obplayer.RTMPStreamer:
+        obplayer.RTMPStreamer.quit()
 
 
 """
