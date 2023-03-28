@@ -529,6 +529,11 @@ class ObConfigData (ObData):
         self.add_setting('location_latitude', '60.27434', 'float')
 
         self.add_setting('offair_audiolog_enable', '0', 'bool')
+        self.add_setting('audiolog_quality', '0.0', 'str')
+        self.add_setting('audiolog_enable_upload', '0', 'bool')
+        self.add_setting('audiolog_upload_appkey', '', 'text')
+        self.add_setting('audiolog_samplerate', '44100', 'str')
+        self.add_setting('audiolog_channels', '2', 'str')
         self.add_setting('offair_audiolog_icecast_ip', 'localhost', 'text')
         self.add_setting('offair_audiolog_icecast_port', '8000', 'int')
         self.add_setting('offair_audiolog_icecast_mountpoint', 'fm_audio', 'text')
