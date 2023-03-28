@@ -112,20 +112,10 @@ class ObRTMPStreamer (ObGstStreamer):
 
         if obplayer.Config.setting('streamer_rtmp_framerate') == "23":
             gst_framerate = "24000/1001"
-        elif obplayer.Config.setting('streamer_rtmp_framerate') == "24":
-            gst_framerate = "24"
-        elif obplayer.Config.setting('streamer_rtmp_framerate') == "25":
-            gst_framerate = "25"
         elif obplayer.Config.setting('streamer_rtmp_framerate') == "29":
             gst_framerate = "30000/1001"
-        elif obplayer.Config.setting('streamer_rtmp_framerate') == "30":
-            gst_framerate = "30"
-        elif obplayer.Config.setting('streamer_rtmp_framerate') == "50":
-            gst_framerate = "50"
         elif obplayer.Config.setting('streamer_rtmp_framerate') == "59":
             gst_framerate = "60000/1001"
-        elif obplayer.Config.setting('streamer_rtmp_framerate') == "60":
-            gst_framerate = "60"
 
         caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2},pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], gst_framerate)))
         self.videopipe.append(caps)
