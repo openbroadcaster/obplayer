@@ -131,18 +131,18 @@ class ObRTMPStreamer (ObGstStreamer):
         self.videopipe[-1].set_property('tune', obplayer.Config.setting('streamer_rtmp_encoder_tune'))
         self.videopipe[-1].set_property('psy-tune', obplayer.Config.setting('streamer_rtmp_encoder_psytune'))
                 
-        # ENCODER TWEAKS
-        self.videopipe[-1].set_property('cabac', False)
-        self.videopipe[-1].set_property('ref', 1)
-        self.videopipe[-1].set_property('bframes', 0)
-        self.videopipe[-1].set_property('mb-tree', 0)
-        self.videopipe[-1].set_property('me', 'umh')
-        self.videopipe[-1].set_property('subme', 2)
-        self.videopipe[-1].set_property('sync-lookahead', 0)
-        self.videopipe[-1].set_property('rc-lookahead', 0)
-        self.videopipe[-1].set_property('trellis', 0)
-        self.videopipe[-1].set_property('threads', 3)
-        self.videopipe[-1].set_property('sliced-threads', True)
+        # ENCODER TWEAKS FOR LOW END MACHINES
+        #self.videopipe[-1].set_property('cabac', False)
+        #self.videopipe[-1].set_property('ref', 1)
+        #self.videopipe[-1].set_property('bframes', 0)
+        #self.videopipe[-1].set_property('mb-tree', 0)
+        #self.videopipe[-1].set_property('me', 'umh')
+        #self.videopipe[-1].set_property('subme', 2)
+        #self.videopipe[-1].set_property('sync-lookahead', 0)
+        #self.videopipe[-1].set_property('rc-lookahead', 0)
+        #self.videopipe[-1].set_property('trellis', 0)
+        #self.videopipe[-1].set_property('threads', 3)
+        #self.videopipe[-1].set_property('sliced-threads', True)
 
         self.videopipe.append(Gst.ElementFactory.make("queue2"))
 
