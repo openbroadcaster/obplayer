@@ -11,7 +11,7 @@ import traceback
 import io
 import re
 
-import cgi
+import html
 import json
 import mimetypes
 
@@ -92,10 +92,6 @@ class PyHTML (object):
 
     def translate(self, string):
         return string
-
-    @staticmethod
-    def htmlspecialchars(text):
-        return cgi.escape(text, True)
 
     ### Parser and Execution Code ###
 
@@ -202,7 +198,7 @@ class PyHTML (object):
         except Exception as e:
             # TODO you need to let this defer to the error handler, don't you?
             self.write('\n<b>Eval Error:</b>\n<pre>\n%s</pre><br />\n' % (traceback.format_exc(),))
-            self.write('<br /><pre>' + self.htmlspecialchars('\n'.join([ str(num + 1) + ':  ' + line for num,line in enumerate(self._pycode.splitlines()) ])) + '</pre>')
+            self.write('<br /><pre>' + html.escape('\n'.join([ str(num + 1) + ':  ' + line for num,line in enumerate(self._pycode.splitlines()) ])) + '</pre>')
             return False
 
         finally:
