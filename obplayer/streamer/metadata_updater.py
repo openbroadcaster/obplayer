@@ -82,7 +82,7 @@ class MetadataUpdater(threading.Thread):
 
                     # send the request to update the now playing track
                     if self._post_metadata_update(stream_title) == False:
-                        obplayer.Log.log('The request to update the now playing track fai\'ld! This mostly likly means your password for your stream is wrong, or that your server is having issues.', 'error')
+                        obplayer.Log.log('The request to update the now playing track failed! This most likely means your password for your stream is wrong, or that your server is having issues.', 'error')
                     else:
                         obplayer.Log.log('"{0}" has been sent to icecast via title streaming.'.format(self._last_track), 'debug')
 
