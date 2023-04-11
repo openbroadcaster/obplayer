@@ -698,7 +698,7 @@ $(document).ready(function()
     });
   });
 
-  document.getElementById('signal_test_btn').addEventListener('click', (e) => {
+  document.getElementById('signal_test_btn')?.addEventListener('click', (e) => {
     e.preventDefault();
     // Pull user selected value.
 
@@ -709,7 +709,7 @@ $(document).ready(function()
 
   });
 
-  document.getElementById('tts_test_btn').addEventListener('click', (e) => {
+  document.getElementById('tts_test_btn')?.addEventListener('click', (e) => {
     e.preventDefault();
     // Pull user selected value.
     let alerts_voice_volume = document.getElementById('alerts_voice_volume').value;
@@ -725,7 +725,7 @@ $(document).ready(function()
     });
   });
 
-  document.getElementById('toggle-scheduler-btn').addEventListener('click', (e) => {
+  document.getElementById('toggle-scheduler-btn')?.addEventListener('click', (e) => {
     e.preventDefault();
     $.post('/toggle_scheduler', {}, function (response) {
       $('#toggle-scheduler-status').html(Site.t('Sync Tab', response.enabled ? 'Enabled' : 'Disabled'));
