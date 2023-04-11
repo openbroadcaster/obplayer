@@ -354,10 +354,10 @@ class ObConfigData (ObData):
             i = str(i)
             if i != "1":
                 self.add_setting('streamer_' + i + '_icecast_enable', '1', 'bool')
-                self.add_setting('streamer_' + i + '_title_streaming_enable', '1', 'bool')
+                self.add_setting('streamer_' + i + '_title_streaming_mode', '', 'text')
             else:
                 self.add_setting('streamer_' + i + '_icecast_enable', '0', 'bool')
-                self.add_setting('streamer_' + i + '_title_streaming_enable', '1', 'bool')
+                self.add_setting('streamer_' + i + '_title_streaming_mode', '', 'text')
             self.add_setting('streamer_' + i + '_icecast_mode', 'audio', 'text')
             self.add_setting('streamer_' + i + '_icecast_bitrate', '0', 'int')
             self.add_setting('streamer_' + i + '_icecast_ip', '127.0.0.1', 'text')

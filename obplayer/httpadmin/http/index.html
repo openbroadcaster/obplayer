@@ -1976,8 +1976,14 @@
                 <td><input type="checkbox" name="streamer_play_on_startup" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_play_on_startup') %> title="streamer_play_on_startup_tooltip" data-t></td>
               </tr>
               <tr>
-                <td data-t>streamer_0_title_streaming_enable</td>
-                <td><input type="checkbox" name="streamer_0_title_streaming_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_0_title_streaming_enable') %> title="streamer_0_title_streaming_enable_tooltip" data-t></td>
+                <td data-t>streamer_0_title_streaming_mode</td>
+                <td>
+                  <select name="streamer_0_title_streaming_mode">
+                    <option value="" <%= obplayer.HTTPAdmin.form_item_selected('streamer_0_title_streaming_mode','') %>>None</option>
+                    <option value="basic" <%= obplayer.HTTPAdmin.form_item_selected('streamer_0_title_streaming_mode','basic') %>>Title - Artist</option>
+                    <option value="json" <%= obplayer.HTTPAdmin.form_item_selected('streamer_0_title_streaming_mode','json') %>>Advanced (JSON)</option>
+                  </select>
+                </td>
               </tr>
             </tbody>
             </table>
@@ -2045,10 +2051,14 @@
                       <td data-t>streamer_1_icecast_public</td>
                       <td><input type="checkbox" name="streamer_1_icecast_public" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_1_icecast_public') %>></td>
                     </tr>
-                    <tr>
-                      <td data-t>streamer_1_title_streaming_enable</td>
-                      <td><input type="checkbox" name="streamer_1_title_streaming_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_1_title_streaming_enable') %> title="streamer_1_title_streaming_enable_tooltip" data-t></td>
-                    </tr>
+                    <td data-t>streamer_1_title_streaming_mode</td>
+                    <td>
+                      <select name="streamer_1_title_streaming_mode">
+                        <option value="" <%= obplayer.HTTPAdmin.form_item_selected('streamer_1_title_streaming_mode','') %>>None</option>
+                        <option value="basic" <%= obplayer.HTTPAdmin.form_item_selected('streamer_1_title_streaming_mode','basic') %>>Title - Artist</option>
+                        <option value="json" <%= obplayer.HTTPAdmin.form_item_selected('streamer_1_title_streaming_mode','json') %>>Advanced (JSON)</option>
+                      </select>
+                    </td>
                   </tbody>
                 </table>
               </div>
