@@ -44,7 +44,7 @@ class MetadataUpdater(threading.Thread):
             track['artist'] = requests['audio']['artist']
             track['title'] = requests['audio']['title']
             track['duration'] = requests['audio']['duration']
-            track['start_time'] = requests['audio']['start_time']
+            track['startTime'] = requests['audio']['start_time']
 
             # return track in json format
             return track
@@ -72,8 +72,7 @@ class MetadataUpdater(threading.Thread):
                     # handle output in json string format
                     if self._json:
                         # use start time to generate current play time position, then delete start time from dict.
-                        new_track['time'] = round(time.time() - new_track['start_time'], 2)
-                        del new_track['start_time']
+                        new_track['time'] = round(time.time() - new_track['startTime'], 2)
                         stream_title = json.dumps(new_track)
                     
                     # handle output in "artist - title" format
