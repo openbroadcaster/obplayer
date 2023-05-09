@@ -216,7 +216,7 @@ class ObAlertTCPFetcher (ObAlertFetcher):
 
                     try:
                         self.socket = socket.socket(af, socktype, proto)
-                        #self.socket.settimeout(360.0)
+                        self.socket.settimeout(120.0)
                     except socket.error as e:
                         self.socket = None
                         continue
