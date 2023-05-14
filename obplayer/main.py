@@ -79,6 +79,8 @@ class ObMainApp:
         if self.args.headless is True:
             obplayer.Config.headless = self.args.headless
 
+        obplayer.Password_System = obplayer.password_system
+
         obplayer.Main = self
 
     def start(self):
