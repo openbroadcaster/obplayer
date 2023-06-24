@@ -911,7 +911,7 @@ class ObSync:
 
             if local_exists and (file_match or sync_mode == 'local'):  # ignoring hash mismatch if source local, there is nothing we can do anyway...
                 obplayer.Log.log('copying ' + filename + ' from local', 'sync')
-                shutil.copy(local_fullpath, media_outfilename)
+                shutil.copyfile(local_fullpath, media_outfilename)
             elif sync_mode == 'backup':
 
                 fetch_from_http = True
@@ -970,7 +970,7 @@ class ObSync:
                 obplayer.Log.log('copying downloaded file to backup location', 'sync')
 
                 # copy newly downloaded file to backup
-                shutil.copy(media_outfilename, local_fullpath)
+                shutil.copyfile(media_outfilename, local_fullpath)
 
     #
     # Check MD5 hash of a given file.
