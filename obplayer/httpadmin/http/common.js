@@ -600,8 +600,13 @@ $(document).ready(function()
 
   $('#audiolog_enable').change(function()
   {
-    if($(this).is(':checked')) $('#audiolog_purge_files_row').show();
-    else $('#audiolog_purge_files_row').hide();
+    if($(this).is(':checked')) {
+      $('#audiolog_purge_files_row').show();
+      $('.audiolog_options').show();
+    } else {
+      $('#audiolog_purge_files_row').hide();
+      $('.audiolog_options').hide();
+    }
   });
   $('#audiolog_enable').change();
 

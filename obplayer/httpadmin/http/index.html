@@ -1435,6 +1435,43 @@
                 <td data-t>audiolog_enable</td>
                 <td><input type="checkbox" id="audiolog_enable" name="audiolog_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audiolog_enable') %>></td>
               </tr>
+              <tr class="audiolog_options">
+                <td data-t>audiolog_samplerate</td>
+                <td>
+                  <select name="audiolog_samplerate" id="audiolog_samplerate">
+                    <option value="" selected hidden>Please select a samplerate...</option>
+                    <option value="22050" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_samplerate', '22050') %>>22050 (FM Radio)</option>
+                    <option value="44100" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_samplerate', '44100') %>>44.100 (CD)</option>
+                    <option value="48000" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_samplerate', '48000') %>>48000 (Video)</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="audiolog_options">
+                <td data-t>audiolog_channels</td>
+                <td>
+                  <select name="audiolog_channels" id="audiolog_channels">
+                    <option value="" selected hidden>Please select a channel count...</option>
+                    <option value="1" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_channels', '1') %>>1ch (Mono)</option>
+                    <option value="2" <%= obplayer.HTTPAdmin.form_item_selected('audiolog_channels', '2') %>>2ch (Stereo)</option>
+                  </select>
+                </td>
+              </tr>
+              <tr class="audiolog_options">
+                <td data-t>audiolog_enable_upload</td>
+                <td>
+                    <input type="checkbox" name="audiolog_enable_upload" value="1"<%= obplayer.HTTPAdmin.form_item_checked('audiolog_enable_upload') %>>
+                </td>
+              </tr>
+              <tr class="audiolog_options">
+                <td data-t>audiolog_upload_appkey</td>
+                <td>
+                    <input type="password" name="audiolog_upload_appkey" value="<%= obplayer.Config.setting('audiolog_upload_appkey',True) %>">
+                </td>
+              </tr>
+              <tr class="audiolog_options">
+                <td data-t>audiolog_quality</td>
+                <td><input type="range" name="audiolog_quality" id="audiolog_quality"  step="0.1" min="0.1" max="0.9" value="<%= obplayer.Config.setting('audiolog_quality',True) %>"></td>
+              </tr>
               <% if obplayer.Config.setting('show_sdr_streaming_logging_settings'): %>
               <tr>
                 <td data-t>offair_audiolog_enable</td>

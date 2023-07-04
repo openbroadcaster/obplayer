@@ -26,6 +26,11 @@ Outputs Tab
   station_override_monitored_streams_invalid: you must list one, or more streams!
   gst_init_callback: Gstreamer Init Callback
   audiolog_enable: Enable Audio Logging
+  audiolog_quality: Audio Logging Quality Levels (Lower is better)
+  audiolog_samplerate: Audio Logging Samplerate
+  audiolog_channels: Audio Logging Channels
+  audiolog_enable_upload: Enable OBServer uploading of logs
+  audiolog_upload_appkey: Server App Key
   offair_audiolog_enable: Enable Off Air Audio Logging
   audiolog_purge_files: Purge Audio Logs After 90 days
   audiolog_purge_files_tooltip: Delete audio log files after 90 days.

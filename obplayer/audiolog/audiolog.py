@@ -32,8 +32,11 @@ import gi
 gi.require_version('Gst', '1.0')
 from gi.repository import GObject, Gst
 
-AUDIOLOG_SAMPLE_RATE = '22050'
-AUDIOLOG_CHANNELS = '1'
+#AUDIOLOG_SAMPLE_RATE = '22050'
+#AUDIOLOG_CHANNELS = '1'
+
+AUDIOLOG_SAMPLE_RATE = obplayer.Config.setting('audiolog_samplerate')
+AUDIOLOG_CHANNELS = obplayer.Config.setting('audiolog_channels')
 
 class ObAudioLog (object):
     def __init__(self):
@@ -98,7 +101,7 @@ class ObAudioLog (object):
         self.elements.append(Gst.ElementFactory.make('queue2'))
 
         self.encoder = Gst.ElementFactory.make('vorbisenc')
-        self.encoder.set_property('quality', 0.0)
+        self.encoder.set_property('quality', float(obplayer.Config.setting('audiolog_quality')))
         self.elements.append(self.encoder)
 
         self.elements.append(Gst.ElementFactory.make('oggmux'))
