@@ -47,6 +47,17 @@ def first_sync():
             obplayer.Scheduler.pause_show()
             obplayer.Scheduler.unpause_show()
 
+    start_sync_threads()
+
+def start_sync_threads():
+    # Start sync threads
+    SyncShowsThread().start()
+    SyncEmergThread().start()
+    SyncMediaThread().start()
+    SyncPlaylogThread().start()
+    if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
+        Sync_Alert_Media_Thread().start()
+
 def init():
     #global Sync, Scheduler
 
@@ -76,13 +87,7 @@ def init():
         #obplayer.Scheduler.pause_show(syncing=True)
         threading.Thread(target=first_sync, args=()).start()
     else:
-        # Start sync threads
-        SyncShowsThread().start()
-        SyncEmergThread().start()
-        SyncMediaThread().start()
-        SyncPlaylogThread().start()
-        if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
-            Sync_Alert_Media_Thread().start()
+        start_sync_threads()
 
 def quit():
     # backup our main db to disk.
