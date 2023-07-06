@@ -120,6 +120,21 @@ h2:first-child
   overflow: auto;
 }
 
+#log-data > span
+{
+  display: block;
+}
+
+#log-data[data-level=normal] > span[data-type=debug]
+{
+  display: none;
+}
+
+#log-data[data-level=alert] > span:not([data-type=alert])
+{
+  display: none;
+}
+
 .alerts-table
 {
   width: 100%;

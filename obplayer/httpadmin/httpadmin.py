@@ -173,10 +173,10 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
                 data['show'] = obplayer.Scheduler.get_show_info()
         else:
             data['show'] = None
-        logs['normal'] = obplayer.Log.format_logs('normal')
-        logs['debug'] = obplayer.Log.format_logs('debug')
-        logs['alerts'] = obplayer.Log.format_logs('alerts')
-        data['logs'] = logs
+        #logs['normal'] = obplayer.Log.format_logs('normal')
+        #logs['debug'] = obplayer.Log.format_logs('debug')
+        #logs['alerts'] = obplayer.Log.format_logs('alerts')
+        data['logs'] = obplayer.Log.format_logs()
         return data
 
     def req_tos_agreed(self, request):

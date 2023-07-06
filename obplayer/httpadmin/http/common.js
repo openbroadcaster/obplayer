@@ -318,18 +318,13 @@ Site.formatLogs = function(lines)
 {
   var scroll = false;
   var logdiv = $('#log-data')[0];
-  var log_level = $('#log_level').val();
 
-  if(logdiv.scrollTop == logdiv.scrollTopMax) scroll=true;
-  if (log_level == 'normal') {
-    lines = lines.normal;
-  } else if (log_level == 'debug') {
-    lines = lines.debug;
-  } else if (log_level == 'alert') {
-    lines = lines.alerts;
+  // if scroll at end, we want to keep at end after updating content
+  if (Math.abs(logdiv.scrollTop - (logdiv.scrollHeight - logdiv.clientHeight)) < 1) {
+    scroll = true;
   }
   $('#log-data').html('');
-  $('#log-data').html(lines.join('<br />\n'));
+  $('#log-data').html(lines.join('\n'));
   if(scroll) logdiv.scrollTop = logdiv.scrollHeight;
 }
 
@@ -642,6 +637,7 @@ $(document).ready(function()
   Site.updateAlertInfo();
   Site.updateStatusInfo();
   $('#log_level').change(Site.updateStatusInfo);
+  $('#log_level').change(function() { $('#log-data').attr('data-level', $('#log_level').val()); });
 
   $('#import-settings').submit(function (event)
   {
