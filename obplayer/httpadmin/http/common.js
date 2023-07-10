@@ -170,8 +170,11 @@ Site.cancelAlert = function()
   }
 }
 
+Site.updateAlertInfoRunning = false;
 Site.updateAlertInfo = function()
 {
+  if(Site.updateAlertInfoRunning) return;
+  Site.updateAlertInfoRunning = true;
   if ($('#tabs .tab[data-content="alerts"]').hasClass('selected')){
     $.post('/alerts/list',{},function(response,status)
     {
@@ -233,6 +236,8 @@ Site.updateAlertInfo = function()
       // display the next time alerts will be played
       var next_check = response.next_play - (Date.now() / 1000);
       $('#alerts-next-play').html(Site.friendlyDuration(next_check >= 0 ? next_check : 0) + " min");
+
+      Site.updateAlertInfoRunning = false;
     },'json').error(function()
     {
       $('#alerts-last-heartbeat').html("");
@@ -240,13 +245,18 @@ Site.updateAlertInfo = function()
 
       $('#active-alerts').html('<span style="color: red; font-weight: bold;">('+Site.t('Responses', 'player-connection-lost')+'</span>');
       $('#expired-alerts').html('<span style="color: red; font-weight: bold;">('+Site.t('Responses', 'player-connection-lost')+')</span>');
+      Site.updateAlertInfoRunning = false;
     });
   }
 }
 
+Site.updateStatusInfoRunning = false;
 
 Site.updateStatusInfo = function()
 {
+  if(Site.updateStatusInfoRunning) return;
+  Site.updateStatusInfoRunning = true;
+
   if($('#tabs .tab[data-content="status"]').hasClass('selected')){
     $.post('/status_info',{},function(response,status)
     {
@@ -282,9 +292,11 @@ Site.updateStatusInfo = function()
 	$('#visual-summary-end-time').html(Site.friendlyTime(response.visual.end_time));
       }
       Site.formatLogs(response.logs);
+      Site.updateStatusInfoRunning = false;
     },'json').error(function()
     {
       $('#log-data').html('<span style="color: red; font-weight: bold;">(' + Site.t('Responses', 'player-connection-lost') + ')</span>');
+      Site.updateStatusInfoRunning = false;
     });
   }
 }
@@ -295,7 +307,10 @@ if ($('#tabs .tab[data-content="outputs"]').hasClass('selected')) {
   const updateStationOverrideBtnInterval = setInterval(Site.updateStationOverrideBtn, 1000);
 }
 
+Site.updateStationOverrideBtnRunning = false;
 Site.updateStationOverrideBtn = function() {
+  if (Site.updateStationOverrideBtnRunning) return;
+  Site.updateStationOverrideBtnRunning = true;
   const btn = $('.audio-override-btn');
   $.post('/inter_station_ctrl/is_live', {}, function (response, status) {
     if (response == 'True') {
@@ -303,6 +318,9 @@ Site.updateStationOverrideBtn = function() {
     } else {
       btn.text('Start');
     }
+    Site.updateStationOverrideBtnRunning = false;
+  }).error(function () {
+    Site.updateStationOverrideBtnRunning = false;
   });
 }
 
