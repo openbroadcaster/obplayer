@@ -22,6 +22,8 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import
 
+import time
+
 import obplayer
 
 from .scheduler import ObScheduler
@@ -40,12 +42,13 @@ def first_sync():
     if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
         obplayer.Sync.sync_alert_media()
 
-    #obplayer.Scheduler.first_sync = False
-    #obplayer.Scheduler.start_show()
     if obplayer.Scheduler.first_sync:
         if obplayer.Sync.is_sync_done():
             obplayer.Scheduler.pause_show()
             obplayer.Scheduler.unpause_show()
+
+    obplayer.Scheduler.first_sync = False
+    obplayer.Scheduler.check_show(time.time())
 
     start_sync_threads()
 
