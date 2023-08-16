@@ -22,5 +22,6 @@ HTTP Tab
   http_readonly_password: Read-Only Password
   http_readonly_allow_restart: Allow Fullscreen/Restart for Read-Only User
   http_admin_title: Dashboard Title
+  http_admin_reload: Reload Admin Every 15 Minutes
 
 

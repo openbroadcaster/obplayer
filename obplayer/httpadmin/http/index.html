@@ -19,6 +19,11 @@
         <script type="text/javascript" src="/map.js"></script>
       <% end %>
 
+      <% if obplayer.Config.setting('http_admin_reload'): %>
+      <script>
+        Site.checkReloadInit();
+      </script>
+      <% end %>
     </head>
     <body>
 
@@ -12771,6 +12776,10 @@
               <tr>
                 <td data-t>http_admin_title</td>
                 <td><input type="text" name="http_admin_title" value="<%= obplayer.Config.setting('http_admin_title',True) %>"></td>
+              </tr>
+              <tr>
+                <td data-t>http_admin_reload</td>
+                <td><input type="checkbox" name="http_admin_reload" value="1"<%= obplayer.HTTPAdmin.form_item_checked('http_admin_reload') %>></td>
               </tr>
               <tr>
                 <td colspan="2"><button name="save" type="button" onclick="javascript: Site.save('http');" data-tns="Common" data-t>Save</button></td>

@@ -466,6 +466,7 @@ class ObConfigData (ObData):
         self.add_setting('http_admin_sslkey', '', 'text')
         self.add_setting('http_admin_sslca', '', 'text')
         self.add_setting('http_admin_title', 'OpenBroadcaster Player Dashboard', 'text')
+        self.add_setting('http_admin_reload', '0', 'bool')
         self.add_setting('http_admin_language', 'en', 'text')
         self.add_setting('http_admin_tos_ui_agreed', '0', 'bool')
         with open('default_tos.txt', 'r') as file:

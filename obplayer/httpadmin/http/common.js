@@ -544,8 +544,23 @@ Site.translate = function(namespace,name,data)
   return string;
 }
 
-Site.t = Site.translate;
+// after a certain period of no client activity (mouse movement, mouse click, keyboard), reload the page
+Site.checkReloadCountdown = null;
+Site.checkReload = function () {
+  Site.checkReloadCountdown--;
+  if (Site.checkReloadCountdown <= 0) location.reload();
+  console.log('reloading after '+Site.checkReloadCountdown+' minutes of inactivity');
+}
+Site.checkReloadReset = function () {
+  Site.checkReloadCountdown = 15;
+}
+Site.checkReloadInit = function () {
+  Site.checkReloadReset();
+  setInterval(Site.checkReload, 60000);
+  $(document).on('mousemove click keydown', Site.checkReloadReset);
+}
 
+Site.t = Site.translate;
 
 $(document).ready(function()
 {
@@ -913,5 +928,4 @@ $(document).ready(function()
     //  console.log(player);
     //});
   });
-
 });
