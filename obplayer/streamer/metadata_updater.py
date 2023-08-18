@@ -9,8 +9,9 @@ import copy
 # not being able to handle a threat thats not running.
 import threading
 
+
 class MetadataUpdater(threading.Thread):
-    def __init__(self, protocol='http', host=None, port='8000', username='source', password='', mount=None, json = True):
+    def __init__(self, protocol='http', host=None, port='8000', username='source', password='', mount=None, mode='basic'):
         threading.Thread.__init__(self)
         self._protocol = protocol
         self._host = host
@@ -18,14 +19,15 @@ class MetadataUpdater(threading.Thread):
         self._username = username
         self._password = password
         self._mount = mount
-        self._json = json
+        self._json = (mode == 'json')
         self._last_track = None
         self.running = True
 
     # Sends the current track info to icecast.
 
     def _post_metadata_update(self, current_track):
-        url = 'http://{0}:{1}/admin/metadata?mode=updinfo&mount=/{2}&song={3}'.format(self._host, self._port, self._mount, urllib.parse.quote(current_track))
+        url = 'http://{0}:{1}/admin/metadata?mode=updinfo&mount=/{2}&song={3}'.format(
+            self._host, self._port, self._mount, urllib.parse.quote(current_track))
         req = requests.get(url, auth=(self._username, self._password))
         if req.status_code == 200:
             return True
@@ -72,18 +74,22 @@ class MetadataUpdater(threading.Thread):
                     # handle output in json string format
                     if self._json:
                         # use start time to generate current play time position, then delete start time from dict.
-                        new_track['time'] = round(time.time() - new_track['startTime'], 2)
+                        new_track['time'] = round(
+                            time.time() - new_track['startTime'], 2)
                         stream_title = json.dumps(new_track)
-                    
+
                     # handle output in "artist - title" format
                     else:
-                        stream_title = '{0} - {1}'.format(new_track['artist'], new_track['title'])
+                        stream_title = '{0} - {1}'.format(
+                            new_track['artist'], new_track['title'])
 
                     # send the request to update the now playing track
                     if self._post_metadata_update(stream_title) == False:
-                        obplayer.Log.log('The request to update the now playing track failed! This most likely means your password for your stream is wrong, or that your server is having issues.', 'error')
+                        obplayer.Log.log(
+                            'The request to update the now playing track failed! This most likely means your password for your stream is wrong, or that your server is having issues.', 'error')
                     else:
-                        obplayer.Log.log('"{0}" has been sent to icecast via title streaming.'.format(self._last_track), 'debug')
+                        obplayer.Log.log('"{0}" has been sent to icecast via title streaming.'.format(
+                            self._last_track), 'debug')
 
             # frequent polling to catch track changes quickly
             time.sleep(0.25)

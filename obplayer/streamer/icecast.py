@@ -40,7 +40,7 @@ from .metadata_updater import MetadataUpdater
 class ObIcecastStreamer (ObGstStreamer):
     def __init__(self, streamer_icecast_ip, streamer_icecast_port, streamer_icecast_password,
         streamer_icecast_mount, streamer_icecast_streamname, streamer_icecast_description,
-        streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate, enable_title_streaming=False):
+        streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate, title_streaming_mode=False):
         self.icecast_ip = streamer_icecast_ip
         self.icecast_port = streamer_icecast_port
         self.icecast_password = streamer_icecast_password
@@ -54,10 +54,13 @@ class ObIcecastStreamer (ObGstStreamer):
         self.mode = obplayer.Config.setting('streamer_0_icecast_mode')
         ObGstStreamer.__init__(self, 'icecast_' + uuid.uuid4().hex)
 
+        if(title_streaming_mode != 'basic' and title_streaming_mode != 'json'):
+                title_streaming_mode = False
+
         if obplayer.Config.setting('streamer_0_icecast_mode') == 'audio':
-            if enable_title_streaming:
+            if title_streaming_mode:
                 self._metadata_updater_thread = MetadataUpdater(host=self.icecast_ip, port=self.icecast_port, username='source',
-                                                                password=self.icecast_password, mount=self.icecast_mount)
+                                                                password=self.icecast_password, mount=self.icecast_mount, mode=title_streaming_mode)
             self.make_audio_pipe()
         else:
             self.make_video_pipe(obplayer.Config.setting('streamer_0_icecast_mode'))
