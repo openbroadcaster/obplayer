@@ -130,7 +130,7 @@ class ObRTMPStreamer (ObGstStreamer):
         self.videopipe[-1].set_property('speed-preset', obplayer.Config.setting('streamer_rtmp_encoder_preset'))
         self.videopipe[-1].set_property('tune', obplayer.Config.setting('streamer_rtmp_encoder_tune'))
         self.videopipe[-1].set_property('psy-tune', obplayer.Config.setting('streamer_rtmp_encoder_psytune'))
-                
+
         # ENCODER TWEAKS FOR LOW END MACHINES
         #self.videopipe[-1].set_property('cabac', False)
         #self.videopipe[-1].set_property('ref', 1)
