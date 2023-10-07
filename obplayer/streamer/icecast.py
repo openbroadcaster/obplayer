@@ -60,7 +60,7 @@ class ObIcecastStreamer (ObGstStreamer):
         if obplayer.Config.setting('streamer_0_icecast_mode') == 'audio':
             if title_streaming_mode:
                 self._metadata_updater_thread = MetadataUpdater(host=self.icecast_ip, port=self.icecast_port, username='source',
-                                                                password=self.icecast_password, mount=self.icecast_mount, mode=title_streaming_mode)
+                                                                password=self.icecast_password, mount=self.icecast_mount)
             self.make_audio_pipe()
         else:
             self.make_video_pipe(obplayer.Config.setting('streamer_0_icecast_mode'))
