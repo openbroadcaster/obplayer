@@ -23,6 +23,7 @@ Streamer Tab
   streamer_0_icecast_ip: Icecast (One) IP
   streamer_0_icecast_port: Icecast (One) Port
   streamer_0_icecast_mount: Icecast (One) Mountpoint
+  streamer_0_icecast_username: Icecast (One) Username
   streamer_0_icecast_password: Icecast (One) Password
   streamer_0_icecast_streamname: Icecast (One) Stream Name
   streamer_0_icecast_description: Icecast (One) Description
@@ -36,6 +37,7 @@ Streamer Tab
   streamer_1_icecast_ip: Icecast (Two) IP
   streamer_1_icecast_port: Icecast (Two) Port
   streamer_1_icecast_mount: Icecast (Two) Mountpoint
+  streamer_1_icecast_username: Icecast (Two) Username
   streamer_1_icecast_password: Icecast (Two) Password
   streamer_1_icecast_streamname: Icecast (Two) Stream Name
   streamer_1_icecast_description: Icecast (Two) Description

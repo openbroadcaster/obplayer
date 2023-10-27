@@ -553,6 +553,10 @@
     	    <td><%= obplayer.Config.setting('streamer_0_icecast_mount') %></td>
     	  </tr>
     	  <tr>
+    	    <td data-t>streamer_0_icecast_username</td>
+    	    <td><%= obplayer.Config.setting('streamer_0_icecast_username') %></td>
+    	  </tr>
+    	  <tr>
     	    <td data-t>streamer_0_icecast_password</td>
     	    <td>(hidden)</td>
     	  </tr>
@@ -1994,6 +1998,10 @@
                 <td><input type="text" name="streamer_0_icecast_mount" value="<%= obplayer.Config.setting('streamer_0_icecast_mount',True) %>"></td>
               </tr>
               <tr>
+                <td data-t>streamer_0_icecast_username</td>
+                <td><input type="text" name="streamer_0_icecast_username" value="<%= obplayer.Config.setting('streamer_0_icecast_username') %>"></td>
+              </tr>
+              <tr>
                 <td data-t>streamer_0_icecast_password</td>
                 <td><input type="password" name="streamer_0_icecast_password" value="<%= obplayer.Config.setting('streamer_0_icecast_password',True) %>"></td>
               </tr>
@@ -2072,6 +2080,10 @@
                     <tr>
                       <td data-t>streamer_1_icecast_mount</td>
                       <td><input type="text" name="streamer_1_icecast_mount" value="<%= obplayer.Config.setting('streamer_1_icecast_mount',True) %>"></td>
+                    </tr>
+                    <tr>
+                      <td data-t>streamer_1_icecast_username</td>
+                      <td><input type="text" name="streamer_1_icecast_username" value="<%= obplayer.Config.setting('streamer_1_icecast_username') %>"></td>
                     </tr>
                     <tr>
                       <td data-t>streamer_1_icecast_password</td>

@@ -363,6 +363,7 @@ class ObConfigData (ObData):
             self.add_setting('streamer_' + i + '_icecast_ip', '127.0.0.1', 'text')
             self.add_setting('streamer_' + i + '_icecast_port', '8000', 'int')
             self.add_setting('streamer_' + i + '_icecast_mount', 'stream_' + i, 'text')
+            self.add_setting('streamer_' + i + '_icecast_username', 'source', 'text')
             self.add_setting('streamer_' + i + '_icecast_password', 'hackme', 'text')
             self.add_setting('streamer_' + i + '_icecast_streamname', '', 'text')
             self.add_setting('streamer_' + i + '_icecast_description', '', 'text')
