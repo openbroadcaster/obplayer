@@ -304,10 +304,10 @@ class ObVideoOutputBin (ObOutputBin):
             self.elements.append(self.videomux)
             self.elements[-1].set_property('streamable', True)
             self.videosink = Gst.ElementFactory.make('shout2send', 'video-out-sink')
-            self.videosink.set_property('ip', obplayer.Config.setting('streamer_icecast_ip'))
-            self.videosink.set_property('port', obplayer.Config.setting('streamer_icecast_port'))
-            self.videosink.set_property('mount', obplayer.Config.setting('streamer_icecast_mount'))
-            self.videosink.set_property('password', obplayer.Config.setting('streamer_icecast_password'))
+            self.videosink.set_property('ip', obplayer.Config.setting('streamer_0_icecast_ip'))
+            self.videosink.set_property('port', obplayer.Config.setting('streamer_0_icecast_port'))
+            self.videosink.set_property('mount', obplayer.Config.setting('streamer_0_icecast_mount'))
+            self.videosink.set_property('password', obplayer.Config.setting('streamer_0_icecast_password'))
 
         elif video_out_mode == 'intersink':
             self.elements.append(Gst.ElementFactory.make('queue2', 'video-out-intersink-queue'))
