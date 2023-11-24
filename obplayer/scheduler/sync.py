@@ -342,12 +342,6 @@ class ObSync:
 
         schedule_xml = self.sync_request('schedule')
 
-        # TODO for debugging purposes, write schedule to file
-        #with open(obplayer.ObData.get_datadir() + "/schedules/" + time.strftime('%Y.%m.%d %H:%M:%S') + ".xml", 'w') as f:
-        #    f.write(schedule_xml)
-        #print(schedule_xml)
-
-
         # trying to quit?
         if self.quit:
             return
@@ -388,8 +382,25 @@ class ObSync:
             # show_start_timestamp=time.mktime(show_start_datetime) - time.timezone;
             show_start_timestamp = calendar.timegm(show_start_datetime)
 
+            show_numitems = len(xml_get_direct_children(show_media, 'item'))
+
+            # check to see if we should bypass the showlock.
+            # this happens if we already have ths show in the database (same ID, start time, last_updated)
+            # and all we're doing is adding more media items
+            # this is to allow more show data to be added to an existing show
+            showlock_bypass = False
+            replace_show = obplayer.RemoteData.get_show(show_id, show_last_updated, show_start_timestamp)
+            if(replace_show):
+                replace_show_id = replace_show[0]
+
+                # figure out how many media items in the show we're replacing has
+                replace_show_numitems = len(obplayer.RemoteData.get_show_media(replace_show_id))
+
+                if(show_numitems > replace_show_numitems):
+                    showlock_bypass = True
+
             # only consider shows that are beyond the showlock time (unless ignore_showlock)
-            if ignore_showlock or show_start_timestamp - cutoff_time > 0:
+            if showlock_bypass or ignore_showlock or show_start_timestamp - cutoff_time > 0:
 
                 local_show_id = obplayer.RemoteData.show_addedit(show_id, show_name, show_type, show_description, show_start_timestamp, show_duration, show_last_updated)
 
