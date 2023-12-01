@@ -159,8 +159,8 @@ Site.cancelAlert = function () {
 Site.updateAlertInfoRunning = false;
 Site.updateAlertInfo = function () {
     if (Site.updateAlertInfoRunning) return;
-    Site.updateAlertInfoRunning = true;
     if ($('#tabs .tab[data-content="alerts"]').hasClass('selected')) {
+        Site.updateAlertInfoRunning = true;
         $.post('/alerts/list', {}, function (response, status) {
             if (response.active.length) {
                 var alerts = response.active;
