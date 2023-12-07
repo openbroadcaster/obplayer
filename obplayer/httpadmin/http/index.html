@@ -212,25 +212,32 @@
   	    <label><span data-t>Scheduled End</span>:</label>
   	    <span id="visual-summary-end-time"></span>
   	  </div>
-  	</div>
-
+  	</div>gi
     <div class="summary">
       <button type="button" name="button" id="open_streams_btn">Open Audio Streams...</button>
     </div>
 
   	<div id="log-window">
   	  <h4 data-t>Logs</h4>
-  	  <div>
-  	    <label><span data-t>Log Level</span>:</label>
-  	    <select id="log_level">
+  	  <div style="display: flex;">
+        <div id="log_filters" style="display: flex;">
+          <div style="padding-right: 10px;"><input type="checkbox" class="log_filter" value="player" checked /><span data-t>player</span></div>
+          <div style="padding-right: 10px;"><input type="checkbox" class="log_filter" value="sync" /> <span data-t>sync</span></div>
+          <div style="padding-right: 10px;"><input type="checkbox" class="log_filter" value="scheduler" /> <span data-t>scheduler</span></div>
+          <div style="padding-right: 10px;"><input type="checkbox" class="log_filter" value="alert" /> <span data-t>alert</span></div>
+          <div style="padding-right: 10px;"><input type="checkbox" class="log_filter" value="error" /> <span data-t>error</span></div>
+          <div style="padding-right: 10px;"><input type="checkbox" class="log_filter" value="debug" /> <span data-t>debug</span></div>
+        </div>
+        <div><button id="logs-open" data-t>Downloads</button></div>
+  	    <!--<select id="log_level">
                 <option value="normal" data-t>Normal</option>
                 <option value="debug" data-t>Debug</option>
                 <option value="alert" data-t>Alerts</option>
               </select>
-              &nbsp;<button id="logs-open" data-t>Downloads</button>
+        -->
   	  </div>
             <br />
-  	  <div id="log-data" data-level="normal">
+  	  <div id="log-data" data-level="normal" data-filter="player">
   	    <!-- Content loaded when displayed -->
   	  </div>
   	</div>

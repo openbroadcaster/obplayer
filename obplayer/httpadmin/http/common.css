@@ -110,7 +110,8 @@ h2:first-child
   width: 8em;
 }
 
-#live-audio-summary {
+#live-audio-summary
+{
   margin-right: 4em;
 }
 
@@ -120,11 +121,12 @@ h2:first-child
   overflow: auto;
 }
 
-#log-data > span
+#log-data>span
 {
-  display: block;
+  display: none;
 }
 
+/*
 #log-data[data-level=normal] > span[data-type=debug]
 {
   display: none;
@@ -133,6 +135,37 @@ h2:first-child
 #log-data[data-level=alert] > span:not([data-type=alert])
 {
   display: none;
+}
+*/
+
+#log-data[data-filter~=player]>span[data-type=player]
+{
+  display: block;
+}
+
+#log-data[data-filter~=sync]>span[data-type=sync]
+{
+  display: block;
+}
+
+#log-data[data-filter~=scheduler]>span[data-type=scheduler]
+{
+  display: block;
+}
+
+#log-data[data-filter~=alert]>span[data-type=alert]
+{
+  display: block;
+}
+
+#log-data[data-filter~=error]>span[data-type=error]
+{
+  display: block;
+}
+
+#log-data[data-filter~=debug]>span[data-type=debug]
+{
+  display: block;
 }
 
 .alerts-table
@@ -186,37 +219,44 @@ h2:first-child
 }
 
 
-.advanced-settings {
+.advanced-settings
+{
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   border: 1px solid #2A2D79;
 }
 
-.advanced-settings > input + label + table {
+.advanced-settings>input+label+table
+{
   padding-top: 2px;
   padding-left: 20px;
 }
 
-.advanced-settings > input {
+.advanced-settings>input
+{
   display: none;
 }
 
-.advanced-settings > input ~ table {
+.advanced-settings>input~table
+{
   display: none;
 }
 
-.advanced-settings > input:checked ~ table {
+.advanced-settings>input:checked~table
+{
   display: block;
 }
 
-.advanced-settings > input + label::before {
+.advanced-settings>input+label::before
+{
   content: "\229e";
   margin-right: 4px;
   margin-left: 4px;
   vertical-align: bottom;
 }
 
-.advanced-settings > input:checked + label::before {
+.advanced-settings>input:checked+label::before
+{
   content: "\229f";
   margin-right: 4px;
   margin-left: 4px;
@@ -224,42 +264,50 @@ h2:first-child
 }
 
 label.advanced-settings,
-label.advanced-settings::before {
+label.advanced-settings::before
+{
   cursor: pointer;
   display: inline-block;
 }
 
-.experimental-settings {
+.experimental-settings
+{
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   border: 1px solid #2A2D79;
 }
 
-.experimental-settings > input + label + table {
+.experimental-settings>input+label+table
+{
   padding-top: 2px;
   padding-left: 20px;
 }
 
-.experimental-settings > input {
+.experimental-settings>input
+{
   display: none;
 }
 
-.experimental-settings > input ~ table {
+.experimental-settings>input~table
+{
   display: none;
 }
 
-.experimental-settings > input:checked ~ table {
+.experimental-settings>input:checked~table
+{
   display: block;
 }
 
-.experimental-settings > input + label::before {
+.experimental-settings>input+label::before
+{
   content: "\229e";
   margin-right: 4px;
   margin-left: 4px;
   vertical-align: bottom;
 }
 
-.experimental-settings > input:checked + label::before {
+.experimental-settings>input:checked+label::before
+{
   content: "\229f";
   margin-right: 4px;
   margin-left: 4px;
@@ -267,42 +315,50 @@ label.advanced-settings::before {
 }
 
 label.experimental-settings,
-label.experimental-settings::before {
+label.experimental-settings::before
+{
   cursor: pointer;
   display: inline-block;
 }
 
-.stl-settings {
+.stl-settings
+{
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   border: 1px solid #2A2D79;
 }
 
-.stl-settings > input + label + table {
+.stl-settings>input+label+table
+{
   padding-top: 2px;
   padding-left: 20px;
 }
 
-.stl-settings > input {
+.stl-settings>input
+{
   display: none;
 }
 
-.stl-settings > input ~ table {
+.stl-settings>input~table
+{
   display: none;
 }
 
-.stl-settings > input:checked ~ table {
+.stl-settings>input:checked~table
+{
   display: block;
 }
 
-.stl-settings > input + label::before {
+.stl-settings>input+label::before
+{
   content: "\229e";
   margin-right: 4px;
   margin-left: 4px;
   vertical-align: bottom;
 }
 
-.stl-settings > input:checked + label::before {
+.stl-settings>input:checked+label::before
+{
   content: "\229f";
   margin-right: 4px;
   margin-left: 4px;
@@ -310,76 +366,90 @@ label.experimental-settings::before {
 }
 
 label.stl-settings,
-label.stl-settings::before {
+label.stl-settings::before
+{
   cursor: pointer;
   display: inline-block;
 }
 
-.pulse-mixer {
+.pulse-mixer
+{
   margin-left: 10px;
 }
 
-.pulse-mixer h5 {
+.pulse-mixer h5
+{
   margin-bottom: 4px;
 }
 
-.pulse-mute {
+.pulse-mute
+{
   padding: 0px;
   font-size: 0.7em;
 }
 
-.pulse-mute.mute {
-    text-decoration: line-through;
+.pulse-mute.mute
+{
+  text-decoration: line-through;
 }
 
-input[type="range"] {
+input[type="range"]
+{
   background: aliceblue;
 }
 
-.pulse-select {
+.pulse-select
+{
   width: 20em;
   font-size: 0.7em;
 }
 
-#map-container {
-  height:400px;
-  width:400px;
+#map-container
+{
+  height: 400px;
+  width: 400px;
   border: 1px solid #0f0f0f;
   border-radius: 5px;
   padding: 2px;
   overflow: hidden;
 }
 
-#map {
+#map
+{
   position: relative;
   top: 0px;
   left: 0px;
   border-radius: 5px;
-  width:400px;
-  height:400px;
-  overflow:hidden;
-}
-
-#logs-download {
+  width: 400px;
+  height: 400px;
   overflow: hidden;
 }
 
-#logs-download .column {
+#logs-download
+{
+  overflow: hidden;
+}
+
+#logs-download .column
+{
   display: inline-block;
   float: left;
   margin-right: 4em;
 }
 
-#logs-download .filesize {
+#logs-download .filesize
+{
   font-size: 0.75em;
   text-align: right;
 }
 
-.select2-search__field {
+.select2-search__field
+{
   min-width: 100px;
 }
 
-.modal {
+.modal
+{
   display: none;
   position: fixed;
   top: 0;
@@ -390,7 +460,8 @@ input[type="range"] {
   z-index: 1;
 }
 
-.modal-content {
+.modal-content
+{
   box-sizing: border-box;
   max-width: 80%;
   max-height: 80%;
@@ -399,12 +470,14 @@ input[type="range"] {
   background-color: #fff;
 }
 
-.modal-content ul {
+.modal-content ul
+{
   padding: 0;
   list-style: none;
 }
 
-.modal_close_btn {
+.modal_close_btn
+{
   float: right;
   outline: none;
   background-color: #fff;
@@ -412,30 +485,36 @@ input[type="range"] {
   font-size: 32px;
 }
 
-.modal_close_btn:hover {
+.modal_close_btn:hover
+{
   cursor: pointer;
 }
 
-#update_modal > .modal-content {
+#update_modal>.modal-content
+{
   border: 2px dotted #fc3d03;
 }
 
-#update_modal p {
+#update_modal p
+{
   font-size: 38px;
 }
 
-#update_modal textarea {
+#update_modal textarea
+{
   width: 100%;
 }
 
-.warning-text {
+.warning-text
+{
   color: #fc3d03;
   font-weight: bold;
   font-size: 42px;
   text-align: center;
 }
 
-.tos_textarea {
+.tos_textarea
+{
   overflow-x: hidden;
   overflow-y: scroll;
   line-height: 20px;

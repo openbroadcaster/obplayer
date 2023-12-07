@@ -63,23 +63,23 @@ class ObLog:
             if re.search('\[error\]', line):
                 output.append('<span data-type="error" style="color: {0}">{1}</span>'.format('#880000;', line))
             elif re.search('\[warning\]', line):
-                output.append('<span data-type="warning" style="color: {0}">{1}</span>'.format('#888800;', line))
+                output.append('<span data-type="debug" style="color: {0}">{1}</span>'.format('#888800;', line))
             elif re.search('\[priority\]', line):
-                output.append('<span data-type="priority" style="color: {0}">{1}</span>'.format('#880088;', line))
+                output.append('<span data-type="alert" style="color: {0}">{1}</span>'.format('#880088;', line))
             elif re.search('\[player\]', line):
                 output.append('<span data-type="player" style="color: {0}">{1}</span>'.format('#005500;', line))
             elif re.search('\[data\]', line):
-                output.append('<span data-type="data" style="color: {0}">{1}</span>'.format('#333333;', line))
+                output.append('<span data-type="sync" style="color: {0}">{1}</span>'.format('#333333;', line))
             elif re.search('\[scheduler\]', line):
                 output.append('<span data-type="scheduler" style="color: {0}">{1}</span>'.format('#005555;', line))
             elif re.search('\[sync\]', line):
                 output.append('<span data-type="sync" style="color: {0}">{1}</span>'.format('#000055;', line))
             elif re.search('\[sync download\]', line):
-                output.append('<span data-type="download" style="color: {0}">{1}</span>'.format('#AA4400;', line))
+                output.append('<span data-type="sync" style="color: {0}">{1}</span>'.format('#AA4400;', line))
             elif re.search('\[admin\]', line):
-                output.append('<span data-type="admin" style="color: {0}">{1}</span>'.format('#333300;', line))
+                output.append('<span data-type="debug" style="color: {0}">{1}</span>'.format('#333300;', line))
             elif re.search('\[live\]', line):
-                output.append('<span data-type="live" style="color: {0}">{1}</span>'.format('#333300;', line))
+                output.append('<span data-type="player" style="color: {0}">{1}</span>'.format('#333300;', line))
             elif re.search('\[alerts\]', line):
                 output.append('<span data-type="alert" style="color: {0}">{1}</span>'.format('#880088;', line))
             elif re.search('\[debug\]', line):
