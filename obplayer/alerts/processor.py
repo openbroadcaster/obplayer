@@ -560,7 +560,7 @@ class ObAlertProcessor (object):
                 # play active alerts
                 if present_time > self.next_alert_check:
                     if len(self.alerts_active) > 0:
-                        obplayer.Log.log("playing active alerts (%d alert(s) to play)" % (len(self.alerts_active),), 'alerts')
+                        obplayer.Log.log("playing active alerts (%d alert(s) to play)" % (len(self.alerts_active),), 'player') # moved from alerts
 
                         self.ctrl.hold_requests(True)
                         self.ctrl.add_request(media_type='break', title="alert lead in delay", duration=self.leadin_delay, onstart=self.trigger_alert_cycle_start)
@@ -574,15 +574,15 @@ class ObAlertProcessor (object):
                                 if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
                                     alert_media = alert.get_media_info(self.language_primary, self.voice_primary, self.language_secondary, self.voice_secondary, True)
                                     if alert.times_played == 0:
-                                        obplayer.Log.log("playing alert: {0}".format(alert.identifier), 'alerts')
+                                        obplayer.Log.log("playing alert: {0}".format(alert.identifier), 'player') # moved from alerts
                                         obplayer.alert_counter.Alert_Counter().add_alert(alert.identifier, alert.alert_type)
-                                        obplayer.Log.log("playing alert media: {0}".format(alert_media), 'alerts')
+                                        obplayer.Log.log("playing alert media: {0}".format(alert_media), 'player') # moved from alerts
                                 else:
                                     alert_media = alert.get_media_info(self.language_primary, self.voice_primary, self.language_secondary, self.voice_secondary)
                                     if alert.times_played == 0:
-                                        obplayer.Log.log("playing alert: {0}".format(alert.identifier), 'alerts')
+                                        obplayer.Log.log("playing alert: {0}".format(alert.identifier), 'player') # moved from alerts
                                         obplayer.alert_counter.Alert_Counter().add_alert(alert.identifier, alert.alert_type)
-                                        obplayer.Log.log("playing alert media: {0}".format(alert_media), 'alerts')
+                                        obplayer.Log.log("playing alert media: {0}".format(alert_media), 'player') # moved from alerts
                                 start_time = self.ctrl.get_requests_endtime()
                                 alert.times_played += 1
                                 obplayer.Log.log("changed number of plays for alert: {0} to {1}".format(alert.identifier, alert.times_played), 'alerts', alert)

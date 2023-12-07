@@ -16,7 +16,7 @@ class Alert_Counter(object):
 
     def add_alert(self, alert_id, alert_type):
         if self.is_already_logged(alert_id):
-            obplayer.Log.log("alert already logged: {0}.".format(alert_id), 'alert counter')
+            obplayer.Log.log("alert already logged: {0}.".format(alert_id), 'alerts')
         else:
             if alert_type == 'Local Test Alert':
                 self.alerts['local_tests'].append(alert_id)
