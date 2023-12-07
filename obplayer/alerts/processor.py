@@ -602,7 +602,7 @@ class ObAlertProcessor (object):
                                     self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri("obplayer/alerts/data", "attention-signal.ogg"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
                                 # Play CA/Alert Ready attn tone
                                 else:
-                                    self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri("/tmp/", "attn.wav"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
+                                    self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(os.path.expanduser('~/.openbroadcaster'), "attn.wav"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
                                 for mediainfo in alert_media:
                                     self.ctrl.add_request(**mediainfo['audio'])
                                     if 'visual' in mediainfo:

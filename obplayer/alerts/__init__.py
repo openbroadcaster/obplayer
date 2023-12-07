@@ -36,10 +36,10 @@ def init():
     vol = obplayer.Config.setting("alerts_attention_signal_volume", True)
 
     if vol != None:
-        vol = round(1 / vol, 3)
-        print(vol)
-        os.system("ffmpeg -y -i obplayer/alerts/data/canadian-attention-signal.mp3 -filter:a \"volume={0}\" /tmp/attn.wav".format(str(vol)))
+        datadir = os.path.expanduser('~/.openbroadcaster')
+        vol = round(vol/100, 3)
+        output_path = os.path.join(datadir, 'attn.wav')
+        os.system("ffmpeg -y -i obplayer/alerts/data/canadian-attention-signal.mp3 -filter:a \"volume={0}\" \"{1}\"".format(str(vol), output_path))
 
 def quit():
     pass
-

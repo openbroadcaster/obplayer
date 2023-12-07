@@ -23,6 +23,7 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 import obplayer
 import obplayer.alerts
 
+import os
 import time
 
 
@@ -129,6 +130,16 @@ class ObRemoteData (obplayer.ObData):
         # now add the alert media... (media not added here, but added by sync script)
         self.execute("INSERT or REPLACE into alert_media VALUES (?, ?, ?, ?, ?, ?, ?)", (media_id, filename, file_hash, file_size, language, event_name, media_type))
         return self.db.last_insert_rowid()
+
+    #
+    # get show at the specified start time
+    #
+    def get_show(self, show_id, last_updated, datetime):
+        rows = self.execute("SELECT * from shows where show_id=? and last_updated=? and datetime=?", (str(show_id), str(last_updated), str(datetime))).fetchall()
+        if(len(rows)==0):
+            return False
+        else:
+            return rows[0]
 
     #
     # Given show_id, name, description, datetime, and duration, add entry to show database.  If entry exists, edit if required.
@@ -390,7 +401,12 @@ class ObRemoteData (obplayer.ObData):
             if present_timestamp < show_end_timestamp:
                 rows[rindex]['start_time'] = show_start_timestamp
                 rows[rindex]['end_time'] = show_end_timestamp
+
+                obplayer.Log.log('show found in get present show', 'data')
+
                 return rows[rindex]
+
+        obplayer.Log.log('no shows found in get present show', 'data')
 
         return None
 

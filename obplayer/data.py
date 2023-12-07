@@ -410,7 +410,7 @@ class ObConfigData (ObData):
         self.add_setting('sync_device_id', '1', 'int')
         self.add_setting('sync_device_password', '', 'text')
         self.add_setting('sync_url', '', 'text')
-        self.add_setting('sync_buffer', '24', 'int')
+        self.add_setting('sync_buffer', '4', 'int')
         self.add_setting('sync_showlock', '20', 'int')
         self.add_setting('sync_playlog_enable', '0', 'bool')
         self.add_setting('sync_freq', '2', 'int')
