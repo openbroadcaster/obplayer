@@ -54,38 +54,38 @@ class ObLog:
             if item['time'] != time.strftime('%H', time.gmtime()):
                 self.recent_msgs.remove(item)
 
-    def format_logs(self, log_level=None):
+    def format_logs(self, start_index=0):
         output = []
         log_data = self.get_log()
         #log_data = cgi.escape(log_data)
-        for line in log_data:
+        for index, line in enumerate(log_data[start_index:], start_index):
             line = html.escape(line)
             if re.search('\[error\]', line):
-                output.append('<span data-type="error" style="color: {0}">{1}</span>'.format('#880000;', line))
+                output.append('<span data-index="{2}" data-type="error" style="color: {0}">{1}</span>'.format('#880000;', line, index))
             elif re.search('\[warning\]', line):
-                output.append('<span data-type="debug" style="color: {0}">{1}</span>'.format('#888800;', line))
+                output.append('<span data-index="{2}" data-type="debug" style="color: {0}">{1}</span>'.format('#888800;', line, index))
             elif re.search('\[priority\]', line):
-                output.append('<span data-type="alert" style="color: {0}">{1}</span>'.format('#880088;', line))
+                output.append('<span data-index="{2}" data-type="alert" style="color: {0}">{1}</span>'.format('#880088;', line, index))
             elif re.search('\[player\]', line):
-                output.append('<span data-type="player" style="color: {0}">{1}</span>'.format('#005500;', line))
+                output.append('<span data-index="{2}" data-type="player" style="color: {0}">{1}</span>'.format('#005500;', line, index))
             elif re.search('\[data\]', line):
-                output.append('<span data-type="sync" style="color: {0}">{1}</span>'.format('#333333;', line))
+                output.append('<span data-index="{2}" data-type="sync" style="color: {0}">{1}</span>'.format('#333333;', line, index))
             elif re.search('\[scheduler\]', line):
-                output.append('<span data-type="scheduler" style="color: {0}">{1}</span>'.format('#005555;', line))
+                output.append('<span data-index="{2}" data-type="scheduler" style="color: {0}">{1}</span>'.format('#005555;', line, index))
             elif re.search('\[sync\]', line):
-                output.append('<span data-type="sync" style="color: {0}">{1}</span>'.format('#000055;', line))
+                output.append('<span data-index="{2}" data-type="sync" style="color: {0}">{1}</span>'.format('#000055;', line, index))
             elif re.search('\[sync download\]', line):
-                output.append('<span data-type="sync" style="color: {0}">{1}</span>'.format('#AA4400;', line))
+                output.append('<span data-index="{2}" data-type="sync" style="color: {0}">{1}</span>'.format('#AA4400;', line, index))
             elif re.search('\[admin\]', line):
-                output.append('<span data-type="debug" style="color: {0}">{1}</span>'.format('#333300;', line))
+                output.append('<span data-index="{2}" data-type="debug" style="color: {0}">{1}</span>'.format('#333300;', line, index))
             elif re.search('\[live\]', line):
-                output.append('<span data-type="player" style="color: {0}">{1}</span>'.format('#333300;', line))
+                output.append('<span data-index="{2}" data-type="player" style="color: {0}">{1}</span>'.format('#333300;', line, index))
             elif re.search('\[alerts\]', line):
-                output.append('<span data-type="alert" style="color: {0}">{1}</span>'.format('#880088;', line))
+                output.append('<span data-index="{2}" data-type="alert" style="color: {0}">{1}</span>'.format('#880088;', line, index))
             elif re.search('\[debug\]', line):
-                output.append('<span data-type="debug" style="color: {0}">{1}</span>'.format('#880088;', line))
+                output.append('<span data-index="{2}" data-type="debug" style="color: {0}">{1}</span>'.format('#880088;', line, index))
             else:
-                output.append('<span data-type="debug" style="color: {0}">{1}</span>'.format('#880088;', line))
+                output.append('<span data-index="{2}" data-type="debug" style="color: {0}">{1}</span>'.format('#880088;', line, index))
         return output
 
     def log(self, message, mtype='error', alert_data=None):

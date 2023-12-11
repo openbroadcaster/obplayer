@@ -234,51 +234,51 @@ Site.updateAlertInfo = function () {
 }
 
 Site.updateStatusInfoRunning = false;
+Site.updateStatusInfoLogIndex = false;
 
 Site.updateStatusInfo = function () {
     if (Site.updateStatusInfoRunning) return;
     Site.updateStatusInfoRunning = true;
 
-    if ($('#tabs .tab[data-content="status"]').hasClass('selected')) {
-        $.post('/status_info', {}, function (response, status) {
-            $('#show-summary-time').html(Site.friendlyTime(response.time));
-            $('#show-summary-uptime').html(response.uptime);
+    $.post('/status_info', {'start_index': Site.updateStatusInfoLogIndex+1}, function (response, status) {
+        $('#show-summary-time').html(Site.friendlyTime(response.time));
+        $('#show-summary-uptime').html(response.uptime);
 
-            if (response.show) {
-                $('#show-summary-type').html(Site.t('Status Show Type', response.show.type));
-                $('#show-summary-id').html(response.show.id);
-                $('#show-summary-name').html(response.show.name);
-                $('#show-summary-description').html(response.show.description);
-                $('#show-summary-last-updated').html(Site.friendlyTime(response.show.last_updated));
-            }
+        if (response.show) {
+            $('#show-summary-type').html(Site.t('Status Show Type', response.show.type));
+            $('#show-summary-id').html(response.show.id);
+            $('#show-summary-name').html(response.show.name);
+            $('#show-summary-description').html(response.show.description);
+            $('#show-summary-last-updated').html(Site.friendlyTime(response.show.last_updated));
+        }
 
-            if (response.audio) {
-                $('#audio-summary-media-type').html(Site.t('Status Media Type', response.audio.media_type));
-                $('#audio-summary-order-num').html(response.audio.order_num);
-                $('#audio-summary-media-id').html(response.audio.media_id);
-                $('#audio-summary-artist').html(response.audio.artist);
-                $('#audio-summary-title').html(response.audio.title);
-                $('#audio-summary-duration').html(Site.friendlyDuration(response.audio.duration));
-                $('#audio-summary-end-time').html(Site.friendlyTime(response.audio.end_time));
-                Site.drawAudioMeter(response.audio_levels);
-            }
+        if (response.audio) {
+            $('#audio-summary-media-type').html(Site.t('Status Media Type', response.audio.media_type));
+            $('#audio-summary-order-num').html(response.audio.order_num);
+            $('#audio-summary-media-id').html(response.audio.media_id);
+            $('#audio-summary-artist').html(response.audio.artist);
+            $('#audio-summary-title').html(response.audio.title);
+            $('#audio-summary-duration').html(Site.friendlyDuration(response.audio.duration));
+            $('#audio-summary-end-time').html(Site.friendlyTime(response.audio.end_time));
+            Site.drawAudioMeter(response.audio_levels);
+        }
 
-            if (response.visual) {
-                $('#visual-summary-media-type').html(Site.t('Status Media Type', response.visual.media_type));
-                $('#visual-summary-order-num').html(response.visual.order_num);
-                $('#visual-summary-media-id').html(response.visual.media_id);
-                $('#visual-summary-artist').html(response.visual.artist);
-                $('#visual-summary-title').html(response.visual.title);
-                $('#visual-summary-duration').html(Site.friendlyDuration(response.visual.duration));
-                $('#visual-summary-end-time').html(Site.friendlyTime(response.visual.end_time));
-            }
-            Site.formatLogs(response.logs);
-            Site.updateStatusInfoRunning = false;
-        }, 'json').error(function () {
-            $('#log-data').html('<span style="color: red; font-weight: bold;">(' + Site.t('Responses', 'player-connection-lost') + ')</span>');
-            Site.updateStatusInfoRunning = false;
-        });
-    }
+        if (response.visual) {
+            $('#visual-summary-media-type').html(Site.t('Status Media Type', response.visual.media_type));
+            $('#visual-summary-order-num').html(response.visual.order_num);
+            $('#visual-summary-media-id').html(response.visual.media_id);
+            $('#visual-summary-artist').html(response.visual.artist);
+            $('#visual-summary-title').html(response.visual.title);
+            $('#visual-summary-duration').html(Site.friendlyDuration(response.visual.duration));
+            $('#visual-summary-end-time').html(Site.friendlyTime(response.visual.end_time));
+        }
+        Site.formatLogs(response.logs);
+        Site.updateStatusInfoLogIndex = parseInt($('#log-data > span[data-index]:last').first().attr('data-index'));
+        Site.updateStatusInfoRunning = false;
+    }, 'json').error(function () {
+        $('#log-data').append('<span data-type="error" style="font-weight: bold; color: #880000;">('+Site.t('Responses', 'player-connection-lost')+')</span>');
+        Site.updateStatusInfoRunning = false;
+    });
 }
 
 //  Check override status and update button text.
@@ -318,8 +318,8 @@ Site.formatLogs = function (lines) {
     if (Math.abs(logdiv.scrollTop - (logdiv.scrollHeight - logdiv.clientHeight)) < 1) {
         scroll = true;
     }
-    $('#log-data').html('');
-    $('#log-data').html(lines.join('\n'));
+    //$('#log-data').html('');
+    $('#log-data').append(lines.join('\n'));
     if (scroll) logdiv.scrollTop = logdiv.scrollHeight;
 }
 

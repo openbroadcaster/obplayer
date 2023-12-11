@@ -176,7 +176,8 @@ class ObHTTPAdmin (httpserver.ObHTTPServer):
         #logs['normal'] = obplayer.Log.format_logs('normal')
         #logs['debug'] = obplayer.Log.format_logs('debug')
         #logs['alerts'] = obplayer.Log.format_logs('alerts')
-        data['logs'] = obplayer.Log.format_logs()
+        start_index = int(request.args['start_index'][0])
+        data['logs'] = obplayer.Log.format_logs(start_index)
         return data
 
     def req_tos_agreed(self, request):
