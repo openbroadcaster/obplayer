@@ -56,6 +56,9 @@ class ObGui:
         self.gui_window.resize(640, 480)
         self.gui_window_fullscreen = False
 
+        # FULLSCREEN TOGGLE
+        self.gui_window.connect("key-press-event", self.key_press)
+
         # MISC WIDGETS
         self.gui_toolbar = builder.get_object('toolbar')
         self.gui_statusbar = builder.get_object('statusbar')
@@ -126,6 +129,10 @@ class ObGui:
         # show main window.
         if obplayer.Config.headless == False:
             self.gui_window.show()
+
+    def key_press(self, widget, event):
+        if event.keyval == Gdk.KEY_F11:
+            self.fullscreen_toggle(None)
 
     def application_shutdown(self, widget):
         obplayer.Main.quit()
