@@ -240,7 +240,7 @@ Site.updateStatusInfo = function () {
     if (Site.updateStatusInfoRunning) return;
     Site.updateStatusInfoRunning = true;
 
-    $.post('/status_info', {'start_index': Site.updateStatusInfoLogIndex+1}, function (response, status) {
+    $.post('/status_info', { 'start_index': Site.updateStatusInfoLogIndex + 1 }, function (response, status) {
         $('#show-summary-time').html(Site.friendlyTime(response.time));
         $('#show-summary-uptime').html(response.uptime);
 
@@ -276,7 +276,7 @@ Site.updateStatusInfo = function () {
         Site.updateStatusInfoLogIndex = parseInt($('#log-data > span[data-index]:last').first().attr('data-index'));
         Site.updateStatusInfoRunning = false;
     }, 'json').error(function () {
-        $('#log-data').append('<span data-type="error" style="font-weight: bold; color: #880000;">('+Site.t('Responses', 'player-connection-lost')+')</span>');
+        $('#log-data').append('<span data-type="error" style="font-weight: bold; color: #880000;">(' + Site.t('Responses', 'player-connection-lost') + ')</span>');
         Site.updateStatusInfoRunning = false;
     });
 }
@@ -310,6 +310,11 @@ Site.updateMapInfo = function () {
     }
 }
 
+Site.logScrollToBottom = function () {
+    var logdiv = $('#log-data')[0];
+    logdiv.scrollTop = logdiv.scrollHeight;
+}
+
 Site.formatLogs = function (lines) {
     var scroll = false;
     var logdiv = $('#log-data')[0];
@@ -318,9 +323,9 @@ Site.formatLogs = function (lines) {
     if (Math.abs(logdiv.scrollTop - (logdiv.scrollHeight - logdiv.clientHeight)) < 1) {
         scroll = true;
     }
-    //$('#log-data').html('');
+
     $('#log-data').append(lines.join('\n'));
-    if (scroll) logdiv.scrollTop = logdiv.scrollHeight;
+    if (scroll) Site.logScrollToBottom();
 }
 
 Site.drawAudioMeter = function (levels) {
@@ -632,6 +637,7 @@ $(document).ready(function () {
             levels.push($(element).val());
         });
         $('#log-data').attr('data-filter', levels.join(' '));
+        Site.logScrollToBottom();
     });
 
     $('#import-settings').submit(function (event) {
