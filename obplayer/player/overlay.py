@@ -35,22 +35,28 @@ import sys
 import threading
 
 pycairo_dll = ctypes.pydll.LoadLibrary(cairo._cairo.__file__)
-pycairo_dll.PycairoContext_FromContext.restype = ctypes.py_object
-pycairo_dll.PycairoContext_FromContext.argtypes = (ctypes.c_void_p, ctypes.py_object, ctypes.py_object)
+
+# no longer works, but no longer necessary?
+#pycairo_dll.PycairoContext_FromContext.restype = ctypes.py_object
+#pycairo_dll.PycairoContext_FromContext.argtypes = (ctypes.c_void_p, ctypes.py_object, ctypes.py_object)
 
 cairo_dll = ctypes.pydll.LoadLibrary(ctypes.util.find_library('cairo'))
 cairo_dll.cairo_reference.restype = ctypes.c_void_p
 cairo_dll.cairo_reference.argtypes = (ctypes.c_void_p,)
 
 def cairo_context_from_gi(gicr):
+    # conversion no longer necessary, we can return as-is.
+    return gicr
+
+    #return cairo.Context(gicr)
     #assert isinstance(gicr, GObject.GBoxed)
-    offset = sys.getsizeof(object())  # size of PyObject_HEAD
+    # offset = sys.getsizeof(object())  # size of PyObject_HEAD
     # Pull the "boxed" pointer off out and use it as a cairo_t*
-    cr_ptr = ctypes.c_void_p.from_address(id(gicr) + offset)
-    cr = pycairo_dll.PycairoContext_FromContext(cr_ptr, cairo.Context, None)
+    # cr_ptr = ctypes.c_void_p.from_address(id(gicr) + offset)
+    # cr = pycairo_dll.PycairoContext_FromContext(cr_ptr, cairo.Context, None)
     # Add a new ref because the pycairo context will attempt to manage this
-    cairo_dll.cairo_reference(cr_ptr)
-    return cr
+    # cairo_dll.cairo_reference(cr_ptr)
+    # return cr
 
 
 class ObOverlay (object):
