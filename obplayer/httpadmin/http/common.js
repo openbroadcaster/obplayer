@@ -122,6 +122,11 @@ $(document).ready(function () {
         $('#tos_modal').hide();
         window.location.href = "https://openbroadcaster.com";
     });
+
+    $('#alert_crawl_speed').change(function() {
+        $('#alert_crawl_speed_value').text($(this).val()+' CPM');
+    });
+    $('#alert_crawl_speed').change();
 });
 
 Site.injectAlert = function () {

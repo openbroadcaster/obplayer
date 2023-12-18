@@ -1862,6 +1862,13 @@
                 <td><input type="checkbox" name="overlay_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('overlay_enable') %>></td>
               </tr>
               <tr>
+                <td data-t>alert_crawl_speed</td>
+                <td>
+                  <input type="range" min="100" max="400" id="alert_crawl_speed" name="alert_crawl_speed" value="<%= obplayer.Config.setting('alert_crawl_speed', True) %>">
+                  <span id="alert_crawl_speed_value" style="font-size: 0.8em; position: relative; top: -3.5px;"></span>
+                </td>
+              </tr>
+              <tr>
                 <td data-t title="bug_overlay_tooltip">bug_overlay_enable</td>
                 <td><input type="checkbox" name="bug_overlay_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('bug_overlay_enable') %>></td>
               </tr>

@@ -340,6 +340,7 @@ class ObConfigData (ObData):
         self.add_setting('images_framerate', '15', 'int')
 
         self.add_setting('overlay_enable', '0', 'bool')
+        self.add_setting('alert_crawl_speed', '300', 'int')
 
         self.add_setting('bug_overlay_enable', '0', 'bool')
         self.add_setting('bug_overlay_offset_x', '100', 'int')

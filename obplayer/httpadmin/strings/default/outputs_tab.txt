@@ -54,6 +54,7 @@ Outputs Tab
   Video Overlay Settings: Video Overlay Settings
 
   overlay_enable: Enable Alert Crawl Video Overlay
+  alert_crawl_speed: Alert Crawl Speed
   bug_overlay_enable: Enable The Station Bug Overlay
   bug_overlay_tooltip: The station bug is a logo that displays normally a corner of video signal.
   bug_overlay_offset_x: Station Bug X Offset
