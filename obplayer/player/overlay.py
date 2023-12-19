@@ -45,8 +45,8 @@ class ObOverlay (object):
     def __init__(self):
         self.message = None
         self.message_surface = None
-        self.scroll_enable = False
-        self.scroll_pos = 0.0
+        # self.scroll_enable = False
+        # self.scroll_pos = 0.0
         #self.scroll_wrap = 1.0
         self.scroll_start_time = None
         self.scroll_per_second = None
@@ -64,21 +64,24 @@ class ObOverlay (object):
     """
         
     def set_message(self, msg):
+        print('set message: ' + str(msg))
         if msg:
-            self.scroll_enable = True
+            # self.scroll_enable = True
             with self.lock:
-                if self.message != msg:
-                    self.scroll_pos = 0.05
+                if msg and self.message != msg:
+                    # self.scroll_pos = 0.05
                     self.scroll_start_time = time.time()
                     self.message = msg
                     self.message_surface = None # force recreation of the surface
         else:
-            self.scroll_enable = False
+            pass
+            # self.scroll_enable = False
 
     def draw_overlay(self, context, width, height):
         
         # do we need to create our message surface?
-        if self.scroll_enable and not self.message_surface:
+        if self.message and not self.message_surface:
+            print('draw overlay')
             # Temporary surface to calculate text dimensions
             temp_surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 10, 10)  # Small surface for measurement
             temp_context = cairo.Context(temp_surface)
@@ -108,7 +111,7 @@ class ObOverlay (object):
 
             self.message_surface = message_surface
 
-        if self.scroll_enable and self.message_surface:
+        if self.message_surface:
             # Draw the red background
             context.set_source_rgb(1, 0, 0)  # Red background
             context.rectangle(0, 0.55 * height, width, 0.15 * height) # Cover the entire surface
@@ -127,6 +130,11 @@ class ObOverlay (object):
             context.set_source(pattern)
             context.paint()  # Paint the text pattern over the red background
             context.restore()
+
+            # If the message has completed its crawl, reset state (remove message surface and message)
+            if start_x < -1*self.message_surface.get_width():
+                self.message_surface = None
+                self.message = None
 
     """
     def draw_overlay(self, context, width, height):
