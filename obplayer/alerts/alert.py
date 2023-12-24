@@ -92,11 +92,9 @@ class Feed (object):
             try:
                 xmlcode = xmlcode.replace('cap:', '')
                 self.alerts = xml.dom.minidom.parseString(xmlcode)
-                #print(xml_get_tags(self.alerts))
             except:
                 obplayer.Log.log('error parsing emergency alert xml data', 'error')
                 obplayer.Log.log(traceback.format_exc(), 'error')
-                print(xmlcode)
                 return
     def get_alerts(self):
         alerts = []
@@ -105,7 +103,7 @@ class Feed (object):
             output = {}
             #print(xml_get_first_tag_value(alert, 'id'))
             #print(self.is_old(xml_get_first_tag_value(alert, 'id')))
-            print(self.has_fips(alert, '039025'))
+            #print(self.has_fips(alert, '039025'))
             #print(get_full_alert(xml_get_first_tag_value(alert, 'id')))
             #alert = alert.ObAlert(get_full_alert(xml_get_first_tag_value(alert, 'id')))
             #print(xml_get_tags(alert))
@@ -146,7 +144,6 @@ class ObAlert (object):
         except:
             obplayer.Log.log('error parsing emergency alert xml data', 'error')
             obplayer.Log.log(traceback.format_exc(), 'error')
-            print(xmlcode)
             return
 
         for alert in alerts.getElementsByTagName('alert'):
@@ -174,8 +171,6 @@ class ObAlert (object):
                     self.info.append(ObAlertInfo(node, True))
                     break
                 #self.info.append(ObAlertInfo(xml_get_tags(alert, 'info')[0], True))
-            # for info in self.info:
-            #     print(info.language)
 
             self.signatures = [ ]
             for signature in xml_get_tags(alert, 'Signature'):
@@ -260,8 +255,6 @@ class ObAlert (object):
 
     def generate_audio(self, language, voice=None, indigenous=False):
         info = self.get_first_info(language, bestmatch=False)
-        #print(info.get_message_text(False))
-        #print(self.get_first_info('en-CA', bestmatch=False))
         #time.sleep(20)
         if info is None:
             self.media_info[language] = None
@@ -294,7 +287,6 @@ class ObAlert (object):
             # over writting for cg scroll text and logging. TODO: shoud be indigenous text here.
             cg_message_text = self.get_first_info('english', bestmatch=True).get_message_text(False)
             uri = obplayer.Player.file_uri(location, filename)
-            #print(uri)
             #time.sleep(20)
 
         d = GstPbutils.Discoverer()
@@ -436,7 +428,7 @@ class ObAlert (object):
         #cmd = u"espeak -v %s -s 130 -w %s/%s " % (voice, location, filename)
         #cmd += u"\"" + message_text[0] + u"\""
         if voice.startswith('aws'):
-            print('voice: ' + voice)
+            #print('voice: ' + voice)
             voice = voice.replace('aws-', '')
             polly_client = boto3.Session(
                 aws_access_key_id=obplayer.Config.setting('aws_access_key_id'), aws_secret_access_key=obplayer.Config.setting('aws_secret_access_key'),
@@ -633,7 +625,7 @@ class ObAlertInfo (object):
         for node in xml_get_tags(info, 'area'):
             self.areas.append(ObAlertArea(node))
         for area in self.areas:
-            print(area.get_sgcs())
+            pass
         self.resources = [ ]
         for node in xml_get_tags(info, 'resource'):
             self.resources.append(ObAlertResource(node))
@@ -677,7 +669,6 @@ class ObAlertInfo (object):
             for area in self.areas:
                 output_geocodes = area.get_sgcs() + output_geocodes
             output_geocodes = list(dict.fromkeys(output_geocodes))
-            #print(type(output_geocodes))
             #time.sleep(20)
             description = '. ' + self.description if self.description else ''
             instruction = '. ' + self.instruction if self.instruction else ''
@@ -688,7 +679,6 @@ class ObAlertInfo (object):
                 text = 'Alerte' + sender + ' - ' + 'Alerte ' + event + areadesc +  instruction
             elif self.language == 'indigenous':
                 self.indigenous = ObAlert.get_indigenous_languages_by_sgcs(output_geocodes)
-                #print(self.indigenous)
                 message_text = ""
                 self.indigenous_languages_enabled = obplayer.Config.setting('alerts_selected_indigenous_languages').split(',')
                 for indigenous in self.indigenous:
@@ -699,7 +689,6 @@ class ObAlertInfo (object):
                         if os.path.isfile("{0}/indigenous/{1}/{2}.wav".format(obplayer.Config.datadir, indigenous.lower(), self.event.lower())):
                             message_text += '{0}/indigenous/{1}/{2}.wav\n'.format(obplayer.Config.datadir, indigenous.lower(), self.event.lower())
                 text = message_text
-                print(message_text)
             else:
                text = 'Message From' + sender + '. ' + event + ' For ' + areadesc + description + instruction
         # Always must be indigenous alert audio

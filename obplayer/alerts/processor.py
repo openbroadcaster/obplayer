@@ -590,7 +590,6 @@ class ObAlertProcessor (object):
                                     if os.access(obplayer.Config.setting('alerts_alert_start_audio'), os.F_OK) == True:
                                         d = GstPbutils.Discoverer()
                                         mediainfo = d.discover_uri(obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')))
-                                        #print('leadin message duration ' + str(mediainfo.get_duration() / float(Gst.SECOND)))
                                         if (mediainfo.get_duration() / float(Gst.SECOND)) > 10.0:
                                             obplayer.Log.log('alert start message is longer then 10 seconds! max allowed is 10 seconds. only playing the first 10 seconds.', 'alerts')
                                             self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=10, artist=None, title='ledin message', overlay_text=None)
