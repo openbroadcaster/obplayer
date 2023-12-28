@@ -39,7 +39,7 @@ def init():
         datadir = os.path.expanduser('~/.openbroadcaster')
         vol = round(vol/100, 3)
         output_path = os.path.join(datadir, 'attn.wav')
-        os.system("ffmpeg -y -i obplayer/alerts/data/canadian-attention-signal.mp3 -filter:a \"volume={0}\" \"{1}\"".format(str(vol), output_path))
+        os.system("ffmpeg -y -i obplayer/alerts/data/canadian-attention-signal.mp3 -filter:a \"volume={0}\" \"{1}\" > /dev/null 2>&1".format(str(vol), output_path))
 
 def quit():
     pass
