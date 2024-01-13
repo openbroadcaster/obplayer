@@ -56,7 +56,6 @@ class ObFakeOutputBin (ObOutputBin):
     def add_inter_tap(self, name):
         pass
 
-
 class ObAudioOutputBin (ObOutputBin):
     def __init__(self):
         ObOutputBin.__init__(self, 'audio-output-bin')
@@ -137,19 +136,6 @@ class ObAudioOutputBin (ObOutputBin):
 
         self.build_pipeline(self.elements)
 
-        """
-        if obplayer.Config.setting('streamer_icecast_mode').startswith('video') or obplayer.Config.setting('streamer_audio_in_mode') == 'intersink':
-            interpipe = [ ]
-            interpipe.append(Gst.ElementFactory.make('queue2'))
-            interpipe.append(Gst.ElementFactory.make('interaudiosink'))
-            interpipe[-1].set_property('channel', 'audio')
-            #interpipe[-1].set_property('sync', False)
-            #interpipe[-1].set_property('async', False)
-            interpipe[-1].set_property('enable-last-sample', False)
-            self.build_pipeline(interpipe)
-            self.tee.link(interpipe[0])
-        """
-
         self.sinkpad = Gst.GhostPad.new('sink', self.elements[0].get_static_pad('sink'))
         self.bin.add_pad(self.sinkpad)
 
@@ -163,7 +149,6 @@ class ObAudioOutputBin (ObOutputBin):
         interpipe[-1].set_property('enable-last-sample', False)
         self.build_pipeline(interpipe)
         self.tee.link(interpipe[0])
-
 
 class ObVideoOutputBin (ObOutputBin):
     def __init__(self):

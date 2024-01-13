@@ -64,7 +64,6 @@ class ObOverlay (object):
     """
         
     def set_message(self, msg):
-        print('set message: ' + str(msg))
         if msg:
             # self.scroll_enable = True
             with self.lock:
