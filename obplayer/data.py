@@ -348,9 +348,7 @@ class ObConfigData (ObData):
         self.add_setting('bug_overlay_image', self.datadir + '/bug.png', 'text')
 
         self.add_setting('streamer_enable', '0', 'bool')
-        self.add_setting('streamer_audio_in_mode', 'intersink', 'text')
-        self.add_setting('streamer_audio_in_alsa_device', 'default', 'text')
-        self.add_setting('streamer_audio_in_jack_name', '', 'text')
+
         for i in range(2):
             i = str(i)
             if i != "1":

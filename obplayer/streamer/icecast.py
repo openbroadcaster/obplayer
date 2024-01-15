@@ -70,42 +70,6 @@ class ObIcecastStreamer (ObGstStreamer):
     def make_audio_pipe(self):
         self.audiopipe = [ ]
 
-        audio_input = obplayer.Config.setting('streamer_audio_in_mode')
-        """
-        if audio_input == 'alsa':
-            self.audiosrc = Gst.ElementFactory.make('alsasrc', 'audiosrc')
-            alsa_device = obplayer.Config.setting('streamer_audio_in_alsa_device')
-            if alsa_device != '':
-                self.audiosrc.set_property('device', alsa_device)
-
-        elif audio_input == 'jack':
-            self.audiosrc = Gst.ElementFactory.make('jackaudiosrc', 'audiosrc')
-            self.audiosrc.set_property('connect', 0)  # don't autoconnect ports.
-            name = obplayer.Config.setting('streamer_audio_in_jack_name')
-            self.audiosrc.set_property('client-name', name if name else 'obplayer')
-
-        elif audio_input == 'oss':
-            self.audiosrc = Gst.ElementFactory.make('osssrc', 'audiosrc')
-
-        elif audio_input == 'pulse':
-            self.audiosrc = Gst.ElementFactory.make('pulsesrc', 'audiosrc')
-            self.audiosrc.set_property('client-name', 'obplayer-streamer-to-icecast')
-
-        elif audio_input == 'test':
-            self.audiosrc = Gst.ElementFactory.make('fakesrc', 'audiosrc')
-
-        elif audio_input == 'intersink':
-            print(self.name)
-            obplayer.Player.add_inter_tap(self.name)
-            self.audiosrc = Gst.ElementFactory.make('interaudiosrc')
-            self.audiosrc.set_property('channel', self.name + ':audio')
-            #self.audiosrc.set_property('buffer-time', 8000000000)
-            #self.audiosrc.set_property('latency-time', 8000000000)
-
-        else:
-            self.audiosrc = Gst.ElementFactory.make('autoaudiosrc', 'audiosrc')
-        """
-
         self.audiosrc = Gst.ElementFactory.make('interpipesrc', 'interpipe-icecast')
         self.audiosrc.set_property('stream-sync', 'compensate-ts')
         self.audiosrc.set_property('is-live', True)

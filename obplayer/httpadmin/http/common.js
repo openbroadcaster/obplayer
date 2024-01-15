@@ -615,15 +615,6 @@ $(document).ready(function () {
     });
     $('#audio_in_mode_select').change();
 
-    $('#streamer_audio_in_mode_select').change(function () {
-        if ($('#streamer_audio_in_mode_select').val() == 'alsa') $('#streamer_audio_in_alsa_device_row').show();
-        else $('#streamer_audio_in_alsa_device_row').hide();
-
-        if ($('#streamer_audio_in_mode_select').val() == 'jack') $('#streamer_audio_in_jack_name_row').show();
-        else $('#streamer_audio_in_jack_name_row').hide();
-    });
-    $('#streamer_audio_in_mode_select').change();
-
     $('#http_admin_secure').change(function () {
         if ($(this).is(':checked')) $('.http_admin_sslcert_row').show();
         else $('.http_admin_sslcert_row').hide();

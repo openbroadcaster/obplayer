@@ -518,23 +518,6 @@
   	    <td data-t>streamer_enable</td>
   	    <td><%= obplayer.Config.setting('streamer_enable') %></td>
   	  </tr>
-  	  <tr>
-  	    <td data-t>streamer_audio_in_mode</td>
-  	    <td><%= obplayer.Config.setting('streamer_audio_in_mode') %></td>
-  	  </tr>
-  	  <% if obplayer.Config.setting('streamer_audio_in_mode') == 'alsa': %>
-              <tr>
-                <td data-t>streamer_audio_in_alsa_device</td>
-                <td><%= obplayer.Config.setting('streamer_audio_in_alsa_device') %></td>
-              </tr>
-            <% end %>
-  	  <% if obplayer.Config.setting('streamer_audio_in_mode') == 'jack': %>
-              <tr>
-                <td data-t>streamer_audio_in_jack_name</td>
-                <td><%= obplayer.Config.setting('streamer_audio_in_jack_name') %></td>
-              </tr>
-            <% end %>
-
         <tr class="padding">
     	    <td data-t>streamer_0_icecast_enable</td>
     	    <td><%= obplayer.Config.setting('streamer_0_icecast_enable') %></td>
@@ -1934,26 +1917,6 @@
               <tr>
                 <td data-t>streamer_enable</td>
                 <td><input type="checkbox" name="streamer_enable" value="1"<%= obplayer.HTTPAdmin.form_item_checked('streamer_enable') %> title="streamer_enable_tooltip" data-t></td>
-              </tr>
-              <tr>
-                <td data-t title="streamer_audio_in_mode_tooltip">streamer_audio_in_mode</td>
-                <td><select id="streamer_audio_in_mode_select" name="streamer_audio_in_mode" data-tns="Gstreamer Modes">
-                    <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','auto') %> data-t>Auto Detect</option>
-                    <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','alsa') %> data-t>ALSA</option>
-                    <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','jack') %> data-t>JACK</option>
-                    <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','oss') %> data-t>OSS</option>
-                    <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','pulse') %> data-t>Pulse Audio</option>
-                    <option value="intersink"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','intersink') %> data-t>InterSink</option>
-                    <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('streamer_audio_in_mode','test') %> data-t>No Input</option>
-                  </select></td>
-              </tr>
-              <tr id="streamer_audio_in_alsa_device_row">
-                <td data-t>streamer_audio_in_alsa_device</td>
-                <td><input type="text" name="streamer_audio_in_alsa_device" value="<%= obplayer.Config.setting('streamer_audio_in_alsa_device',True) %>"></td>
-              </tr>
-              <tr id="streamer_audio_in_jack_name_row">
-                <td data-t>streamer_audio_in_jack_name</td>
-                <td><input type="text" name="streamer_audio_in_jack_name" value="<%= obplayer.Config.setting('streamer_audio_in_jack_name',True) %>"></td>
               </tr>
             </tbody>
           </table>

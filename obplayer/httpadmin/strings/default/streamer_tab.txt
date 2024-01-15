@@ -6,13 +6,6 @@ Streamer Tab
   streamer_enable: Enable Streaming
   streamer_enable_tooltip: Enables the streaming module.
 
-  streamer_audio_in_mode: Audio Input Mode
-  streamer_audio_in_mode_tooltip: The type of audio input to use.  If using pulseaudio, make sure to select the "Monitor of ..." source for this input in the "Pulse Audio Volume Control" utility.
-
-  streamer_audio_in_alsa_device: ALSA Device Name
-  streamer_audio_in_jack_name: Jack Port Name
-
-
   Icecast Streaming: Icecast Streaming
 
   streamer_0_icecast_enable: Enable Icecast Streaming
