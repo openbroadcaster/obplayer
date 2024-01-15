@@ -71,6 +71,7 @@ class ObIcecastStreamer (ObGstStreamer):
         self.audiopipe = [ ]
 
         audio_input = obplayer.Config.setting('streamer_audio_in_mode')
+        """
         if audio_input == 'alsa':
             self.audiosrc = Gst.ElementFactory.make('alsasrc', 'audiosrc')
             alsa_device = obplayer.Config.setting('streamer_audio_in_alsa_device')
@@ -103,12 +104,21 @@ class ObIcecastStreamer (ObGstStreamer):
 
         else:
             self.audiosrc = Gst.ElementFactory.make('autoaudiosrc', 'audiosrc')
+        """
 
+        self.audiosrc = Gst.ElementFactory.make('interpipesrc', 'interpipe-icecast')
+        self.audiosrc.set_property('stream-sync', 'compensate-ts')
+        self.audiosrc.set_property('is-live', True)
+        self.audiosrc.set_property('listen-to', 'interpipe-output')
+        self.audiosrc.set_property('allow-renegotiation', True)
+        self.audiosrc.set_property('format', 'time')
+        self.audiosrc.set_property('caps', Gst.Caps.from_string("audio/x-raw,format=S16LE,rate=44100,layout=interleaved,channels=2"))
         self.audiopipe.append(self.audiosrc)
 
-        caps = Gst.ElementFactory.make('capsfilter')
-        caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,channel-mask=(bitmask)0x3"))
-        self.audiopipe.append(caps)
+        
+        #caps = Gst.ElementFactory.make('capsfilter')
+        #caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,channel-mask=(bitmask)0x3"))
+        #self.audiopipe.append(caps)
 
         self.audiopipe.append(Gst.ElementFactory.make("queue2"))
 

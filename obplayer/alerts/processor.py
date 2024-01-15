@@ -317,7 +317,7 @@ class ObAlertProcessor (object):
             self.triggers.append(LEDSignTrigger())
 
 
-        self.ctrl = obplayer.Player.create_controller('alerts', priority=100, default_play_mode='overlap', allow_overlay=True)
+        self.ctrl = obplayer.Player.create_controller('alert', priority=100, default_play_mode='overlap', allow_overlay=True)
         #self.ctrl.do_player_request = self.do_player_request
 
         self.thread = obplayer.ObThread('ObAlertProcessor', target=self.run)
@@ -563,7 +563,8 @@ class ObAlertProcessor (object):
                         obplayer.Log.log("playing active alerts (%d alert(s) to play)" % (len(self.alerts_active),), 'player') # moved from alerts
 
                         self.ctrl.hold_requests(True)
-                        self.ctrl.add_request(media_type='break', title="alert lead in delay", duration=self.leadin_delay, onstart=self.trigger_alert_cycle_start)
+                        # was "break"
+                        self.ctrl.add_request(media_type='alert', mixerstart='alert_on', title="alert lead in delay", duration=self.leadin_delay, onstart=self.trigger_alert_cycle_start)
 
                         expired_list = [ ]
                         with self.lock:
@@ -592,18 +593,21 @@ class ObAlertProcessor (object):
                                         mediainfo = d.discover_uri(obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')))
                                         if (mediainfo.get_duration() / float(Gst.SECOND)) > 10.0:
                                             obplayer.Log.log('alert start message is longer then 10 seconds! max allowed is 10 seconds. only playing the first 10 seconds.', 'alerts')
-                                            self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=10, artist=None, title='ledin message', overlay_text=None)
+                                            self.ctrl.add_request(media_type='alert', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=10, artist=None, title='ledin message', overlay_text=None)
                                         else:
-                                            self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=mediainfo.get_duration() / float(Gst.SECOND), artist=None, title='ledin message', overlay_text=None)
-                                self.ctrl.add_request(media_type='break', title="alert tone delay", duration=1.0)
+                                            self.ctrl.add_request(media_type='alert', uri=obplayer.Player.file_uri(obplayer.Config.setting('alerts_alert_start_audio')), duration=mediainfo.get_duration() / float(Gst.SECOND), artist=None, title='ledin message', overlay_text=None)
+                                # was "break"
+                                self.ctrl.add_request(media_type='alert', title="alert tone delay", duration=1.0)
                                 # Play US/EAS attn tone
                                 if obplayer.Config.setting('alerts_location_type') == 'US':
-                                    self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri("obplayer/alerts/data", "attention-signal.ogg"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
+                                    self.ctrl.add_request(media_type='alert', uri=obplayer.Player.file_uri("obplayer/alerts/data", "attention-signal.ogg"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
                                 # Play CA/Alert Ready attn tone
                                 else:
-                                    self.ctrl.add_request(media_type='audio', uri=obplayer.Player.file_uri(os.path.expanduser('~/.openbroadcaster'), "attn.wav"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
+                                    self.ctrl.add_request(media_type='alert', uri=obplayer.Player.file_uri(os.path.expanduser('~/.openbroadcaster'), "attn.wav"), duration=8, artist=alert_media[0]['audio']['artist'], title=alert_media[0]['audio']['title'], overlay_text=alert_media[0]['audio']['overlay_text'])
                                 for mediainfo in alert_media:
-                                    self.ctrl.add_request(**mediainfo['audio'])
+                                    if 'audio' in mediainfo:
+                                        mediainfo['audio']['media_type'] = 'alert' # now using alert pipeline
+                                        self.ctrl.add_request(**mediainfo['audio'])
                                     if 'visual' in mediainfo:
                                        self.ctrl.add_request(start_time=start_time, **mediainfo['visual'])
 
@@ -612,7 +616,8 @@ class ObAlertProcessor (object):
                                 if (self.repeat_times > 0 and alert.times_played >= self.repeat_times) or (alert.max_plays > 0 and alert.times_played >= alert.max_plays):
                                     expired_list.append(alert)
 
-                        self.ctrl.add_request(media_type='break', title="alert lead out delay", duration=self.leadout_delay, onend=self.trigger_alert_cycle_stop)
+                        # was "break"
+                        self.ctrl.add_request(media_type='alert', mixerend="alert_off", title="alert lead out delay", duration=self.leadout_delay, onend=self.trigger_alert_cycle_stop)
                         self.ctrl.adjust_request_times(time.time())
                         self.ctrl.hold_requests(False)
 

@@ -62,7 +62,10 @@ class ObPlayer (object):
 
     def player_init(self):
         self.outputs = { }
+        self.outputs['mixer'] = outputs.ObAudioMixerBin()
         self.outputs['audio'] = outputs.ObAudioOutputBin()
+        self.outputs['alert'] = outputs.ObFakeOutputBin() 
+
         if not obplayer.Config.headless:
             self.outputs['visual'] = outputs.ObVideoOutputBin()
         else:
@@ -79,6 +82,7 @@ class ObPlayer (object):
         self.pipes = { }
         self.pipes['audio'] = pipes.ObAudioPlayBinPipeline('audio-playbin', self, obplayer.Config.setting('audio_out_visualization'))
         self.pipes['video'] = pipes.ObPlayBinPipeline('video-playbin', self)
+        self.pipes['alert'] = pipes.ObAlertPipeline('alert-pipeline', self)
         self.pipes['testsignal'] = pipes.ObTestSignalPipeline('test-signal', self)
         self.pipes['image'] = pipes.ObImagePipeline('image-pipeline', self)
         self.pipes['break'] = pipes.ObBreakPipeline('audio-break', self)
@@ -265,6 +269,9 @@ class ObPlayer (object):
         request_pipe.set_request(req)
         request_pipe.start()
 
+        if req['mixerstart']:
+            self.outputs['mixer'].execute_instruction(req['mixerstart'])
+
         if req['onstart']:
             req['onstart']()
 
@@ -289,6 +296,9 @@ class ObPlayer (object):
 
         if outputs.Overlay and req['overlay_text']:
             outputs.Overlay.set_message('')
+
+        if req['mixerend']:
+            self.outputs['mixer'].execute_instruction(req['mixerend'])
 
         if req['onend']:
             req['onend']()
@@ -434,7 +444,7 @@ class ObPlayerController (object):
 
     # media_type can be: audio, video, image, linein, break, testsignal
     # play_mode can be:  exclusive, overlap
-    def add_request(self, media_type, start_time=None, end_time=None, uri='', duration=0.0, offset=0, media_id=0, order_num=-1, artist='unknown', title='unknown', play_mode=None, overlay_text=None, onstart=None, onend=None):
+    def add_request(self, media_type, start_time=None, end_time=None, uri='', duration=0.0, offset=0, media_id=0, order_num=-1, artist='unknown', title='unknown', play_mode=None, overlay_text=None, onstart=None, onend=None, mixerstart=None, mixerend=None):
         if not self.enabled:
             return
 
@@ -471,7 +481,9 @@ class ObPlayerController (object):
             'play_mode' : play_mode,
             'overlay_text' : overlay_text,
             'onstart' : onstart,
-            'onend' : onend
+            'onend' : onend,
+            'mixerstart' : mixerstart,
+            'mixerend' : mixerend
         }
 
         self.insert_request(req)

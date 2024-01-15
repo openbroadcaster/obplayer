@@ -113,13 +113,59 @@ class ObPlayBinPipeline (ObGstPipeline):
             self.play_start_time = time.time()
 
         offset = time.time() - self.play_start_time
+        offset = 0 # TODO FIXME SEEK TEMPORARIY DISABLED
         if offset != 0:
-        #if offset > 0.25:
+            print(offset)
             if self.pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, offset * Gst.SECOND) == False:
                 obplayer.Log.log('unable to seek on this track', 'error')
             obplayer.Log.log('resuming track at ' + str(offset) + ' seconds.', 'player')
 
-
 class ObAudioPlayBinPipeline (ObPlayBinPipeline):
     min_class = [ 'audio' ]
     max_class = [ 'audio', 'visual' ]
+
+"""
+class ObAudioPlayBinPipeline (ObGstPipeline):
+    min_class = [ 'audio' ]
+    max_class = [ 'audio', 'visual' ]
+    playbin = False
+
+    def __init__(self, name, player, audiovis=False):
+        ObGstPipeline.__init__(self, name)
+
+        # make the rest of the code happy by having a pipeline all the time
+        self.pipeline = Gst.parse_launch('audiotestsrc ! audioconvert ! fakesink')
+        self.pipeline.set_state(Gst.State.PAUSED)
+
+    def set_request(self, req):
+        if self.pipeline:
+            self.pipeline.set_state(Gst.State.NULL)
+            self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+            self.pipeline = False
+
+        if req['uri']:
+            if(req['start_time']):
+                offset = max(0, time.time() - req['start_time'])
+            else:
+                offset = 0
+            self.pipeline = Gst.ElementFactory.make("playbin", "playbin")
+            self.pipeline.set_property("uri", req['uri'])
+            interpipesink = Gst.ElementFactory.make("interpipesink", 'interpipe-main')
+            interpipesink.set_property('sync', True)
+            self.pipeline.set_property("audio-sink", interpipesink)
+            print(self.pipeline.get_property("audio-sink"))
+
+            print('playing ' + req['uri'])
+
+            self.pipeline.set_state(Gst.State.PAUSED)
+            self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+            if(offset):
+                #print('seeking to ' + str(offset))
+                #print(self.pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, offset * Gst.SECOND))
+                pass
+                #print(self.pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, offset * Gst.SECOND))
+
+        else:
+            self.pipeline = Gst.parse_launch('audiotestsrc ! audioconvert ! fakesink')
+
+"""

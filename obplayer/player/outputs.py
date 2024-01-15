@@ -56,6 +56,41 @@ class ObFakeOutputBin (ObOutputBin):
     def add_inter_tap(self, name):
         pass
 
+class ObAudioMixerBin (ObOutputBin):
+    def __init__(self):
+
+        print('setting up mixer')
+
+        pipeline_str = """
+            interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-main format=time ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! interpipesink name=interpipe-output
+            interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-alert format=time ! audioconvert ! mixer.
+        """
+
+        self.pipeline = Gst.parse_launch(pipeline_str)
+        self.pipeline.set_state(Gst.State.PLAYING)
+
+        pipeline2_str = """
+            interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-output format=time ! autoaudiosink
+        """
+
+        self.pipeline2 = Gst.parse_launch(pipeline2_str)
+        self.pipeline2.set_state(Gst.State.PLAYING)
+    
+    def alert_mode_on(self):
+        self.pipeline.get_by_name('main-volume').set_property('volume', 0.1)
+    
+    def alert_mode_off(self):
+        self.pipeline.get_by_name('main-volume').set_property('volume', 1.0)
+    
+    def execute_instruction(self, instruction):
+        obplayer.Log.log("mixer received instruction " + instruction, 'debug')
+        if instruction == 'alert_on':
+            self.alert_mode_on()
+        elif instruction == 'alert_off':
+            self.alert_mode_off()
+        else:
+            print ('unknown mixer instruction: ' + instruction)
+
 class ObAudioOutputBin (ObOutputBin):
     def __init__(self):
         ObOutputBin.__init__(self, 'audio-output-bin')
@@ -68,7 +103,8 @@ class ObAudioOutputBin (ObOutputBin):
         ## create caps filter element to set the output audio parameters
         caps = Gst.ElementFactory.make('capsfilter', 'audio-out-capsfilter')
         #caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100,format=S16LE,layout=interleaved"))
-        caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2"))
+        # caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2"))
+        caps.set_property('caps', Gst.Caps.from_string("caps=audio/x-raw,format=S16LE,rate=44100,layout=interleaved,channels=2"))
         self.elements.append(caps)
 
         #add volume sink
@@ -130,7 +166,8 @@ class ObAudioOutputBin (ObOutputBin):
             self.audiosink = Gst.ElementFactory.make('fakesink', 'audiosink')
 
         else:
-            self.audiosink = Gst.ElementFactory.make('autoaudiosink', 'audiosink')
+            self.audiosink = Gst.ElementFactory.make('interpipesink', 'interpipe-main')
+            self.audiosink.set_property('sync', True)
 
         self.elements.append(self.audiosink)
 
