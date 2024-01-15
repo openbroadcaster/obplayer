@@ -59,8 +59,7 @@ class ObFakeOutputBin (ObOutputBin):
 class ObAudioMixerBin (ObOutputBin):
     def __init__(self):
 
-        print('setting up mixer')
-
+        # input section
         pipeline_str = """
             interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-main format=time ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! interpipesink name=interpipe-output
             interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-alert format=time ! audioconvert ! mixer.
@@ -69,11 +68,34 @@ class ObAudioMixerBin (ObOutputBin):
         self.pipeline = Gst.parse_launch(pipeline_str)
         self.pipeline.set_state(Gst.State.PLAYING)
 
-        pipeline2_str = """
-            interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-output format=time ! autoaudiosink
-        """
+        # output section
 
+        audio_output = obplayer.Config.setting('audio_out_mode')
+        if audio_output == 'pipewire':
+            audiosink_str = 'pipewiresink'
+        
+        elif audio_output == 'jack':
+            audiosink_str = 'jackaudiosink'
+
+        elif audio_output == 'pulse':
+            audiosink_str = 'pulsesink'
+
+        elif audio_output == 'test':
+            audiosink_str = 'fakesink'
+
+        else:
+            audiosink_str = 'autoaudiosink'
+
+        pipeline2_str = 'interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-output format=time ! audioconvert ! ' + audiosink_str + ' name=audio-out-sink'
+        
         self.pipeline2 = Gst.parse_launch(pipeline2_str)
+
+        if audio_output == 'jack':
+            audiosink = self.pipeline2.get_by_name('audio-out-sink')
+            audiosink.set_property('connect', 0)
+            jack_name = obplayer.Config.setting('audio_out_jack_name')
+            audiosink.set_property('client-name', jack_name if jack_name else 'obplayer')
+
         self.pipeline2.set_state(Gst.State.PLAYING)
     
     def alert_mode_on(self):
@@ -123,52 +145,8 @@ class ObAudioOutputBin (ObOutputBin):
         self.elements.append(Gst.ElementFactory.make('queue2', 'audio-out-post-tee-queue'))
 
         ## create audio sink element
-        audio_output = obplayer.Config.setting('audio_out_mode')
-        if audio_output == 'alsa':
-            self.audiosink = Gst.ElementFactory.make('alsasink', 'audio-out-sink')
-            alsa_device = obplayer.Config.setting('audio_out_alsa_device')
-            if alsa_device != '':
-                self.audiosink.set_property('device', alsa_device)
-
-        elif audio_output == 'esd':
-            self.audiosink = Gst.ElementFactory.make('esdsink', 'audio-out-sink')
-
-        elif audio_output == 'jack':
-            self.audiosink = Gst.ElementFactory.make('jackaudiosink', 'audio-out-sink')
-            self.audiosink.set_property('connect', 0)  # don't autoconnect ports.
-            name = obplayer.Config.setting('audio_out_jack_name')
-            self.audiosink.set_property('client-name', name if name else 'obplayer')
-
-        elif audio_output == 'oss':
-            self.audiosink = Gst.ElementFactory.make('osssink', 'audio-out-sink')
-
-        elif audio_output == 'pulse':
-            self.audiosink = Gst.ElementFactory.make('pulsesink', 'audio-out-sink')
-
-        elif audio_output == 'shout2send':
-            self.elements.append(Gst.ElementFactory.make('queue2', 'audio-out-shoutcast-queue'))
-            self.elements.append(Gst.ElementFactory.make('lamemp3enc', 'audio-out-shoutcast-encoder'))
-            self.audiosink = Gst.ElementFactory.make('shout2send', 'audio-out-sink')
-            self.audiosink.set_property('ip', obplayer.Config.setting('streamer_shout2send_ip'))
-            self.audiosink.set_property('port', obplayer.Config.setting('streamer_shout2send_port'))
-            self.audiosink.set_property('mount', obplayer.Config.setting('streamer_shout2send_mount'))
-            self.audiosink.set_property('password', obplayer.Config.setting('streamer_shout2send_password'))
-
-        elif audio_output == 'intersink':
-            self.elements.append(Gst.ElementFactory.make('queue2', 'audio-out-intersink-queue'))
-            self.audiosink = Gst.ElementFactory.make('interaudiosink', 'audio-out-intersink')
-            self.audiosink.set_property('channel', 'audio')
-            #self.audiosink.set_property('sync', False)
-            #self.audiosink.set_property('async', False)
-            self.audiosink.set_property('enable-last-sample', False)
-
-        elif audio_output == 'test':
-            self.audiosink = Gst.ElementFactory.make('fakesink', 'audiosink')
-
-        else:
-            self.audiosink = Gst.ElementFactory.make('interpipesink', 'interpipe-main')
-            self.audiosink.set_property('sync', True)
-
+        self.audiosink = Gst.ElementFactory.make('interpipesink', 'interpipe-main')
+        self.audiosink.set_property('sync', True)
         self.elements.append(self.audiosink)
 
         self.build_pipeline(self.elements)

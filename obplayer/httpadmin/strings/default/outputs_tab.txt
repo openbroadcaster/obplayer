@@ -7,12 +7,7 @@ Outputs Tab
 
   audio_out_mode: Audio Output Mode
   audio_output_volume: Audio Output Levels
-  audio_out_alsa_device: ALSA Device Name
   audio_out_jack_name: Jack Port Name
-  audio_out_shout2send_ip_stream_one: Shoutcast IP (Stream one)
-  audio_out_shout2send_port_stream_one: Shoutcast Port (Stream one)
-  audio_out_shout2send_mount_stream_one: Shoutcast Mountpoint (Stream one)
-  audio_out_shout2send_password_stream_one: Shoutcast Password (Stream one)
   audio_out_visualization: Enable Audio Visualization
   station_override_tooltip: Stream linein to other stations
   station_override_monitored_streams: Streams in order of priority to check for override audio. separate entrys using ','

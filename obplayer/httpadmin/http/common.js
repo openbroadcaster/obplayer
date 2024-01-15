@@ -574,24 +574,8 @@ $(document).ready(function () {
     $('#sync_media_mode').change();
 
     $('#audio_out_mode_select').change(function () {
-        if ($('#audio_out_mode_select').val() == 'alsa') $('#audio_out_alsa_device_row').show();
-        else $('#audio_out_alsa_device_row').hide();
-
         if ($('#audio_out_mode_select').val() == 'jack') $('#audio_out_jack_name_row').show();
         else $('#audio_out_jack_name_row').hide();
-
-        if ($('#audio_out_mode_select').val() == 'shout2send') {
-            $('#audio_out_shout2send_ip_row').show();
-            $('#audio_out_shout2send_port_row').show();
-            $('#audio_out_shout2send_mount_row').show();
-            $('#audio_out_shout2send_password_row').show();
-        }
-        else {
-            $('#audio_out_shout2send_ip_row').hide();
-            $('#audio_out_shout2send_port_row').hide();
-            $('#audio_out_shout2send_mount_row').hide();
-            $('#audio_out_shout2send_password_row').hide();
-        }
     });
     $('#audio_out_mode_select').change();
 

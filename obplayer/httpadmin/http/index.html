@@ -429,12 +429,6 @@
   	    <td data-t>audio_out_mode</td>
   	    <td><%= obplayer.Config.setting('audio_out_mode') %></td>
   	  </tr>
-  	  <% if obplayer.Config.setting('audio_out_mode') == 'alsa': %>
-              <tr>
-                <td data-t>audio_out_alsa_device</td>
-                <td><%= obplayer.Config.setting('audio_out_alsa_device') %></td>
-              </tr>
-            <% end %>
   	  <% if obplayer.Config.setting('audio_out_mode') == 'jack': %>
               <tr>
                 <td data-t>audio_out_jack_name</td>
@@ -1382,45 +1376,19 @@
                 <td data-t>audio_out_mode</td>
                 <td><select id="audio_out_mode_select" name="audio_out_mode" data-tns="Gstreamer Modes">
                     <option value="auto"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','auto') %> data-t>Auto Detect</option>
-                    <option value="alsa"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','alsa') %> data-t>ALSA</option>
-                    <option value="esd"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','esd') %> data-t>Esound</option>
+                    <option value="pipewire"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','pipewire') %> data-t>PipeWire</option>
                     <option value="jack"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','jack') %> data-t>JACK</option>
-                    <option value="oss"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','oss') %> data-t>OSS</option>
-                    <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','pulse') %> data-t>Pulse Audio</option>
-                    <!-- <option value="shout2send"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','shout2send') %> data-t>Shoutcast</option> -->
-                    <!-- <option value="intersink"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','intersink') %> data-t>Direct Streaming</option> -->
+                    <option value="pulse"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','pulse') %> data-t>PulseAudio</option>
                     <option value="test"<%= obplayer.HTTPAdmin.form_item_selected('audio_out_mode','test') %> data-t>No Output</option>
                   </select></td>
               </tr>
-              <% if obplayer.Config.setting('audio_out_mode') != 'pulse': %>
               <tr>
                 <td data-t>audio_output_volume</td>
                 <td><input type="range" name="audio_output_volume" value="<%= obplayer.Config.setting('audio_output_volume',True) %>" min="0.0" max="1.0" step="0.1"></td>
               </tr>
-              <% end %>
-              <tr id="audio_out_alsa_device_row">
-                <td data-t>audio_out_alsa_device</td>
-                <td><input type="text" name="audio_out_alsa_device" value="<%= obplayer.Config.setting('audio_out_alsa_device',True) %>"></td>
-              </tr>
               <tr id="audio_out_jack_name_row">
                 <td data-t>audio_out_jack_name</td>
                 <td><input type="text" name="audio_out_jack_name" value="<%= obplayer.Config.setting('audio_out_jack_name',True) %>"></td>
-              </tr>
-              <tr id="audio_out_shout2send_ip_row">
-                <td data-t>audio_out_shout2send_ip</td>
-                <td><input type="text" name="audio_out_shout2send_ip" value="<%= obplayer.Config.setting('audio_out_shout2send_ip',True) %>"></td>
-              </tr>
-              <tr id="audio_out_shout2send_port_row">
-                <td data-t>audio_out_shout2send_port</td>
-                <td><input type="text" name="audio_out_shout2send_port" value="<%= obplayer.Config.setting('audio_out_shout2send_port',True) %>"></td>
-              </tr>
-              <tr id="audio_out_shout2send_mount_row">
-                <td data-t>audio_out_shout2send_mount</td>
-                <td><input type="text" name="audio_out_shout2send_mount" value="<%= obplayer.Config.setting('audio_out_shout2send_mount',True) %>"></td>
-              </tr>
-              <tr id="audio_out_shout2send_password_row">
-                <td data-t>audio_out_shout2send_password</td>
-                <td><input type="password" name="audio_out_shout2send_password" value="<%= obplayer.Config.setting('audio_out_shout2send_password',True) %>"></td>
               </tr>
               <tr>
                 <td data-t>audio_out_visualization</td>
