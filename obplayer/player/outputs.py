@@ -61,15 +61,14 @@ class ObAudioMixerBin (ObOutputBin):
 
         # input section
         pipeline_str = """
-            interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-main format=time ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! interpipesink name=interpipe-output
-            interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-alert format=time ! audioconvert ! mixer.
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-main format=time ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! interpipesink name=interpipe-output sync=true
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-alert format=time ! audioconvert ! mixer.
         """
 
         self.pipeline = Gst.parse_launch(pipeline_str)
         self.pipeline.set_state(Gst.State.PLAYING)
 
         # output section
-
         audio_output = obplayer.Config.setting('audio_out_mode')
         if audio_output == 'pipewire':
             audiosink_str = 'pipewiresink'
@@ -86,7 +85,7 @@ class ObAudioMixerBin (ObOutputBin):
         else:
             audiosink_str = 'autoaudiosink'
 
-        pipeline2_str = 'interpipesrc stream-sync=compensate-ts is-live=true listen-to=interpipe-output format=time ! audioconvert ! ' + audiosink_str + ' name=audio-out-sink'
+        pipeline2_str = 'interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-output format=time ! audioconvert ! ' + audiosink_str + ' name=audio-out-sink'
         
         self.pipeline2 = Gst.parse_launch(pipeline2_str)
 

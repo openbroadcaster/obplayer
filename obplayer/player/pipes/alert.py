@@ -52,7 +52,9 @@ class ObAlertPipeline (ObGstPipeline):
         if req['uri']:
             self.pipeline = Gst.ElementFactory.make("playbin", "playbin")
             self.pipeline.set_property("uri", req['uri'])
-            self.pipeline.set_property("audio-sink", Gst.ElementFactory.make("interpipesink", 'interpipe-alert'))
+            self.interpipesink = Gst.ElementFactory.make("interpipesink", 'interpipe-alert')
+            self.interpipesink.set_property('sync', True)
+            self.pipeline.set_property("audio-sink", self.interpipesink)
             self.pipeline.set_state(Gst.State.PAUSED)
 
         else:
