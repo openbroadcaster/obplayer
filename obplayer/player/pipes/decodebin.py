@@ -62,6 +62,7 @@ class ObPlayBinPipeline (ObGstPipeline):
         #self.pipeline.connect("about-to-finish", self.about_to_finish_handler)
 
     def patch(self, mode):
+        print('patch')
         obplayer.Log.log(self.name + ": patching " + mode, 'debug')
 
         (change, state, pending) = self.pipeline.get_state(0)
@@ -78,6 +79,7 @@ class ObPlayBinPipeline (ObGstPipeline):
             self.wait_state(Gst.State.PLAYING)
 
     def unpatch(self, mode):
+        print('unpatch')
         obplayer.Log.log(self.name + ": unpatching " + mode, 'debug')
 
         (change, state, pending) = self.pipeline.get_state(0)
@@ -97,12 +99,14 @@ class ObPlayBinPipeline (ObGstPipeline):
             self.wait_state(Gst.State.PLAYING)
 
     def set_request(self, req):
+        print('self request')
         self.play_start_time = req['start_time']
         #self.pipeline.set_property('uri', Gst.filename_to_uri(req['file_location'] + '/' + req['filename']))
         self.pipeline.set_property('uri', req['uri'])
         self.seek_pause()
 
     def seek_pause(self):
+        self.player.outputs['mixer'].main_off()
         # Set pipeline to paused state
         self.wait_state(Gst.State.PAUSED)
 
@@ -119,6 +123,8 @@ class ObPlayBinPipeline (ObGstPipeline):
             if self.pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, offset * Gst.SECOND) == False:
                 obplayer.Log.log('unable to seek on this track', 'error')
             obplayer.Log.log('resuming track at ' + str(offset) + ' seconds.', 'player')
+            print('seek done')
+        self.player.outputs['mixer'].main_on()
 
 class ObAudioPlayBinPipeline (ObPlayBinPipeline):
     min_class = [ 'audio' ]

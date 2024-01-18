@@ -59,9 +59,19 @@ class ObFakeOutputBin (ObOutputBin):
 class ObAudioMixerBin (ObOutputBin):
     def __init__(self):
 
+        # silent input section
+        silent_pipeline_str = """
+            audiotestsrc is-live=true wave=silence ! capsfilter name=capsfilter ! audioconvert ! queue ! interpipesink name=interpipe-none sync=true
+        """
+
+        self.pipeline0 = Gst.parse_launch(silent_pipeline_str)
+        capsfilter = self.pipeline0.get_by_name('capsfilter')
+        capsfilter.set_property('caps', Gst.Caps.from_string(obplayer.Config.setting('audio_caps')))
+        self.pipeline0.set_state(Gst.State.PLAYING)
+
         # input section
         pipeline_str = """
-            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-main format=time ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! interpipesink name=interpipe-output sync=true
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! interpipesink name=interpipe-output sync=true
             interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-alert format=time ! audioconvert ! mixer.
         """
 
@@ -97,18 +107,24 @@ class ObAudioMixerBin (ObOutputBin):
 
         self.pipeline2.set_state(Gst.State.PLAYING)
     
-    def alert_mode_on(self):
+    def main_on(self):
+        self.pipeline.get_by_name('interpipesrc').set_property('listen-to', 'interpipe-main')
+
+    def main_off(self):
+        self.pipeline.get_by_name('interpipesrc').set_property('listen-to', 'interpipe-none')
+
+    def alert_on(self):
         self.pipeline.get_by_name('main-volume').set_property('volume', 0.1)
     
-    def alert_mode_off(self):
+    def alert_off(self):
         self.pipeline.get_by_name('main-volume').set_property('volume', 1.0)
     
     def execute_instruction(self, instruction):
         obplayer.Log.log("mixer received instruction " + instruction, 'debug')
         if instruction == 'alert_on':
-            self.alert_mode_on()
+            self.alert_on()
         elif instruction == 'alert_off':
-            self.alert_mode_off()
+            self.alert_off()
         else:
             print ('unknown mixer instruction: ' + instruction)
 
@@ -123,9 +139,7 @@ class ObAudioOutputBin (ObOutputBin):
 
         ## create caps filter element to set the output audio parameters
         caps = Gst.ElementFactory.make('capsfilter', 'audio-out-capsfilter')
-        #caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100,format=S16LE,layout=interleaved"))
-        # caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2"))
-        caps.set_property('caps', Gst.Caps.from_string("caps=audio/x-raw,format=S16LE,rate=44100,layout=interleaved,channels=2"))
+        caps.set_property('caps', Gst.Caps.from_string(obplayer.Config.setting('audio_caps')))
         self.elements.append(caps)
 
         #add volume sink

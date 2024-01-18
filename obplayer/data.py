@@ -317,6 +317,7 @@ class ObConfigData (ObData):
 
     # make sure we have all our required settings. if not, add setting with default value.
     def check_defaults(self):
+        self.add_setting('audio_caps', 'audio/x-raw,channels=2,rate=44100,format=S16LE,layout=interleaved')
         self.add_setting('audio_out_mode', 'auto', 'text')
         self.add_setting('audio_out_alsa_device', 'default', 'text')
         self.add_setting('audio_out_jack_name', '', 'text')
