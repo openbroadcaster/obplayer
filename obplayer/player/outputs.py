@@ -71,7 +71,7 @@ class ObAudioMixerBin (ObOutputBin):
 
         # input section
         pipeline_str = """
-            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! interpipesink name=interpipe-output sync=true
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! queue ! interpipesink name=interpipe-output sync=true
             interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-alert format=time ! audioconvert ! mixer.
         """
 
@@ -95,7 +95,7 @@ class ObAudioMixerBin (ObOutputBin):
         else:
             audiosink_str = 'autoaudiosink'
 
-        pipeline2_str = 'interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-output format=time ! audioconvert ! ' + audiosink_str + ' name=audio-out-sink'
+        pipeline2_str = 'interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-output format=time ! audioconvert ! queue ! ' + audiosink_str + ' name=audio-out-sink'
         
         self.pipeline2 = Gst.parse_launch(pipeline2_str)
 
@@ -109,9 +109,11 @@ class ObAudioMixerBin (ObOutputBin):
     
     def main_on(self):
         self.pipeline.get_by_name('interpipesrc').set_property('listen-to', 'interpipe-main')
+        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
     def main_off(self):
         self.pipeline.get_by_name('interpipesrc').set_property('listen-to', 'interpipe-none')
+        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
     def alert_on(self):
         self.pipeline.get_by_name('main-volume').set_property('volume', 0.1)

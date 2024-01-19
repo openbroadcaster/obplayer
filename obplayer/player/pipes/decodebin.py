@@ -117,13 +117,15 @@ class ObPlayBinPipeline (ObGstPipeline):
             self.play_start_time = time.time()
 
         offset = time.time() - self.play_start_time
-        offset = 0 # TODO FIXME SEEK TEMPORARIY DISABLED
         if offset != 0:
             print(offset)
             if self.pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, offset * Gst.SECOND) == False:
                 obplayer.Log.log('unable to seek on this track', 'error')
-            obplayer.Log.log('resuming track at ' + str(offset) + ' seconds.', 'player')
+            if(offset > 0.25):
+                obplayer.Log.log('resuming track at ' + str(offset) + ' seconds.', 'player')
             print('seek done')
+            self.wait_state(Gst.State.PAUSED)
+
         self.player.outputs['mixer'].main_on()
 
 class ObAudioPlayBinPipeline (ObPlayBinPipeline):
