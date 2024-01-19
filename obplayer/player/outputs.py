@@ -116,7 +116,7 @@ class ObAudioMixerBin (ObOutputBin):
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
     def alert_on(self):
-        self.pipeline.get_by_name('main-volume').set_property('volume', 0.1)
+        self.pipeline.get_by_name('main-volume').set_property('volume', 0.0)
     
     def alert_off(self):
         self.pipeline.get_by_name('main-volume').set_property('volume', 1.0)
