@@ -71,8 +71,8 @@ class ObAudioMixerBin (ObOutputBin):
 
         # input section
         pipeline_str = """
-            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! queue ! interpipesink name=interpipe-output sync=true
-            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-alert format=time ! audioconvert ! mixer.
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-main ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! queue ! interpipesink name=interpipe-output sync=true
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-alert ! audioconvert ! mixer.
         """
 
         self.pipeline = Gst.parse_launch(pipeline_str)
@@ -108,25 +108,28 @@ class ObAudioMixerBin (ObOutputBin):
         self.pipeline2.set_state(Gst.State.PLAYING)
     
     def main_on(self):
-        self.pipeline.get_by_name('interpipesrc').set_property('listen-to', 'interpipe-main')
+        self.pipeline.get_by_name('interpipesrc-main').set_property('listen-to', 'interpipe-main')
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
     def main_off(self):
-        self.pipeline.get_by_name('interpipesrc').set_property('listen-to', 'interpipe-none')
+        self.pipeline.get_by_name('interpipesrc-main').set_property('listen-to', 'interpipe-none')
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
     def alert_on(self):
-        self.pipeline.get_by_name('main-volume').set_property('volume', 0.0)
+        self.pipeline.get_by_name('interpipesrc-alert').set_property('listen-to', 'interpipe-alert')
+        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
     
     def alert_off(self):
-        self.pipeline.get_by_name('main-volume').set_property('volume', 1.0)
+        self.pipeline.get_by_name('interpipesrc-alert').set_property('listen-to', 'interpipe-none')
+        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
     
     def execute_instruction(self, instruction):
         obplayer.Log.log("mixer received instruction " + instruction, 'debug')
+        # TODO instruction should be more like "mixer_mode_alert" here? (confusing with above alert/on which are different)
         if instruction == 'alert_on':
-            self.alert_on()
+            self.pipeline.get_by_name('main-volume').set_property('volume', 0.0)
         elif instruction == 'alert_off':
-            self.alert_off()
+            self.pipeline.get_by_name('main-volume').set_property('volume', 1.0)
         else:
             print ('unknown mixer instruction: ' + instruction)
 
@@ -136,8 +139,8 @@ class ObAudioOutputBin (ObOutputBin):
 
         self.elements = [ ]
 
-        #self.elements.append(Gst.ElementFactory.make('audioconvert', 'audio-out-pre-convert'))
-        #self.elements.append(Gst.ElementFactory.make('audioresample', 'audio-out-pre-resample'))
+        self.elements.append(Gst.ElementFactory.make('audioconvert', 'audio-out-pre-convert'))
+        self.elements.append(Gst.ElementFactory.make('audioresample', 'audio-out-pre-resample'))
 
         ## create caps filter element to set the output audio parameters
         caps = Gst.ElementFactory.make('capsfilter', 'audio-out-capsfilter')

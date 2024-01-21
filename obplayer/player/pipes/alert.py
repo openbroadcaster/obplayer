@@ -39,23 +39,31 @@ class ObAlertPipeline (ObGstPipeline):
     def __init__(self, name, player):
         ObGstPipeline.__init__(self, name)
 
+        self.player = player
+
         # make the rest of the code happy by having a pipeline all the time
         self.pipeline = Gst.parse_launch('audiotestsrc ! audioconvert ! fakesink')
         self.pipeline.set_state(Gst.State.PAUSED)
 
     def set_request(self, req):
-        if self.pipeline:
-            self.pipeline.set_state(Gst.State.NULL)
-            self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
-            self.pipeline = False
+        self.player.outputs['mixer'].alert_off()
+
+        self.pipeline.set_state(Gst.State.NULL)
+        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+        self.pipeline = False
 
         if req['uri']:
-            self.pipeline = Gst.ElementFactory.make("playbin", "playbin")
-            self.pipeline.set_property("uri", req['uri'])
-            self.interpipesink = Gst.ElementFactory.make("interpipesink", 'interpipe-alert')
-            self.interpipesink.set_property('sync', True)
-            self.pipeline.set_property("audio-sink", self.interpipesink)
-            self.pipeline.set_state(Gst.State.PAUSED)
+            # remove file:// from req['uri']
+            if req['uri'].startswith('file://'):
+                req['uri'] = req['uri'][7:]
+
+            self.pipeline = Gst.parse_launch('filesrc name=filesrc ! decodebin ! audioconvert ! audioresample ! capsfilter caps=audio/x-raw,format=S16LE,rate=44100,layout=interleaved,channels=2 ! interpipesink sync=true name=interpipe-alert')
+            self.pipeline.get_by_name('filesrc').set_property('location', req['uri'])
 
         else:
             self.pipeline = Gst.parse_launch('audiotestsrc ! audioconvert ! fakesink')
+
+        self.pipeline.set_state(Gst.State.PAUSED)
+        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+
+        self.player.outputs['mixer'].alert_on()
