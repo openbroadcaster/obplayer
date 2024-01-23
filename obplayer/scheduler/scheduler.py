@@ -120,6 +120,7 @@ class ObShow (object):
         self.show_data = data
         self.playlist = ObPlaylist(self.show_data['id'])
         self.groups = obplayer.RemoteData.load_groups(self.show_data['id'])
+
         return self
 
     def get_break_media(self, end_time=None, title="show paused break"):
@@ -223,6 +224,8 @@ class ObShow (object):
             self.ctrl.add_request(media_type = 'break', end_time = self.end_time(), title = "live assist breakpoint", order_num = media['order_num'])
 
         else:
+            self.voicetrack_ctrl.add_request(media_type='voicetrack', start_time = self.media_start_time, end_time = self.media_start_time + 3, title = 'voicetrack', uri='file:///home/cedars/obplayer/voicetrack-demo.mp3', mixerstart='voicetrack_on', mixerend='voicetrack_off')
+
             # if track does not end in time, use show end_time instead of track duration
             if self.end_time() and self.media_start_time + media['duration'] > self.end_time():
                 self.ctrl.add_request(
@@ -401,6 +404,9 @@ class ObScheduler:
         self.lock = threading.Lock()
         self.first_sync = first_sync
 
+        #print('add voicetrack controller')
+        self.voicetrack_ctrl = obplayer.Player.create_controller('voicetrack', priority=50, default_play_mode='overlap', allow_overlay=True)   
+
         self.ctrl = obplayer.Player.create_controller('scheduler', priority=50, default_play_mode='overlap', allow_overlay=False)   
         self.ctrl.set_request_callback(self.do_player_request)
         self.ctrl.set_update_callback(self.do_player_update)
@@ -449,6 +455,7 @@ class ObScheduler:
 
             else:
                 self.present_show.ctrl = self.ctrl
+                self.present_show.voicetrack_ctrl = self.voicetrack_ctrl
                 obplayer.Log.log('loading show ' + str(self.present_show.show_id()), 'scheduler')
 
                 # update now_playing data

@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from .base import ObGstPipeline
 from .breakbin import ObBreakPipeline
 from .decodebin import ObPlayBinPipeline, ObAudioPlayBinPipeline
-from .alert import ObAlertPipeline
+from .audio import ObAlertPipeline, ObVoicetrackPipeline
 from .image import ObImagePipeline
 from .linein import ObLineInPipeline
 from .rtp import ObRTPInputPipeline

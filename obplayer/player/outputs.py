@@ -72,6 +72,7 @@ class ObAudioMixerBin (ObOutputBin):
         # input section
         pipeline_str = """
             interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-main ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! queue ! interpipesink name=interpipe-output sync=true
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-voicetrack ! audioconvert ! mixer.
             interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-alert ! audioconvert ! mixer.
         """
 
@@ -115,6 +116,14 @@ class ObAudioMixerBin (ObOutputBin):
         self.pipeline.get_by_name('interpipesrc-main').set_property('listen-to', 'interpipe-none')
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
+    def voicetrack_on(self):
+        self.pipeline.get_by_name('interpipesrc-voicetrack').set_property('listen-to', 'interpipe-voicetrack')
+        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+
+    def voicetrack_off(self):
+        self.pipeline.get_by_name('interpipesrc-voicetrack').set_property('listen-to', 'interpipe-none')
+        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+
     def alert_on(self):
         self.pipeline.get_by_name('interpipesrc-alert').set_property('listen-to', 'interpipe-alert')
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
@@ -129,6 +138,10 @@ class ObAudioMixerBin (ObOutputBin):
         if instruction == 'alert_on':
             self.pipeline.get_by_name('main-volume').set_property('volume', 0.0)
         elif instruction == 'alert_off':
+            self.pipeline.get_by_name('main-volume').set_property('volume', 1.0)
+        elif instruction == 'voicetrack_on':
+            self.pipeline.get_by_name('main-volume').set_property('volume', 0.25)
+        elif instruction == 'voicetrack_off':
             self.pipeline.get_by_name('main-volume').set_property('volume', 1.0)
         else:
             print ('unknown mixer instruction: ' + instruction)

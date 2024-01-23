@@ -65,6 +65,7 @@ class ObPlayer (object):
         self.outputs['mixer'] = outputs.ObAudioMixerBin()
         self.outputs['audio'] = outputs.ObAudioOutputBin()
         self.outputs['alert'] = outputs.ObFakeOutputBin() 
+        self.outputs['voicetrack'] = outputs.ObFakeOutputBin()
 
         if not obplayer.Config.headless:
             self.outputs['visual'] = outputs.ObVideoOutputBin()
@@ -82,6 +83,7 @@ class ObPlayer (object):
         self.pipes = { }
         self.pipes['audio'] = pipes.ObAudioPlayBinPipeline('audio-playbin', self, obplayer.Config.setting('audio_out_visualization'))
         self.pipes['video'] = pipes.ObPlayBinPipeline('video-playbin', self)
+        self.pipes['voicetrack'] = pipes.ObVoicetrackPipeline('voicetrack-pipeline', self)
         self.pipes['alert'] = pipes.ObAlertPipeline('alert-pipeline', self)
         self.pipes['testsignal'] = pipes.ObTestSignalPipeline('test-signal', self)
         self.pipes['image'] = pipes.ObImagePipeline('image-pipeline', self)
