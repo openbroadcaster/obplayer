@@ -45,6 +45,10 @@ class ObRemoteData (obplayer.ObData):
             obplayer.Log.log('media table not found, creating', 'data')
             self.shows_media_create_table()
 
+        if not self.table_exists('shows_voicetracks'):
+            obplayer.Log.log('media table not found, creating', 'data')
+            self.shows_voicetracks_create_table()
+
         if not self.table_exists('priority_broadcasts'):
             obplayer.Log.log('priority broadcast table not found, creating', 'data')
             self.priority_broadcasts_create_table()
@@ -98,6 +102,10 @@ class ObRemoteData (obplayer.ObData):
     def shows_media_create_table(self):
         self.execute('CREATE TABLE shows_media (id INTEGER PRIMARY KEY, local_show_id INTEGER, media_id INTEGER, show_id INTEGER, order_num INTEGER, filename TEXT, artist TEXT, title TEXT, offset NUMERIC, duration NUMERIC, media_type TEXT, file_hash TEXT, file_size INT, file_location TEXT, approved INT, archived INT)')
         self.execute('CREATE INDEX local_show_id_index on shows_media (local_show_id)')
+
+    def shows_voicetracks_create_table(self):
+        self.execute('CREATE TABLE shows_voicetracks (id INTEGER PRIMARY KEY, local_show_id INTEGER, media_id INTEGER, order_num INTEGER, filename TEXT, offset NUMERIC, duration NUMERIC, media_type TEXT, file_hash TEXT, file_size INT, file_location TEXT, approved INT, archived INT)')
+        self.execute('CREATE INDEX voicetracks_local_show_id_index on shows_voicetracks (local_show_id)')
 
     def alert_media_create_table(self):
         self.execute('CREATE TABLE alert_media (media_id INTEGER, filename TEXT, file_hash TEXT, file_size INT, language TEXT, event_name TEXT, media_type TEXT, PRIMARY KEY(media_id))')
@@ -153,8 +161,9 @@ class ObRemoteData (obplayer.ObData):
             if int(row[0]) == int(show_id) and int(row[1]) == int(last_updated) and float(row[3]) == float(duration):
                 return False
             else:
-                # if we have a match, but update is required, delete entry + associated media.
+                # if we have a match, but update is required, delete entry + associated media/voicetracks.
                 self.execute("DELETE from shows_media where local_show_id=?", (str(row[2]),))
+                self.execute("DELETE from shows_voicetracks where local_show_id=?", (str(row[2]),))
 
         # now add the show... (media not added here, but added by sync script)
         self.execute("INSERT or REPLACE into shows VALUES (null, ?, ?, ?, ?, ?, ?, ?)", (show_id, name, show_type, description, str(datetime), duration, str(last_updated)))
@@ -171,6 +180,7 @@ class ObRemoteData (obplayer.ObData):
         for row in rows:
             self.execute("DELETE from shows where id = " + str(row['id']))
             self.execute("DELETE from shows_media where local_show_id = " + str(row['id']))
+            self.execute("DELETE from shows_voicetracks where local_show_id = " + str(row['id']))
         return True
 
     # remove shows that are over, and associated media.
@@ -180,6 +190,7 @@ class ObRemoteData (obplayer.ObData):
         for row in rows:
             self.execute("DELETE from shows where id = " + str(row['id']))
             self.execute("DELETE from shows_media where local_show_id = " + str(row['id']))
+            self.execute("DELETE from shows_voicetracks where local_show_id = " + str(row['id']))
         return True
 
     #
@@ -239,6 +250,25 @@ class ObRemoteData (obplayer.ObData):
 
         self.execute(query, bindings)
         return self.db.last_insert_rowid()
+    
+    def show_voicetrack_add(self, local_show_id, media_item):
+        query = "INSERT into shows_voicetracks VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        bindings = (
+            str(local_show_id),
+            str(media_item['id']),
+            media_item['order'],
+            media_item['filename'],
+            media_item['offset'],
+            media_item['duration'],
+            media_item['type'],
+            media_item['file_hash'],
+            media_item['file_size'],
+            media_item['file_location'],
+            media_item['approved'],
+            media_item['archived'])
+
+        self.execute(query, bindings)
+        return self.db.last_insert_rowid()
 
     def group_remove_old(self, local_show_id):
         rows = self.query("SELECT id from groups WHERE local_show_id = " + str(local_show_id))
@@ -275,9 +305,15 @@ class ObRemoteData (obplayer.ObData):
     # This is based on the entries in shows_media and priority_broadcasts.
     #
     def media_required(self):
+        media_list = {}
+
         rows = self.execute("SELECT filename,media_id,file_hash,file_location,approved,archived,file_size,media_type from shows_media GROUP by media_id")
 
-        media_list = {}
+        for row in rows:
+            media_row = self.get_media_from_row(row)
+            media_list[media_row['filename']] = media_row
+
+        rows = self.execute("SELECT filename,media_id,file_hash,file_location,approved,archived,file_size,media_type from shows_voicetracks GROUP by media_id")
 
         for row in rows:
             media_row = self.get_media_from_row(row)
@@ -455,6 +491,31 @@ class ObRemoteData (obplayer.ObData):
     #
     def get_show_media(self, local_show_id):
         rows = self.execute("SELECT filename,order_num,duration,media_type,artist,title,media_id,file_location,offset,file_size from shows_media where local_show_id=? order by offset", (str(local_show_id),))
+
+        media = []
+        for row in rows:
+            media_data = {}
+            media_data['filename'] = row[0]
+            media_data['order_num'] = int(row[1])
+            media_data['offset'] = float(row[8])
+            media_data['duration'] = float(row[2])
+            media_data['type'] = row[3]
+            media_data['artist'] = row[4]
+            media_data['title'] = row[5]
+            media_data['media_id'] = int(row[6])
+            media_data['file_location'] = row[7]
+            media_data['media_type'] = row[3]
+            media_data['file_size'] = row[9]
+
+            media.append(media_data)
+
+        if len(media) <= 0:
+            return None
+        else:
+            return media
+        
+    def get_show_voicetracks(self, local_show_id):
+        rows = self.execute("SELECT filename,order_num,duration,media_type,media_id,file_location,offset,file_size from shows_voicetracks where local_show_id=? order by offset", (str(local_show_id),))
 
         media = []
         for row in rows:
