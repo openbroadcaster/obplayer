@@ -373,6 +373,12 @@ class ObSync:
             show_duration = xml_get_first_tag_value(show, 'duration', 0)
             show_last_updated = xml_get_first_tag_value(show, 'last_updated', 0)
             show_media = xml_get_direct_children(show, 'media')[0]
+            show_voicetracks = xml_get_direct_children(show, 'voicetrack')
+
+            if(len(show_voicetracks) > 0):
+                show_voicetracks = show_voicetracks[0]
+            else:
+                show_voicetracks = False
 
             show_liveassist = xml_get_direct_children(show, 'liveassist_buttons')
             if show_liveassist:
@@ -411,6 +417,11 @@ class ObSync:
                     for media in xml_get_direct_children(show_media, 'item'):
                         media_item = xml_get_media_item(media)
                         obplayer.RemoteData.show_media_add(local_show_id, show_id, media_item)
+
+                    if(show_voicetracks):
+                        for voicetrack in xml_get_direct_children(show_voicetracks, 'item'):
+                            voicetrack_item = xml_get_media_item(voicetrack)
+                            obplayer.RemoteData.show_voicetrack_add(local_show_id, voicetrack_item)
 
                     if show_liveassist:
 

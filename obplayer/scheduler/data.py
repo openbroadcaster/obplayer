@@ -260,7 +260,7 @@ class ObRemoteData (obplayer.ObData):
             media_item['filename'],
             media_item['offset'],
             media_item['duration'],
-            media_item['type'],
+            'audio',
             media_item['file_hash'],
             media_item['file_size'],
             media_item['file_location'],

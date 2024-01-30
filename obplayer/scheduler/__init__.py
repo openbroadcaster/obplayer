@@ -75,6 +75,7 @@ def init():
         obplayer.Log.log('resetting show, media, and priority data', 'data')
         obplayer.RemoteData.empty_table('shows')
         obplayer.RemoteData.empty_table('shows_media')
+        obplayer.RemoteData.empty_table('shows_voicetracks')
         obplayer.RemoteData.empty_table('groups')
         obplayer.RemoteData.empty_table('group_items')
         obplayer.RemoteData.empty_table('priority_broadcasts')
