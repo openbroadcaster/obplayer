@@ -522,15 +522,12 @@ class ObRemoteData (obplayer.ObData):
             media_data = {}
             media_data['filename'] = row[0]
             media_data['order_num'] = int(row[1])
-            media_data['offset'] = float(row[8])
             media_data['duration'] = float(row[2])
-            media_data['type'] = row[3]
-            media_data['artist'] = row[4]
-            media_data['title'] = row[5]
-            media_data['media_id'] = int(row[6])
-            media_data['file_location'] = row[7]
             media_data['media_type'] = row[3]
-            media_data['file_size'] = row[9]
+            media_data['media_id'] = int(row[4])
+            media_data['file_location'] = row[5]
+            media_data['offset'] = float(row[6])
+            media_data['file_size'] = row[7]
 
             media.append(media_data)
 

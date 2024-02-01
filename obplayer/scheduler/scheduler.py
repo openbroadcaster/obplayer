@@ -30,6 +30,8 @@ class ObPlaylist (object):
     def __init__(self, show_id):
         self.pos = 0
         self.playlist = obplayer.RemoteData.get_show_media(show_id)
+        self.voicetracks = obplayer.RemoteData.get_show_voicetracks(show_id)
+        
         if self.playlist == None:
             self.playlist = [ ]
 
@@ -45,6 +47,12 @@ class ObPlaylist (object):
         if self.pos >= len(self.playlist):
             return None
         return self.playlist[self.pos]
+    
+    def current_voicetrack(self):
+        for voicetrack in self.voicetracks:
+            if voicetrack['order_num'] == self.pos:
+                return voicetrack
+        return None
 
     def increment(self):
         self.pos += 1
@@ -194,6 +202,7 @@ class ObShow (object):
             return False
 
         media = self.playlist.current()
+        voicetrack_media = self.playlist.current_voicetrack()
         if not media or not obplayer.Sync.check_media(media):
             obplayer.Log.log("media not found at position " + str(self.playlist.current_pos()) + ": " + str(media['filename']) if media else '??', 'scheduler')
             next_start = self.playlist.next_start() if media else None
@@ -203,13 +212,14 @@ class ObShow (object):
             return False
 
         offset = present_time - self.show_data['start_time'] - media['offset']
-        self.play_media(media, offset, present_time)
+        self.play_media(media, offset, present_time, voicetrack_media)
         next_start = self.playlist.next_start()
         self.next_media_update = self.start_time() + next_start if next_start else self.end_time()
 
         return True
 
-    def play_media(self, media, offset, present_time):
+    def play_media(self, media, offset, present_time, voicetrack_media = None):
+
         self.now_playing = media
         self.pause_position = 0
         self.media_start_time = present_time - offset
@@ -224,7 +234,24 @@ class ObShow (object):
             self.ctrl.add_request(media_type = 'break', end_time = self.end_time(), title = "live assist breakpoint", order_num = media['order_num'])
 
         else:
-            self.voicetrack_ctrl.add_request(media_type='voicetrack', start_time = self.media_start_time, end_time = self.media_start_time + 3, title = 'voicetrack', uri='file:///home/cedars/obplayer/voicetrack-demo.mp3', mixerstart='voicetrack_on', mixerend='voicetrack_off')
+            print('add request for media ', media)
+
+            # self.voicetrack_ctrl.add_request(media_type='voicetrack', start_time = self.media_start_time, end_time = self.media_start_time + 3, title = 'voicetrack', uri='file:///home/cedars/obplayer/voicetrack-demo.mp3', mixerstart='voicetrack_on', mixerend='voicetrack_off')
+
+            if(voicetrack_media):
+                print('add request for voicetrack ', voicetrack_media)
+                self.voicetrack_ctrl.add_request(
+                    start_time = self.media_start_time,
+                    media_type = 'voicetrack',
+                    uri=obplayer.Sync.media_uri(voicetrack_media['file_location'], voicetrack_media['filename']),
+                    media_id = voicetrack_media['media_id'],
+                    order_num = voicetrack_media['order_num'],
+                    artist = 'voicetrack',
+                    title = 'voicetrack',
+                    duration = voicetrack_media['duration'],
+                    mixerstart='voicetrack_on',
+                    mixerend='voicetrack_off'
+                )
 
             # if track does not end in time, use show end_time instead of track duration
             if self.end_time() and self.media_start_time + media['duration'] > self.end_time():
