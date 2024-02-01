@@ -8,6 +8,14 @@ then
 	exit;
 fi
 
+# restart PipeWire if it's running (temporary bug fix)
+if systemctl --user is-active --quiet pipewire; then
+    echo "PipeWire is running. Restarting it now (temporary bug fix)."
+    systemctl --user restart pipewire
+else
+    echo "PipeWire is not running."
+fi
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
