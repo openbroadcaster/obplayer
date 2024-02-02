@@ -26,6 +26,7 @@ import os
 import sys
 import time
 import traceback
+import threading
 
 import gi
 gi.require_version('Gst', '1.0')
@@ -58,6 +59,8 @@ class ObFakeOutputBin (ObOutputBin):
 
 class ObAudioMixerBin (ObOutputBin):
     def __init__(self):
+        
+        self.main_fade_thread = None
 
         # silent input section
         silent_pipeline_str = """
@@ -132,6 +135,30 @@ class ObAudioMixerBin (ObOutputBin):
         self.pipeline.get_by_name('interpipesrc-alert').set_property('listen-to', 'interpipe-none')
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
     
+    def main_fade_in(self):
+        
+        def run():
+            self.main_fade_cancel = False
+            volume_element = self.pipeline.get_by_name('main-volume')
+            current_volume = volume_element.get_property('volume')
+        
+            while current_volume < 1.0:
+                if(self.main_fade_cancel):
+                    break
+                current_volume += 0.05
+                volume_element.set_property('volume', current_volume)
+                print('current volume: ' + str(round(current_volume,2)))
+                time.sleep(0.1)    
+
+        # cancel any existing run
+        if self.main_fade_thread is not None:
+            self.main_fade_cancel = True
+            self.main_fade_thread.join()
+            self.made_fade_thread = None
+
+        self.main_fade_thread = threading.Thread(target=run)
+        self.main_fade_thread.start()
+
     def execute_instruction(self, instruction):
         obplayer.Log.log("mixer received instruction " + instruction, 'debug')
         # TODO instruction should be more like "mixer_mode_alert" here? (confusing with above alert/on which are different)
@@ -142,7 +169,7 @@ class ObAudioMixerBin (ObOutputBin):
         elif instruction == 'voicetrack_on':
             self.pipeline.get_by_name('main-volume').set_property('volume', 0.25)
         elif instruction == 'voicetrack_off':
-            self.pipeline.get_by_name('main-volume').set_property('volume', 1.0)
+            self.main_fade_in()
         else:
             print ('unknown mixer instruction: ' + instruction)
 

@@ -31,8 +31,11 @@ class ObPlaylist (object):
         self.pos = 0
         self.playlist = obplayer.RemoteData.get_show_media(show_id)
         self.voicetracks = obplayer.RemoteData.get_show_voicetracks(show_id)
+
+        if not self.voicetracks:
+            self.voicetracks = [ ]
         
-        if self.playlist == None:
+        if not self.playlist:
             self.playlist = [ ]
 
     def size(self):
