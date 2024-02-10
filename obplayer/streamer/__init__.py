@@ -29,44 +29,39 @@ from gi.repository import GObject
 
 
 def init():
+    obplayer.Streamer_stream_0 = None
     obplayer.Streamer_stream_1 = None
-    obplayer.Streamer_stream_2 = None
     obplayer.RTSPStreamer = None
     obplayer.RTPStreamer = None
     obplayer.RTMPStreamer = None
 
     from .icecast import ObIcecastStreamer
     def delaystart():
-        # Start stream one
-        #print(obplayer.Config.setting('streamer_0_icecast_port'))
-        obplayer.Streamer_stream_1 = ObIcecastStreamer(obplayer.Config.setting('streamer_0_icecast_ip'), int(obplayer.Config.setting('streamer_0_icecast_port')),
+        obplayer.Streamer_stream_0 = ObIcecastStreamer(obplayer.Config.setting('streamer_0_icecast_ip'), int(obplayer.Config.setting('streamer_0_icecast_port')),
                 obplayer.Config.setting('streamer_0_icecast_username'), obplayer.Config.setting('streamer_0_icecast_password'), obplayer.Config.setting('streamer_0_icecast_mount'),
                 obplayer.Config.setting('streamer_0_icecast_streamname'), obplayer.Config.setting('streamer_0_icecast_description'),
                 obplayer.Config.setting('streamer_0_icecast_url'), obplayer.Config.setting('streamer_0_icecast_public'), obplayer.Config.setting('streamer_0_icecast_bitrate'),
-                obplayer.Config.setting('streamer_0_title_streaming_mode'))
-        # Start stream two
-        obplayer.Streamer_stream_2 = ObIcecastStreamer(obplayer.Config.setting('streamer_1_icecast_ip'), int(obplayer.Config.setting('streamer_1_icecast_port')),
+                obplayer.Config.setting('streamer_0_title_streaming_mode'), obplayer.Config.setting('streamer_0_icecast_mode'))
+        obplayer.Streamer_stream_1 = ObIcecastStreamer(obplayer.Config.setting('streamer_1_icecast_ip'), int(obplayer.Config.setting('streamer_1_icecast_port')),
                     obplayer.Config.setting('streamer_1_icecast_username'), obplayer.Config.setting('streamer_1_icecast_password'), obplayer.Config.setting('streamer_1_icecast_mount'),
                     obplayer.Config.setting('streamer_1_icecast_streamname'), obplayer.Config.setting('streamer_1_icecast_description'),
                     obplayer.Config.setting('streamer_1_icecast_url'), obplayer.Config.setting('streamer_1_icecast_public'), obplayer.Config.setting('streamer_1_icecast_bitrate'),
-                    obplayer.Config.setting('streamer_1_title_streaming_mode'))
+                    obplayer.Config.setting('streamer_1_title_streaming_mode'), obplayer.Config.setting('streamer_1_icecast_mode'))
         if obplayer.Config.setting('streamer_play_on_startup'):
             if obplayer.Config.setting('streamer_0_icecast_enable'):
+                obplayer.Streamer_stream_0.start()
+                if obplayer.Streamer_stream_0.mode == 'audio':
+                    obplayer.Streamer_stream_0.start_title_streaming()
+            else:
+                if obplayer.Streamer_stream_0.mode == 'audio':
+                    obplayer.Streamer_stream_0.stop_title_streaming()
+            if obplayer.Config.setting('streamer_1_icecast_enable'):
                 obplayer.Streamer_stream_1.start()
-                # Title streaming is for mp3 only.
                 if obplayer.Streamer_stream_1.mode == 'audio':
                     obplayer.Streamer_stream_1.start_title_streaming()
             else:
                 if obplayer.Streamer_stream_1.mode == 'audio':
                     obplayer.Streamer_stream_1.stop_title_streaming()
-            if obplayer.Config.setting('streamer_1_icecast_enable'):
-                obplayer.Streamer_stream_2.start()
-                # Title streaming is for mp3 only.
-                if obplayer.Streamer_stream_2.mode == 'audio':
-                    obplayer.Streamer_stream_2.start_title_streaming()
-            else:
-                if obplayer.Streamer_stream_2.mode == 'audio':
-                    obplayer.Streamer_stream_2.stop_title_streaming()
 
     GObject.timeout_add(1000, delaystart)
 
@@ -86,12 +81,12 @@ def init():
         obplayer.RTMPStreamer.start()
 
 def quit():
+    if obplayer.Streamer_stream_0:
+        obplayer.Streamer_stream_0.stop_title_streaming()
+        obplayer.Streamer_stream_0.quit()
     if obplayer.Streamer_stream_1:
         obplayer.Streamer_stream_1.stop_title_streaming()
         obplayer.Streamer_stream_1.quit()
-    if obplayer.Streamer_stream_2:
-        obplayer.Streamer_stream_2.stop_title_streaming()
-        obplayer.Streamer_stream_2.quit()
     if obplayer.RTSPStreamer:
         obplayer.RTSPStreamer.quit()
     if obplayer.RTPStreamer:

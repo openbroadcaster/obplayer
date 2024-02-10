@@ -40,7 +40,7 @@ from .metadata_updater import MetadataUpdater
 class ObIcecastStreamer (ObGstStreamer):
     def __init__(self, streamer_icecast_ip, streamer_icecast_port, streamer_icecast_username, streamer_icecast_password,
         streamer_icecast_mount, streamer_icecast_streamname, streamer_icecast_description,
-        streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate, title_streaming_mode=False):
+        streamer_icecast_url, streamer_icecast_public, streamer_icecast_bitrate, title_streaming_mode=False, streamer_media_mode='audio'):
         self.icecast_ip = streamer_icecast_ip
         self.icecast_port = streamer_icecast_port
         self.icecast_username = streamer_icecast_username
@@ -52,25 +52,26 @@ class ObIcecastStreamer (ObGstStreamer):
         self.icecast_public = streamer_icecast_public
         self.icecast_bitrate = streamer_icecast_bitrate
         self._metadata_updater_thread = None
-        self.mode = obplayer.Config.setting('streamer_0_icecast_mode')
+        self.mode = streamer_media_mode
+
         ObGstStreamer.__init__(self, 'icecast_' + uuid.uuid4().hex)
 
         if(title_streaming_mode != 'basic' and title_streaming_mode != 'json'):
                 title_streaming_mode = False
 
-        if obplayer.Config.setting('streamer_0_icecast_mode') == 'audio':
+        if self.mode == 'audio':
             if title_streaming_mode:
                 self._metadata_updater_thread = MetadataUpdater(host=self.icecast_ip, port=self.icecast_port, username=self.icecast_username,
                                                                 password=self.icecast_password, mount=self.icecast_mount, mode=title_streaming_mode)
             self.make_audio_pipe()
         else:
-            self.make_video_pipe(obplayer.Config.setting('streamer_0_icecast_mode'))
-            title_streaming = False
+            self.make_video_pipe(self.mode)
+            # title_streaming_mode = False
 
     def make_audio_pipe(self):
         self.audiopipe = [ ]
 
-        self.audiosrc = Gst.ElementFactory.make('interpipesrc', 'interpipe-icecast')
+        self.audiosrc = Gst.ElementFactory.make('interpipesrc')
         self.audiosrc.set_property('stream-sync', 'compensate-ts')
         self.audiosrc.set_property('is-live', True)
         self.audiosrc.set_property('listen-to', 'interpipe-output')
