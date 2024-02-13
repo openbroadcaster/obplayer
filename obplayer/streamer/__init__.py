@@ -63,22 +63,22 @@ def init():
                 if obplayer.Streamer_stream_1.mode == 'audio':
                     obplayer.Streamer_stream_1.stop_title_streaming()
 
+        obplayer.RTSPStreamer = None
+        if obplayer.Config.setting('streamer_rtsp_enable'):
+            from .rtsp import ObRTSPStreamer
+            obplayer.RTSPStreamer = ObRTSPStreamer()
+
+        if obplayer.Config.setting('streamer_rtp_enable'):
+            from .rtp import ObRTPStreamer
+            obplayer.ObRTPStreamer = ObRTPStreamer()
+            obplayer.ObRTPStreamer.start()
+
+        if obplayer.Config.setting('streamer_rtmp_enable'):
+            from .rtmp import ObRTMPStreamer
+            obplayer.RTMPStreamer = ObRTMPStreamer()
+            obplayer.RTMPStreamer.start()
+
     GObject.timeout_add(1000, delaystart)
-
-    obplayer.RTSPStreamer = None
-    if obplayer.Config.setting('streamer_rtsp_enable'):
-        from .rtsp import ObRTSPStreamer
-        obplayer.RTSPStreamer = ObRTSPStreamer()
-
-    if obplayer.Config.setting('streamer_rtp_enable'):
-        from .rtp import ObRTPStreamer
-        obplayer.ObRTPStreamer = ObRTPStreamer()
-        obplayer.ObRTPStreamer.start()
-
-    if obplayer.Config.setting('streamer_rtmp_enable'):
-        from .rtmp import ObRTMPStreamer
-        obplayer.RTMPStreamer = ObRTMPStreamer()
-        obplayer.RTMPStreamer.start()
 
 def quit():
     if obplayer.Streamer_stream_0:

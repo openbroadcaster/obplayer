@@ -47,6 +47,28 @@ class ObRTPStreamer (ObGstStreamer):
 
         self.audiopipe = [ ]
 
+        self.audiosrc = Gst.ElementFactory.make('interpipesrc')
+        self.audiosrc.set_property('stream-sync', 'compensate-ts')
+        self.audiosrc.set_property('is-live', True)
+        self.audiosrc.set_property('listen-to', 'interpipe-output')
+        self.audiosrc.set_property('allow-renegotiation', True)
+        self.audiosrc.set_property('format', 'time')
+        self.audiosrc.set_property('caps', Gst.Caps.from_string("audio/x-raw,format=S16LE,rate=44100,layout=interleaved,channels=2"))
+        self.audiopipe.append(self.audiosrc)
+
+        """
+        # testing with pipewiresink
+        self.audiopipe.append(Gst.ElementFactory.make('queue2'))
+        self.audiopipe.append(Gst.ElementFactory.make('audioconvert'))
+        self.audiopipe.append(Gst.ElementFactory.make('audioresample'))
+        self.audiopipe.append(Gst.ElementFactory.make('queue2'))
+        self.audiopipe.append(Gst.ElementFactory.make('pipewiresink'))
+        self.build_pipeline(self.audiopipe)
+        return
+        """
+
+        """
+        # replaced with above interpipesrc
         obplayer.Player.add_inter_tap(self.name)
         self.interaudiosrc = Gst.ElementFactory.make('interaudiosrc')
         self.interaudiosrc.set_property('channel', self.name + ':audio')
@@ -60,6 +82,7 @@ class ObRTPStreamer (ObGstStreamer):
         caps = Gst.ElementFactory.make('capsfilter')
         caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,channel-mask=(bitmask)=0x3"))
         self.audiopipe.append(caps)
+        """
 
         self.audiopipe.append(Gst.ElementFactory.make('queue2', self.name + '-streamer-pre-queue'))
 
@@ -127,9 +150,3 @@ class ObRTPStreamer (ObGstStreamer):
             #self.audiopipe.append(self.udpsink_rtcp)
             self.pipeline.add(self.udpsink_rtcp)
             self.rtpbin.link_pads('send_rtcp_src_0', self.udpsink_rtcp, 'sink')
-
-
-
-
-
-
