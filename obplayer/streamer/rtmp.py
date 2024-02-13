@@ -52,6 +52,17 @@ class ObRTMPStreamer (ObGstStreamer):
 
         self.audiopipe = [ ]
 
+        self.audiosrc = Gst.ElementFactory.make('interpipesrc')
+        self.audiosrc.set_property('stream-sync', 'compensate-ts')
+        self.audiosrc.set_property('is-live', True)
+        self.audiosrc.set_property('listen-to', 'interpipe-output')
+        self.audiosrc.set_property('allow-renegotiation', True)
+        self.audiosrc.set_property('format', 'time')
+        self.audiosrc.set_property('caps', Gst.Caps.from_string("audio/x-raw,format=S16LE,rate=44100,layout=interleaved,channels=2"))
+        self.audiopipe.append(self.audiosrc)
+
+        """
+        # replaced with above interpipesrc
         self.interaudiosrc = Gst.ElementFactory.make('interaudiosrc')
         self.interaudiosrc.set_property('channel', self.name + ':audio')
         #self.interaudiosrc.set_property('buffer-time', 8000000000)
@@ -64,6 +75,7 @@ class ObRTMPStreamer (ObGstStreamer):
         caps = Gst.ElementFactory.make('capsfilter')
         caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,channel-mask=(bitmask)=0x3"))
         self.audiopipe.append(caps)
+        """
 
         self.audiopipe.append(Gst.ElementFactory.make("queue2"))
 
