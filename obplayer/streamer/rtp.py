@@ -48,7 +48,7 @@ class ObRTPStreamer (ObGstStreamer):
         self.audiopipe = [ ]
 
         self.audiosrc = Gst.ElementFactory.make('interpipesrc')
-        self.audiosrc.set_property('stream-sync', 'compensate-ts')
+        self.audiosrc.set_property('stream-sync', 'restart-ts')
         self.audiosrc.set_property('is-live', True)
         self.audiosrc.set_property('listen-to', 'interpipe-output')
         self.audiosrc.set_property('allow-renegotiation', True)
