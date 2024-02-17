@@ -1001,6 +1001,7 @@ class ObSync:
             
             # pre-decode WAV (TODO this is a bug workaround with OGG files having stutter/jitter since migration to interpipe)
             # see https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/2240 for possibly related issue?
+            # TODO we could speed up the sync process by doing this at the same time as download (async)
             if media['media_type']=='audio' and not media_outfilename.lower().endswith('wav'):
                 filename_split = os.path.splitext(media_outfilename)
                 filename_wav = filename_split[0] + '.wav'
@@ -1012,7 +1013,7 @@ class ObSync:
                     stderr=subprocess.DEVNULL
                 )
                 if decode_result.returncode != 0:
-                    obplayer.Log.log('error decoding audio media (will decode at play time)', 'sync')
+                    obplayer.Log.log('error decoding audio media (will attempt decode at play time)', 'sync')
 
     #
     # Check MD5 hash of a given file.
