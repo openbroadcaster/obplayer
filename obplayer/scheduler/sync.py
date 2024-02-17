@@ -38,6 +38,7 @@ import calendar
 import threading
 import traceback
 import requests
+import subprocess
 
 
 MIN_SERVER_VERSION = '4.1.1-20150507'
@@ -736,16 +737,20 @@ class ObSync:
     #
     def remove_unused_media(self, searchdir, media_required):
 
+        # remove extension from media_required; we compare without extension in case there are multiple files for this media item
+        # added to support pre-decoding audio files to wav
+        media_required_noext = list(media_required.keys())
+        for index, media in enumerate(media_required):
+            media_required_noext[index] = os.path.splitext(media)[0]
+
         dirlist = os.listdir(searchdir)
         for thisfile in dirlist:
 
             if os.path.isdir(searchdir + '/' + thisfile):
                 self.remove_unused_media(searchdir + '/' + thisfile, media_required)
             else:
-
-                try:
-                    media_required[thisfile]
-                except:
+                thisfile_noext = os.path.splitext(thisfile)[0]
+                if thisfile_noext not in media_required_noext:
                     obplayer.Log.log('deleting unused media: ' + searchdir + '/' + thisfile, 'sync')
                     try:
                         os.remove(searchdir + '/' + thisfile)
@@ -993,6 +998,21 @@ class ObSync:
 
                 # copy newly downloaded file to backup
                 shutil.copyfile(media_outfilename, local_fullpath)
+            
+            # pre-decode WAV (TODO this is a bug workaround with OGG files having stutter/jitter since migration to interpipe)
+            # see https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/2240 for possibly related issue?
+            if media['media_type']=='audio' and not media_outfilename.lower().endswith('wav'):
+                filename_split = os.path.splitext(media_outfilename)
+                filename_wav = filename_split[0] + '.wav'
+
+                obplayer.Log.log('pre-decoding audio media', 'sync')
+                decode_result = subprocess.run(
+                    ['ffmpeg', '-y', '-i', media_outfilename, '-acodec', 'pcm_s16le', '-ar', '44100', '-ac', '2', filename_wav],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                if decode_result.returncode != 0:
+                    obplayer.Log.log('error decoding audio media (will decode at play time)', 'sync')
 
     #
     # Check MD5 hash of a given file.
@@ -1018,7 +1038,18 @@ class ObSync:
         if not file_location:
             return ''
         file_location = obplayer.Sync.media_location(file_location)
-        if filename and os.path.exists(file_location + '/' + filename) == False:
+
+        # check if this file exists with the wav extension instead
+        # TODO this is related to above pre-decode in fetch_media (bug workaround)
+        filename_noext = os.path.splitext(filename)[0]
+        filename_wav = filename_noext + '.wav'
+
+        if filename_wav and os.path.exists(file_location + '/' + filename_wav):
+            return 'file://' + file_location + '/' + filename_wav
+        
+        elif filename and os.path.exists(file_location + '/' + filename):
+            return 'file://' + file_location + '/' + filename
+
+        else:
             obplayer.Log.log('ObPlayer: File ' + file_location + '/' + filename + ' does not exist. Skipping playback', 'error')
             return None
-        return 'file://' + file_location + '/' + filename

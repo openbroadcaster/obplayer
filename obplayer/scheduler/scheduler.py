@@ -237,10 +237,6 @@ class ObShow (object):
             self.ctrl.add_request(media_type = 'break', end_time = self.end_time(), title = "live assist breakpoint", order_num = media['order_num'])
 
         else:
-            print('add request for media ', media)
-
-            # self.voicetrack_ctrl.add_request(media_type='voicetrack', start_time = self.media_start_time, end_time = self.media_start_time + 3, title = 'voicetrack', uri='file:///home/cedars/obplayer/voicetrack-demo.mp3', mixerstart='voicetrack_on', mixerend='voicetrack_off')
-
             if(voicetrack_media):
                 print('add request for voicetrack ', voicetrack_media)
                 self.voicetrack_ctrl.add_request(
