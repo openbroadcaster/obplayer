@@ -81,3 +81,14 @@ Include if using Off-air audio log:
 
 Include if using the news feed override:
  - pip3 install inotify
+
+Pipewire Dependencies
+
+sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gtk-doc-tools
+git clone https://github.com/RidgeRun/gst-interpipe.git
+cd gst-interpipe
+mkdir build
+meson build --prefix=/usr
+ninja -C build
+sudo ninja -C build install
+
