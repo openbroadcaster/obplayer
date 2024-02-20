@@ -93,7 +93,7 @@ class ObPlaylist (object):
         return self.playlist[self.pos + 1]['offset']
 
     def advance_to_current(self, present_offset, media_type=None):
-        for i in range(self.pos, len(self.playlist)):
+        for i in range(0, len(self.playlist)):
             if present_offset >= self.playlist[i]['offset'] and present_offset <= self.playlist[i]['offset'] + self.playlist[i]['duration'] and (not media_type or media_type == self.playlist[i]['media_type']):
                 self.pos = i
                 return True
