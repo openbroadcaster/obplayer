@@ -417,6 +417,11 @@ class ObSync:
 
                     for media in xml_get_direct_children(show_media, 'item'):
                         media_item = xml_get_media_item(media)
+
+                        # skip breakpoint if requested by settings
+                        if media_item['type']=='breakpoint' and obplayer.Config.setting('scheduler_skip_breakpoints') == True:
+                           continue
+
                         obplayer.RemoteData.show_media_add(local_show_id, show_id, media_item)
 
                     if(show_voicetracks):

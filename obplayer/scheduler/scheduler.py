@@ -227,7 +227,7 @@ class ObShow (object):
         self.pause_position = 0
         self.media_start_time = present_time - offset
 
-        if media['media_type'] == 'breakpoint' and obplayer.Config.setting('scheduler_skip_breakpoints') == False:
+        if media['media_type'] == 'breakpoint':
             obplayer.Log.log("stopping on breakpoint at position " + str(self.playlist.pos), 'scheduler')
             self.playlist.increment()
             self.auto_advance = False
