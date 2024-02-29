@@ -310,13 +310,20 @@ class ObSync:
 
         curl.close()
 
+        version = False
         if curl_response.buffer:
-            version = json.loads(curl_response.buffer)
+            try:
+                version = json.loads(curl_response.buffer)
+            except:
+                print(curl_response.buffer)
+                pass
+
+        if version:
             obplayer.Log.log("server version reported as " + str(version), 'sync')
             if not self.check_min_version(version):
                 obplayer.Log.log("minimum server version " + str(MIN_SERVER_VERSION) + " is required. Please update server software before continuing", 'error')
         else:
-            obplayer.Log.log("server did not report a version number", 'warning')
+            obplayer.Log.log("server did not report a valid version number", 'warning')
 
 
     def check_min_version(self, version):
