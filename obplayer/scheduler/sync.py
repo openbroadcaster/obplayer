@@ -1011,21 +1011,21 @@ class ObSync:
                 # copy newly downloaded file to backup
                 shutil.copyfile(media_outfilename, local_fullpath)
             
-            # pre-decode WAV (TODO this is a bug workaround with OGG files having stutter/jitter since migration to interpipe)
-            # see https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/2240 for possibly related issue?
-            # TODO we could speed up the sync process by doing this at the same time as download (async)
-            if media['media_type']=='audio' and not media_outfilename.lower().endswith('wav'):
-                filename_split = os.path.splitext(media_outfilename)
-                filename_wav = filename_split[0] + '.wav'
+        # pre-decode WAV (TODO this is a bug workaround with OGG files having stutter/jitter since migration to interpipe)
+        # see https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/2240 for possibly related issue?
+        # TODO we could speed up the sync process by doing this at the same time as download (async)
+        if media['media_type']=='audio' and not media_outfilename.lower().endswith('wav'):
+            filename_split = os.path.splitext(media_outfilename)
+            filename_wav = filename_split[0] + '.wav'
 
-                obplayer.Log.log('pre-decoding audio media', 'sync')
-                decode_result = subprocess.run(
-                    ['ffmpeg', '-y', '-i', media_outfilename, '-acodec', 'pcm_s16le', '-ar', '44100', '-ac', '2', filename_wav],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
-                )
-                if decode_result.returncode != 0:
-                    obplayer.Log.log('error decoding audio media (will attempt decode at play time)', 'sync')
+            obplayer.Log.log('pre-decoding audio media', 'sync')
+            decode_result = subprocess.run(
+                ['ffmpeg', '-y', '-i', media_outfilename, '-acodec', 'pcm_s16le', '-ar', '44100', '-ac', '2', filename_wav],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            if decode_result.returncode != 0:
+                obplayer.Log.log('error decoding audio media (will attempt decode at play time)', 'sync')
 
     #
     # Check MD5 hash of a given file.
