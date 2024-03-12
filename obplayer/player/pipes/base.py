@@ -27,25 +27,26 @@ import time
 import traceback
 
 import gi
-gi.require_version('Gst', '1.0')
-gi.require_version('GstVideo', '1.0')
-gi.require_version('GstController', '1.0')
+
+gi.require_version("Gst", "1.0")
+gi.require_version("GstVideo", "1.0")
+gi.require_version("GstController", "1.0")
 from gi.repository import GObject, Gst, GstVideo, GstController
 
 
-class ObGstPipeline (object):
+class ObGstPipeline(object):
     def __init__(self, name):
-        #Gst.Bin.__init__(self)
+        # Gst.Bin.__init__(self)
         self.mode = set()
         self.name = name
 
     def start(self):
-        #print(self.name + ": starting")
+        # print(self.name + ": starting")
         self.wait_state(Gst.State.PLAYING)
 
-    def stop(self, label=''):
-        #print(self.name + ": stopping")
-        obplayer.Log.log(self.name + ": stopped " + label, 'debug')
+    def stop(self, label=""):
+        # print(self.name + ": stopping")
+        obplayer.Log.log(self.name + ": stopped " + label, "debug")
         self.wait_state(Gst.State.NULL)
 
     def quit(self):
@@ -58,20 +59,19 @@ class ObGstPipeline (object):
         return False
 
     def patch(self, mode):
-        for output in mode.split('/'):
+        for output in mode.split("/"):
             self.mode.add(output)
 
     def unpatch(self, mode):
-        for output in mode.split('/'):
+        for output in mode.split("/"):
             self.mode.discard(output)
 
     def set_request(self, req):
         pass
 
-
     def build_pipeline(self, elements):
         for element in elements:
-            obplayer.Log.log("adding element to bin: " + element.get_name(), 'debug')
+            obplayer.Log.log("adding element to bin: " + element.get_name(), "debug")
             self.pipeline.add(element)
         for index in range(0, len(elements) - 1):
             elements[index].link(elements[index + 1])
@@ -91,7 +91,6 @@ class ObGstPipeline (object):
                 elements[index].link(elements[index + 1])
         return
     """
-
 
     """
 
@@ -122,8 +121,10 @@ class ObGstPipeline (object):
         self.pipeline.set_state(target_state)
         (statechange, state, pending) = self.pipeline.get_state(timeout=5 * Gst.SECOND)
         if statechange != Gst.StateChangeReturn.SUCCESS:
-            obplayer.Log.log("gstreamer failed waiting for state change to " + str(pending), 'error')
-            #raise Exception("Failed waiting for state change")
+            obplayer.Log.log(
+                "gstreamer failed waiting for state change to " + str(pending), "error"
+            )
+            # raise Exception("Failed waiting for state change")
             return False
         return True
 
@@ -131,11 +132,13 @@ class ObGstPipeline (object):
     def sync_handler(self, bus, message):
         if message.get_structure() is None:
             return Gst.BusSyncReply.PASS
-        if message.get_structure().get_name() == 'prepare-window-handle':
+        if message.get_structure().get_name() == "prepare-window-handle":
             if obplayer.Gui.gst_xid != "Wayland":
                 message.src.set_window_handle(obplayer.Gui.gst_xid)
             else:
-                obplayer.Log.log(message="The player doesn't support Wayland due to limited python support. The player will now restart under X11.")
+                obplayer.Log.log(
+                    message="The player doesn't support Wayland due to limited python support. The player will now restart under X11."
+                )
                 obplayer.Main.quit()
         return Gst.BusSyncReply.PASS
 
@@ -143,7 +146,7 @@ class ObGstPipeline (object):
     def message_handler(self, bus, message):
         if message.type == Gst.MessageType.STATE_CHANGED:
             oldstate, newstate, pending = message.parse_state_changed()
-            #obplayer.Log.log("gstreamer state changed to " + str(newstate), 'debug')
+            # obplayer.Log.log("gstreamer state changed to " + str(newstate), 'debug')
             """
             if message.src == self.pipeline:
                 obplayer.Log.log("State Changed to " + str(newstate), "player")
@@ -155,35 +158,41 @@ class ObGstPipeline (object):
 
         elif message.type == Gst.MessageType.ERROR:
             err, debug = message.parse_error()
-            obplayer.Log.log("gstreamer error: %s, %s, %s" % (err, debug, err.code), 'error')
-            #self.pipeline.set_state(Gst.State.READY)
+            obplayer.Log.log(
+                "gstreamer error: %s, %s, %s" % (err, debug, err.code), "error"
+            )
+            # self.pipeline.set_state(Gst.State.READY)
             self.player.request_update.set()
 
         elif message.type == Gst.MessageType.WARNING:
             err, debug = message.parse_warning()
-            obplayer.Log.log("gstreamer warning: %s, %s, %s" % (err, debug, err.code), 'warning')
+            obplayer.Log.log(
+                "gstreamer warning: %s, %s, %s" % (err, debug, err.code), "warning"
+            )
 
         elif message.type == Gst.MessageType.INFO:
             err, debug = message.parse_info()
-            obplayer.Log.log("gstreamer info: %s, %s, %s" % (err, debug, err.code), 'info')
+            obplayer.Log.log(
+                "gstreamer info: %s, %s, %s" % (err, debug, err.code), "info"
+            )
 
         elif message.type == Gst.MessageType.BUFFERING:
             print("Buffering Issue")
-            #percent = message.parse_buffering()
-            #if percent < 100:
+            # percent = message.parse_buffering()
+            # if percent < 100:
             #    self.pipeline.set_state(Gst.State.PAUSED)
-            #else:
+            # else:
             #    self.pipeline.set_state(Gst.State.PLAYING)
 
         elif message.type == Gst.MessageType.EOS:
-            obplayer.Log.log("player received end of stream signal", 'debug')
+            obplayer.Log.log("player received end of stream signal", "debug")
             self.player.request_update.set()
 
         elif message.type == Gst.MessageType.ELEMENT:
             struct = message.get_structure()
-            #print(struct.to_string())
-            #self.player.audio_levels = [ pow(10, rms / 20) for rms in rms_values ]
-            self.player.audio_levels = struct.get_value('rms')
+            # print(struct.to_string())
+            # self.player.audio_levels = [ pow(10, rms / 20) for rms in rms_values ]
+            self.player.audio_levels = struct.get_value("rms")
             self.player.audio_levels_timestamp = time.time()
             """
             peaks = struct.get_value('peak')
@@ -207,5 +216,3 @@ class ObGstPipeline (object):
                 req = ctrl.get_next_request()
                 # you can't just play the request... you need a function that just sets the uri, does the playlog, and all the log statements
     """
-
-

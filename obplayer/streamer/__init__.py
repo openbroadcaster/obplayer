@@ -36,49 +36,72 @@ def init():
     obplayer.RTMPStreamer = None
 
     from .icecast import ObIcecastStreamer
+
     def delaystart():
-        obplayer.Streamer_stream_0 = ObIcecastStreamer(obplayer.Config.setting('streamer_0_icecast_ip'), int(obplayer.Config.setting('streamer_0_icecast_port')),
-                obplayer.Config.setting('streamer_0_icecast_username'), obplayer.Config.setting('streamer_0_icecast_password'), obplayer.Config.setting('streamer_0_icecast_mount'),
-                obplayer.Config.setting('streamer_0_icecast_streamname'), obplayer.Config.setting('streamer_0_icecast_description'),
-                obplayer.Config.setting('streamer_0_icecast_url'), obplayer.Config.setting('streamer_0_icecast_public'), obplayer.Config.setting('streamer_0_icecast_bitrate'),
-                obplayer.Config.setting('streamer_0_title_streaming_mode'), obplayer.Config.setting('streamer_0_icecast_mode'))
-        obplayer.Streamer_stream_1 = ObIcecastStreamer(obplayer.Config.setting('streamer_1_icecast_ip'), int(obplayer.Config.setting('streamer_1_icecast_port')),
-                    obplayer.Config.setting('streamer_1_icecast_username'), obplayer.Config.setting('streamer_1_icecast_password'), obplayer.Config.setting('streamer_1_icecast_mount'),
-                    obplayer.Config.setting('streamer_1_icecast_streamname'), obplayer.Config.setting('streamer_1_icecast_description'),
-                    obplayer.Config.setting('streamer_1_icecast_url'), obplayer.Config.setting('streamer_1_icecast_public'), obplayer.Config.setting('streamer_1_icecast_bitrate'),
-                    obplayer.Config.setting('streamer_1_title_streaming_mode'), obplayer.Config.setting('streamer_1_icecast_mode'))
-        if obplayer.Config.setting('streamer_play_on_startup'):
-            if obplayer.Config.setting('streamer_0_icecast_enable'):
+        obplayer.Streamer_stream_0 = ObIcecastStreamer(
+            obplayer.Config.setting("streamer_0_icecast_ip"),
+            int(obplayer.Config.setting("streamer_0_icecast_port")),
+            obplayer.Config.setting("streamer_0_icecast_username"),
+            obplayer.Config.setting("streamer_0_icecast_password"),
+            obplayer.Config.setting("streamer_0_icecast_mount"),
+            obplayer.Config.setting("streamer_0_icecast_streamname"),
+            obplayer.Config.setting("streamer_0_icecast_description"),
+            obplayer.Config.setting("streamer_0_icecast_url"),
+            obplayer.Config.setting("streamer_0_icecast_public"),
+            obplayer.Config.setting("streamer_0_icecast_bitrate"),
+            obplayer.Config.setting("streamer_0_title_streaming_mode"),
+            obplayer.Config.setting("streamer_0_icecast_mode"),
+        )
+        obplayer.Streamer_stream_1 = ObIcecastStreamer(
+            obplayer.Config.setting("streamer_1_icecast_ip"),
+            int(obplayer.Config.setting("streamer_1_icecast_port")),
+            obplayer.Config.setting("streamer_1_icecast_username"),
+            obplayer.Config.setting("streamer_1_icecast_password"),
+            obplayer.Config.setting("streamer_1_icecast_mount"),
+            obplayer.Config.setting("streamer_1_icecast_streamname"),
+            obplayer.Config.setting("streamer_1_icecast_description"),
+            obplayer.Config.setting("streamer_1_icecast_url"),
+            obplayer.Config.setting("streamer_1_icecast_public"),
+            obplayer.Config.setting("streamer_1_icecast_bitrate"),
+            obplayer.Config.setting("streamer_1_title_streaming_mode"),
+            obplayer.Config.setting("streamer_1_icecast_mode"),
+        )
+        if obplayer.Config.setting("streamer_play_on_startup"):
+            if obplayer.Config.setting("streamer_0_icecast_enable"):
                 obplayer.Streamer_stream_0.start()
-                if obplayer.Streamer_stream_0.mode == 'audio':
+                if obplayer.Streamer_stream_0.mode == "audio":
                     obplayer.Streamer_stream_0.start_title_streaming()
             else:
-                if obplayer.Streamer_stream_0.mode == 'audio':
+                if obplayer.Streamer_stream_0.mode == "audio":
                     obplayer.Streamer_stream_0.stop_title_streaming()
-            if obplayer.Config.setting('streamer_1_icecast_enable'):
+            if obplayer.Config.setting("streamer_1_icecast_enable"):
                 obplayer.Streamer_stream_1.start()
-                if obplayer.Streamer_stream_1.mode == 'audio':
+                if obplayer.Streamer_stream_1.mode == "audio":
                     obplayer.Streamer_stream_1.start_title_streaming()
             else:
-                if obplayer.Streamer_stream_1.mode == 'audio':
+                if obplayer.Streamer_stream_1.mode == "audio":
                     obplayer.Streamer_stream_1.stop_title_streaming()
 
         obplayer.RTSPStreamer = None
-        if obplayer.Config.setting('streamer_rtsp_enable'):
+        if obplayer.Config.setting("streamer_rtsp_enable"):
             from .rtsp import ObRTSPStreamer
+
             obplayer.RTSPStreamer = ObRTSPStreamer()
 
-        if obplayer.Config.setting('streamer_rtp_enable'):
+        if obplayer.Config.setting("streamer_rtp_enable"):
             from .rtp import ObRTPStreamer
+
             obplayer.ObRTPStreamer = ObRTPStreamer()
             obplayer.ObRTPStreamer.start()
 
-        if obplayer.Config.setting('streamer_rtmp_enable'):
+        if obplayer.Config.setting("streamer_rtmp_enable"):
             from .rtmp import ObRTMPStreamer
+
             obplayer.RTMPStreamer = ObRTMPStreamer()
             obplayer.RTMPStreamer.start()
 
     GObject.timeout_add(1000, delaystart)
+
 
 def quit():
     if obplayer.Streamer_stream_0:

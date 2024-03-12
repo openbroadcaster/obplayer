@@ -20,12 +20,12 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __future__ import absolute_import 
+from __future__ import absolute_import
 
 from obplayer.httpadmin.httpadmin import obplayer, ObHTTPAdmin
 
 
-class HTTPAdminThread (obplayer.ObThread):
+class HTTPAdminThread(obplayer.ObThread):
     def try_run(self):
         obplayer.HTTPAdmin = ObHTTPAdmin()
         obplayer.HTTPAdmin.serve_forever()
@@ -34,11 +34,12 @@ class HTTPAdminThread (obplayer.ObThread):
         if obplayer.HTTPAdmin:
             obplayer.HTTPAdmin.shutdown()
 
+
 def init():
     # run our admin web server.
     if obplayer.Config.args.disable_http is False:
         HTTPAdminThread().start()
 
+
 def quit():
     pass
-

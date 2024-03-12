@@ -29,25 +29,32 @@ import datetime
 import traceback
 
 import gi
-gi.require_version('Gst', '1.0')
+
+gi.require_version("Gst", "1.0")
 from gi.repository import GObject, Gst
 
-#AUDIOLOG_SAMPLE_RATE = '22050'
-#AUDIOLOG_CHANNELS = '1'
+# AUDIOLOG_SAMPLE_RATE = '22050'
+# AUDIOLOG_CHANNELS = '1'
 
-AUDIOLOG_SAMPLE_RATE = obplayer.Config.setting('audiolog_samplerate')
-AUDIOLOG_CHANNELS = obplayer.Config.setting('audiolog_channels')
+AUDIOLOG_SAMPLE_RATE = obplayer.Config.setting("audiolog_samplerate")
+AUDIOLOG_CHANNELS = obplayer.Config.setting("audiolog_channels")
 
-class ObAudioLog (object):
+
+class ObAudioLog(object):
     def __init__(self):
-        self.purge_files = obplayer.Config.setting('audiolog_purge_files')
+        self.purge_files = obplayer.Config.setting("audiolog_purge_files")
         self.pipeline = None
-        self.date = time.strftime('%Y-%m-%d-%H')
+        self.date = time.strftime("%Y-%m-%d-%H")
         self.start()
 
     def start(self):
-        obplayer.Log.log("starting new audio log", 'audiolog')
-        outfile = obplayer.ObData.get_datadir() + '/audiologs/' + time.strftime('%Y-%m-%d_%H:%M:%S') + '.ogg'
+        obplayer.Log.log("starting new audio log", "audiolog")
+        outfile = (
+            obplayer.ObData.get_datadir()
+            + "/audiologs/"
+            + time.strftime("%Y-%m-%d_%H:%M:%S")
+            + ".ogg"
+        )
 
         """
         audio_output = obplayer.Config.setting('audio_out_mode')
@@ -61,60 +68,69 @@ class ObAudioLog (object):
 
         self.pipeline = Gst.Pipeline()
 
-        self.elements = [ ]
+        self.elements = []
 
         # NOTE we are using the main audio output mode here to determine the audio input mode, since they should match
-        audio_input = obplayer.Config.setting('audio_out_mode')
-        if audio_input == 'alsa':
-            self.audiosrc = Gst.ElementFactory.make('alsasrc', 'audiosrc')
-            alsa_device = obplayer.Config.setting('audio_out_alsa_device')
-            if alsa_device != '':
-                self.audiosrc.set_property('device', alsa_device)
+        audio_input = obplayer.Config.setting("audio_out_mode")
+        if audio_input == "alsa":
+            self.audiosrc = Gst.ElementFactory.make("alsasrc", "audiosrc")
+            alsa_device = obplayer.Config.setting("audio_out_alsa_device")
+            if alsa_device != "":
+                self.audiosrc.set_property("device", alsa_device)
 
-        elif audio_input == 'jack':
-            self.audiosrc = Gst.ElementFactory.make('jackaudiosrc', 'audiosrc')
-            self.audiosrc.set_property('connect', 0)  # don't autoconnect ports.
-            self.audiosrc.set_property('client-name', 'obplayer-audiolog')
+        elif audio_input == "jack":
+            self.audiosrc = Gst.ElementFactory.make("jackaudiosrc", "audiosrc")
+            self.audiosrc.set_property("connect", 0)  # don't autoconnect ports.
+            self.audiosrc.set_property("client-name", "obplayer-audiolog")
 
-        elif audio_input == 'oss':
-            self.audiosrc = Gst.ElementFactory.make('osssrc', 'audiosrc')
+        elif audio_input == "oss":
+            self.audiosrc = Gst.ElementFactory.make("osssrc", "audiosrc")
 
-        elif audio_input == 'pulse':
-            self.audiosrc = Gst.ElementFactory.make('pulsesrc', 'audiosrc')
-            self.audiosrc.set_property('client-name', 'obplayer-audiolog')
+        elif audio_input == "pulse":
+            self.audiosrc = Gst.ElementFactory.make("pulsesrc", "audiosrc")
+            self.audiosrc.set_property("client-name", "obplayer-audiolog")
 
-        elif audio_input == 'test':
-            self.audiosrc = Gst.ElementFactory.make('fakesrc', 'audiosrc')
+        elif audio_input == "test":
+            self.audiosrc = Gst.ElementFactory.make("fakesrc", "audiosrc")
 
         else:
-            self.audiosrc = Gst.ElementFactory.make('autoaudiosrc', 'audiosrc')
+            self.audiosrc = Gst.ElementFactory.make("autoaudiosrc", "audiosrc")
         self.elements.append(self.audiosrc)
 
-        self.elements.append(Gst.ElementFactory.make('audioconvert'))
-        self.elements.append(Gst.ElementFactory.make('audioresample'))
+        self.elements.append(Gst.ElementFactory.make("audioconvert"))
+        self.elements.append(Gst.ElementFactory.make("audioresample"))
 
         ## create caps filter element to set the output audio parameters
-        self.audiocaps = Gst.ElementFactory.make('capsfilter')
-        self.audiocaps.set_property('caps', Gst.Caps.from_string('audio/x-raw, rate=' + AUDIOLOG_SAMPLE_RATE + ', channels=' + AUDIOLOG_CHANNELS))
+        self.audiocaps = Gst.ElementFactory.make("capsfilter")
+        self.audiocaps.set_property(
+            "caps",
+            Gst.Caps.from_string(
+                "audio/x-raw, rate="
+                + AUDIOLOG_SAMPLE_RATE
+                + ", channels="
+                + AUDIOLOG_CHANNELS
+            ),
+        )
         self.elements.append(self.audiocaps)
 
-        self.elements.append(Gst.ElementFactory.make('queue2'))
+        self.elements.append(Gst.ElementFactory.make("queue2"))
 
-        self.encoder = Gst.ElementFactory.make('vorbisenc')
-        self.encoder.set_property('quality', float(obplayer.Config.setting('audiolog_quality')))
+        self.encoder = Gst.ElementFactory.make("vorbisenc")
+        self.encoder.set_property(
+            "quality", float(obplayer.Config.setting("audiolog_quality"))
+        )
         self.elements.append(self.encoder)
 
-        self.elements.append(Gst.ElementFactory.make('oggmux'))
-        self.elements.append(Gst.ElementFactory.make('queue2'))
+        self.elements.append(Gst.ElementFactory.make("oggmux"))
+        self.elements.append(Gst.ElementFactory.make("queue2"))
 
-        self.filesink = Gst.ElementFactory.make('filesink')
-        self.filesink.set_property('location', outfile)
+        self.filesink = Gst.ElementFactory.make("filesink")
+        self.filesink.set_property("location", outfile)
         self.elements.append(self.filesink)
 
         self.build_pipeline(self.elements)
         self.pipeline.set_state(Gst.State.PLAYING)
         self.log_rotate()
-
 
     def stop(self):
         self.pipeline.set_state(Gst.State.NULL)
@@ -122,14 +138,14 @@ class ObAudioLog (object):
 
     def build_pipeline(self, elements):
         for element in elements:
-            #print("adding element to bin: " + element.get_name())
+            # print("adding element to bin: " + element.get_name())
             self.pipeline.add(element)
         for index in range(0, len(elements) - 1):
             elements[index].link(elements[index + 1])
 
     def log_rotate(self):
-        if self.date != time.strftime('%Y-%m-%d-%H'):
-            self.date = time.strftime('%Y-%m-%d-%H')
+        if self.date != time.strftime("%Y-%m-%d-%H"):
+            self.date = time.strftime("%Y-%m-%d-%H")
             self.stop()
             self.start()
             if self.purge_files:
@@ -141,10 +157,10 @@ class ObAudioLog (object):
         then = datetime.datetime.now() - datetime.timedelta(days=90)
 
         for filename in os.listdir(basedir):
-            parts = filename[:10].split('-')
+            parts = filename[:10].split("-")
             if len(parts) != 3:
                 continue
             filedate = datetime.datetime(int(parts[0]), int(parts[1]), int(parts[2]))
             if filedate < then:
-                obplayer.Log.log("deleting audiolog file " + filename, 'debug')
+                obplayer.Log.log("deleting audiolog file " + filename, "debug")
                 os.remove(os.path.join(basedir, filename))

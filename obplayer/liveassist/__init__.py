@@ -26,22 +26,28 @@ from obplayer.liveassist.liveassist import *
 
 LiveAssist = None
 
-class LiveAssistThread (obplayer.ObThread):
+
+class LiveAssistThread(obplayer.ObThread):
     def try_run(self):
         obplayer.LiveAssist = ObLiveAssist()
         obplayer.LiveAssist.serve_forever()
 
     def stop(self):
-        if hasattr(obplayer, 'LiveAssist') and obplayer.LiveAssist:
+        if hasattr(obplayer, "LiveAssist") and obplayer.LiveAssist:
             obplayer.LiveAssist.shutdown()
 
+
 def init():
-    if not obplayer.Config.setting('scheduler_enable'):
-        obplayer.Log.log("error starting liveassist.  The scheduler must be enabled (Disable maintenance mode) in order to use the liveassist interface, but it is currently disabled in the settings", 'error')
+    if not obplayer.Config.setting("scheduler_enable"):
+        obplayer.Log.log(
+            "error starting liveassist.  The scheduler must be enabled (Disable maintenance mode) in order to use the liveassist interface, but it is currently disabled in the settings",
+            "error",
+        )
         return
 
-    if obplayer.Config.setting('live_assist_enable'):
+    if obplayer.Config.setting("live_assist_enable"):
         LiveAssistThread().start()
+
 
 def quit():
     pass

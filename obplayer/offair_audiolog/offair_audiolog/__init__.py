@@ -26,10 +26,12 @@ import obplayer
 
 from .audiolog import Oboff_air_AudioLog
 
+
 def init():
     obplayer.off_air_AudioLog = Oboff_air_AudioLog()
 
+
 def quit():
     # stop the audio logger.
-    if hasattr(obplayer, 'off_air_AudioLog'):
+    if hasattr(obplayer, "off_air_AudioLog"):
         obplayer.off_air_AudioLog.stop()

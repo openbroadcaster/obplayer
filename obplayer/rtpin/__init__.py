@@ -20,18 +20,21 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __future__ import absolute_import 
+from __future__ import absolute_import
 
 import obplayer
 
+
 def init():
     def rtp_in_request(self, present_time, media_class):
-        #uri = obplayer.Config.setting('aoip_in_uri')
-        self.add_request(media_type='rtp', duration=31536000)        # duration = 1 year (ie. indefinitely)
+        # uri = obplayer.Config.setting('aoip_in_uri')
+        self.add_request(
+            media_type="rtp", duration=31536000
+        )  # duration = 1 year (ie. indefinitely)
 
-    ctrl = obplayer.Player.create_controller('rtpin', priority=15, allow_requeue=False)
+    ctrl = obplayer.Player.create_controller("rtpin", priority=15, allow_requeue=False)
     ctrl.set_request_callback(rtp_in_request)
+
 
 def quit():
     pass
-

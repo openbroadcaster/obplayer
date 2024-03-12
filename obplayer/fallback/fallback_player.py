@@ -30,15 +30,16 @@ import random
 import traceback
 
 import gi
-gi.require_version('Gst', '1.0')
-gi.require_version('GstPbutils', '1.0')
+
+gi.require_version("Gst", "1.0")
+gi.require_version("GstPbutils", "1.0")
 from gi.repository import GObject, Gst, GstPbutils
 
-if sys.version.startswith('3'):
+if sys.version.startswith("3"):
     unicode = str
 
 
-class ObFallbackPlayer (obplayer.player.ObPlayerController):
+class ObFallbackPlayer(obplayer.player.ObPlayerController):
 
     def __init__(self):
         self.media = []
@@ -46,21 +47,21 @@ class ObFallbackPlayer (obplayer.player.ObPlayerController):
         self.media_types = []
         self.image_types = []
 
-        self.media_types.append('audio/x-flac')
-        self.media_types.append('audio/flac')
-        self.media_types.append('audio/mpeg')
-        self.media_types.append('audio/ogg')
+        self.media_types.append("audio/x-flac")
+        self.media_types.append("audio/flac")
+        self.media_types.append("audio/mpeg")
+        self.media_types.append("audio/ogg")
 
         # TODO we're always headless new so we never play images or video??
-        #if obplayer.Config.headless == False:
-        self.image_types.append('image/jpeg')
-        self.image_types.append('image/png')
-        self.image_types.append('image/svg+xml')
-        self.media_types.append('application/ogg')
-        self.media_types.append('video/ogg')
-        self.media_types.append('video/x-msvideo')
-        self.media_types.append('video/mp4')
-        self.media_types.append('video/mpeg')
+        # if obplayer.Config.headless == False:
+        self.image_types.append("image/jpeg")
+        self.image_types.append("image/png")
+        self.image_types.append("image/svg+xml")
+        self.media_types.append("application/ogg")
+        self.media_types.append("video/ogg")
+        self.media_types.append("video/x-msvideo")
+        self.media_types.append("video/mp4")
+        self.media_types.append("video/mpeg")
 
         self.play_index = 0
         self.image_duration = 15.0
@@ -68,12 +69,14 @@ class ObFallbackPlayer (obplayer.player.ObPlayerController):
         m = magic.open(magic.MAGIC_MIME)
         m.load()
 
-        for (dirname, dirnames, filenames) in os.walk(unicode(obplayer.Config.setting('fallback_media'))):
+        for dirname, dirnames, filenames in os.walk(
+            unicode(obplayer.Config.setting("fallback_media"))
+        ):
             for filename in filenames:
                 try:
                     path = os.path.join(dirname, filename)
                     uri = obplayer.Player.file_uri(path)
-                    filetype = m.file(path.encode('utf-8')).split(';')[0]
+                    filetype = m.file(path.encode("utf-8")).split(";")[0]
 
                     if filetype in self.media_types:
                         d = GstPbutils.Discoverer()
@@ -82,27 +85,40 @@ class ObFallbackPlayer (obplayer.player.ObPlayerController):
                         media_type = None
                         for stream in mediainfo.get_video_streams():
                             if stream.is_image():
-                                media_type = 'image'
+                                media_type = "image"
                             else:
-                                media_type = 'video'
+                                media_type = "video"
                                 break
                         if not media_type and len(mediainfo.get_audio_streams()) > 0:
-                            media_type = 'audio'
+                            media_type = "audio"
 
                         if media_type:
                             # we discovered some more fallback media, add to our media list.
-                            self.media.append([ uri, filename, media_type, float(mediainfo.get_duration()) / Gst.SECOND ])
+                            self.media.append(
+                                [
+                                    uri,
+                                    filename,
+                                    media_type,
+                                    float(mediainfo.get_duration()) / Gst.SECOND,
+                                ]
+                            )
 
                     if filetype in self.image_types:
-                        self.media.append([ uri, filename, 'image', self.image_duration ])
+                        self.media.append([uri, filename, "image", self.image_duration])
                 except:
-                    obplayer.Log.log("exception while loading fallback media: " + dirname + '/' + filename, 'error')
-                    obplayer.Log.log(traceback.format_exc(), 'error')
+                    obplayer.Log.log(
+                        "exception while loading fallback media: "
+                        + dirname
+                        + "/"
+                        + filename,
+                        "error",
+                    )
+                    obplayer.Log.log(traceback.format_exc(), "error")
 
         # shuffle the list
         random.shuffle(self.media)
 
-        self.ctrl = obplayer.Player.create_controller('fallback', priority=25)
+        self.ctrl = obplayer.Player.create_controller("fallback", priority=25)
         self.ctrl.set_request_callback(self.do_player_request)
 
     # the player is asking us what to play next
@@ -112,19 +128,19 @@ class ObFallbackPlayer (obplayer.player.ObPlayerController):
 
         if self.play_index >= len(self.media):
             self.play_index = 0
-            random.shuffle(self.media)  # shuffle again to create a new order for next time.
+            random.shuffle(
+                self.media
+            )  # shuffle again to create a new order for next time.
 
         ctrl.add_request(
-            media_type = unicode(self.media[self.play_index][2]),
-            uri = unicode(self.media[self.play_index][0]),
-            duration = self.media[self.play_index][3],
-            order_num = self.play_index,
-            artist = u'unknown',
-            title = unicode(self.media[self.play_index][1])
+            media_type=unicode(self.media[self.play_index][2]),
+            uri=unicode(self.media[self.play_index][0]),
+            duration=self.media[self.play_index][3],
+            order_num=self.play_index,
+            artist="unknown",
+            title=unicode(self.media[self.play_index][1]),
         )
 
         self.play_index = self.play_index + 1
 
         return True
-
-

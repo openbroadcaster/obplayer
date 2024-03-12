@@ -23,7 +23,7 @@ along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 import obplayer
 
 
-class StreamerTrigger (object):
+class StreamerTrigger(object):
     def __init__(self):
         pass
 
@@ -34,13 +34,11 @@ class StreamerTrigger (object):
         pass
 
     def alert_cycle_start(self):
-        if hasattr(obplayer, 'Streamer'):
-            obplayer.Log.log("starting icecast streamer for alert cycle", 'alerts')
+        if hasattr(obplayer, "Streamer"):
+            obplayer.Log.log("starting icecast streamer for alert cycle", "alerts")
             obplayer.Streamer.start()
 
     def alert_cycle_stop(self):
-        if hasattr(obplayer, 'Streamer'):
-            obplayer.Log.log("stopping icecast streamer after alert cycle", 'alerts')
+        if hasattr(obplayer, "Streamer"):
+            obplayer.Log.log("stopping icecast streamer after alert cycle", "alerts")
             obplayer.Streamer.stop()
-
-

@@ -19,13 +19,27 @@
 
 import dbus
 
-SERVER_INVALID, SERVER_REGISTERING, SERVER_RUNNING, SERVER_COLLISION, SERVER_FAILURE = range(0, 5)
+SERVER_INVALID, SERVER_REGISTERING, SERVER_RUNNING, SERVER_COLLISION, SERVER_FAILURE = (
+    range(0, 5)
+)
 
-ENTRY_GROUP_UNCOMMITED, ENTRY_GROUP_REGISTERING, ENTRY_GROUP_ESTABLISHED, ENTRY_GROUP_COLLISION, ENTRY_GROUP_FAILURE = range(0, 5)
+(
+    ENTRY_GROUP_UNCOMMITED,
+    ENTRY_GROUP_REGISTERING,
+    ENTRY_GROUP_ESTABLISHED,
+    ENTRY_GROUP_COLLISION,
+    ENTRY_GROUP_FAILURE,
+) = range(0, 5)
 
-DOMAIN_BROWSER_BROWSE, DOMAIN_BROWSER_BROWSE_DEFAULT, DOMAIN_BROWSER_REGISTER, DOMAIN_BROWSER_REGISTER_DEFAULT, DOMAIN_BROWSER_BROWSE_LEGACY = range(0, 5)
+(
+    DOMAIN_BROWSER_BROWSE,
+    DOMAIN_BROWSER_BROWSE_DEFAULT,
+    DOMAIN_BROWSER_REGISTER,
+    DOMAIN_BROWSER_REGISTER_DEFAULT,
+    DOMAIN_BROWSER_BROWSE_LEGACY,
+) = range(0, 5)
 
-PROTO_UNSPEC, PROTO_INET, PROTO_INET6  = -1, 0, 1
+PROTO_UNSPEC, PROTO_INET, PROTO_INET6 = -1, 0, 1
 
 IF_UNSPEC = -1
 
@@ -66,17 +80,19 @@ DBUS_INTERFACE_HOST_NAME_RESOLVER = DBUS_NAME + ".HostNameResolver"
 DBUS_INTERFACE_SERVICE_RESOLVER = DBUS_NAME + ".ServiceResolver"
 DBUS_INTERFACE_RECORD_BROWSER = DBUS_NAME + ".RecordBrowser"
 
+
 def byte_array_to_string(s):
     r = ""
-    
+
     for c in s:
-        
+
         if c >= 32 and c < 127:
             r += "%c" % c
         else:
             r += "."
 
     return r
+
 
 def txt_array_to_string_array(t):
     l = []
@@ -95,6 +111,7 @@ def string_to_byte_array(s):
 
     return r
 
+
 def string_array_to_txt_array(t):
     l = []
 
@@ -103,10 +120,11 @@ def string_array_to_txt_array(t):
 
     return l
 
+
 def dict_to_txt_array(txt_dict):
     l = []
 
-    for k,v in txt_dict.items():
-        l.append(string_to_byte_array("%s=%s" % (k,v)))
+    for k, v in txt_dict.items():
+        l.append(string_to_byte_array("%s=%s" % (k, v)))
 
     return l

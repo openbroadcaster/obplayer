@@ -20,7 +20,7 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __future__ import absolute_import 
+from __future__ import absolute_import
 
 import obplayer
 from obplayer.alerts.alert import ObAlert, parse_alert_file
@@ -29,6 +29,7 @@ import os
 
 Processor = None
 
+
 def init():
     global Processor
     Processor = ObAlertProcessor()
@@ -36,10 +37,15 @@ def init():
     vol = obplayer.Config.setting("alerts_attention_signal_volume", True)
 
     if vol != None:
-        datadir = os.path.expanduser('~/.openbroadcaster')
-        vol = round(vol/100, 3)
-        output_path = os.path.join(datadir, 'attn.wav')
-        os.system("ffmpeg -y -i obplayer/alerts/data/canadian-attention-signal.mp3 -filter:a \"volume={0}\" \"{1}\" > /dev/null 2>&1".format(str(vol), output_path))
+        datadir = os.path.expanduser("~/.openbroadcaster")
+        vol = round(vol / 100, 3)
+        output_path = os.path.join(datadir, "attn.wav")
+        os.system(
+            'ffmpeg -y -i obplayer/alerts/data/canadian-attention-signal.mp3 -filter:a "volume={0}" "{1}" > /dev/null 2>&1'.format(
+                str(vol), output_path
+            )
+        )
+
 
 def quit():
     pass

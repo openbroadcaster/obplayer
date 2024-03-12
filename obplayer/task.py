@@ -26,7 +26,8 @@ import threading
 
 import traceback
 
-class ObThread (threading.Thread):
+
+class ObThread(threading.Thread):
     threads = []
 
     def __init__(self, name=None, target=None):
@@ -41,11 +42,11 @@ class ObThread (threading.Thread):
         ObThread.threads.remove(self)
 
     def start(self):
-        obplayer.Log.log("starting thread <%s>" % (str(self.name),), 'debug')
+        obplayer.Log.log("starting thread <%s>" % (str(self.name),), "debug")
         threading.Thread.start(self)
 
     def stop(self):
-        obplayer.Log.log("stopping thread <%s>" % (str(self.name),), 'debug')
+        obplayer.Log.log("stopping thread <%s>" % (str(self.name),), "debug")
         self.stopflag.set()
 
     @staticmethod
@@ -58,9 +59,13 @@ class ObThread (threading.Thread):
         for t in ObThread.threads:
             if t.daemon is False:
                 t.join()
-                obplayer.Log.log("thread <%s> has joined successfully" % (str(t.name),), 'debug')
+                obplayer.Log.log(
+                    "thread <%s> has joined successfully" % (str(t.name),), "debug"
+                )
             else:
-                obplayer.Log.log("thread <%s> is daemon, skipping" % (str(t.name),), 'debug')
+                obplayer.Log.log(
+                    "thread <%s> is daemon, skipping" % (str(t.name),), "debug"
+                )
 
     def run(self):
         try:
@@ -69,8 +74,9 @@ class ObThread (threading.Thread):
             else:
                 self.try_run()
         except:
-            obplayer.Log.log("exception occurred in thread " + str(self.name) + ":", 'error')
-            obplayer.Log.log(traceback.format_exc(), 'error')
+            obplayer.Log.log(
+                "exception occurred in thread " + str(self.name) + ":", "error"
+            )
+            obplayer.Log.log(traceback.format_exc(), "error")
         finally:
             del self.target
-

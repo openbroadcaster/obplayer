@@ -20,18 +20,23 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __future__ import absolute_import 
+from __future__ import absolute_import
 
 import obplayer
 
+
 def init():
     def testsignal_request(self, present_time, media_class):
-        self.add_request(media_type='break', duration=5)
-        self.add_request(media_type='testsignal', duration=31536000)        # duration = 1 year (ie. indefinitely)
+        self.add_request(media_type="break", duration=5)
+        self.add_request(
+            media_type="testsignal", duration=31536000
+        )  # duration = 1 year (ie. indefinitely)
 
-    ctrl = obplayer.Player.create_controller('testsignal', priority=2, allow_requeue=False)
+    ctrl = obplayer.Player.create_controller(
+        "testsignal", priority=2, allow_requeue=False
+    )
     ctrl.set_request_callback(testsignal_request)
+
 
 def quit():
     pass
-

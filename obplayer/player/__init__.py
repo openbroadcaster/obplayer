@@ -20,17 +20,18 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __future__ import absolute_import 
+from __future__ import absolute_import
 
 import obplayer
 
 from .control import ObPlayer, ObPlayerController
 from .playlog import ObPlaylogData
 
+
 def init():
     obplayer.Player = ObPlayer()
     obplayer.PlaylogData = ObPlaylogData()
 
+
 def quit():
     pass
-

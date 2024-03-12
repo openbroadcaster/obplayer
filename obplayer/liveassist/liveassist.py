@@ -37,22 +37,25 @@ from . import microphone
 import requests
 
 
-class ObLiveAssist (httpserver.ObHTTPServer):
+class ObLiveAssist(httpserver.ObHTTPServer):
     def __init__(self):
-        self.root = 'obplayer/liveassist/http'
+        self.root = "obplayer/liveassist/http"
         self.username = None
         self.readonly_username = None
-        self.websockets = [ ]
+        self.websockets = []
 
-        server_address = ('', obplayer.Config.setting('live_assist_port'))  # (address, port)
+        server_address = (
+            "",
+            obplayer.Config.setting("live_assist_port"),
+        )  # (address, port)
 
         httpserver.ObHTTPServer.__init__(self, server_address, None)
         sa = self.socket.getsockname()
-        obplayer.Log.log('serving live assist http on port ' + str(sa[1]), 'liveassist')
+        obplayer.Log.log("serving live assist http on port " + str(sa[1]), "liveassist")
 
     def log(self, message):
         if not "POST /info/levels" in message and not "POST /command/station_count":
-            obplayer.Log.log(message, 'debug')
+            obplayer.Log.log(message, "debug")
 
     def shutdown(self):
         for conn in self.websockets:
@@ -60,106 +63,116 @@ class ObLiveAssist (httpserver.ObHTTPServer):
         httpserver.ObHTTPServer.shutdown(self)
 
     def handle_post(self, request):
-        #if not request.access:
+        # if not request.access:
         #    return { 'status' : False, 'error' : "You don't have permission to do that.  You are current logged in as a guest" }
 
-        if request.path == '/info/levels':
+        if request.path == "/info/levels":
             return obplayer.Scheduler.get_audio_levels()
 
-        elif request.path == '/info/play_status':
+        elif request.path == "/info/play_status":
             return obplayer.Scheduler.get_now_playing()
 
-        elif request.path == '/info/current_time':
-            return { 'value' : str(time.time()) }
+        elif request.path == "/info/current_time":
+            return {"value": str(time.time())}
 
-        elif request.path == '/info/show_name':
-            return { 'value' : obplayer.Scheduler.get_show_name() }
+        elif request.path == "/info/show_name":
+            return {"value": obplayer.Scheduler.get_show_name()}
 
-        elif request.path == '/info/show_end':
-            return { 'value' : str(obplayer.Scheduler.get_show_end()) }
+        elif request.path == "/info/show_end":
+            return {"value": str(obplayer.Scheduler.get_show_end())}
 
-        elif request.path == '/info/playlist':
+        elif request.path == "/info/playlist":
             playlist = obplayer.Scheduler.get_current_playlist()
             return playlist
 
-        elif request.path == '/info/liveassist_groups':
+        elif request.path == "/info/liveassist_groups":
             groups = obplayer.Scheduler.get_current_groups()
             return groups
 
-        elif request.path == '/command/play':
+        elif request.path == "/command/play":
             if obplayer.Scheduler.unpause_show() == True:
-                return {'status' : True }
-            return { 'status' : False }
+                return {"status": True}
+            return {"status": False}
 
-        elif request.path == '/command/pause':
+        elif request.path == "/command/pause":
             if obplayer.Scheduler.pause_show() == True:
-                return { 'status' : True }
-            return { 'status' : False }
+                return {"status": True}
+            return {"status": False}
 
-        elif request.path == '/command/next':
+        elif request.path == "/command/next":
             if obplayer.Scheduler.next_track() == True:
-                return {'status' : True }
-            return { 'status' : False }
+                return {"status": True}
+            return {"status": False}
 
-        elif request.path == '/command/prev':
+        elif request.path == "/command/prev":
             if obplayer.Scheduler.previous_track() == True:
-                return {'status' : True }
-            return { 'status' : False }
+                return {"status": True}
+            return {"status": False}
 
-        elif request.path == '/command/play_group_item':
+        elif request.path == "/command/play_group_item":
             try:
-                group_num = int(request.args['group_num'][0])
-                group_item_num = int(request.args['group_item_num'][0])
-                position = float(request.args['position'][0])
+                group_num = int(request.args["group_num"][0])
+                group_item_num = int(request.args["group_item_num"][0])
+                position = float(request.args["position"][0])
             except AttributeError as e:
-                return { 'status' : False, 'error': "invalid request, missing " + e.args[0] + "." }
+                return {
+                    "status": False,
+                    "error": "invalid request, missing " + e.args[0] + ".",
+                }
 
             if obplayer.Scheduler.play_group_item(group_num, group_item_num, position):
-                return { 'status' : True }
+                return {"status": True}
             else:
-                return { 'status' : False }
+                return {"status": False}
 
-        elif request.path == '/command/playlist_seek':
+        elif request.path == "/command/playlist_seek":
             try:
-                track_num = int(request.args['track_num'][0])
-                position = float(request.args['position'][0])
+                track_num = int(request.args["track_num"][0])
+                position = float(request.args["position"][0])
             except AttributeError as e:
-                return { 'status' : False, 'error': "invalid request, missing " + e.args[0] + "." }
+                return {
+                    "status": False,
+                    "error": "invalid request, missing " + e.args[0] + ".",
+                }
 
             if obplayer.Scheduler.playlist_seek(track_num, position):
-                return { 'status' : True }
+                return {"status": True}
             else:
-                return { 'status' : False }
+                return {"status": False}
 
-        elif request.path == '/command/station_count':
-            mount = obplayer.Config.setting('station_override_server_mountpoint')
-            req = requests.get("http://{0}:{1}/status-json.xsl".format(obplayer.Config.setting('station_override_server_ip'), obplayer.Config.setting('station_override_server_port')))
+        elif request.path == "/command/station_count":
+            mount = obplayer.Config.setting("station_override_server_mountpoint")
+            req = requests.get(
+                "http://{0}:{1}/status-json.xsl".format(
+                    obplayer.Config.setting("station_override_server_ip"),
+                    obplayer.Config.setting("station_override_server_port"),
+                )
+            )
             if req.status_code == 200:
                 data = req.json()
                 # check if source exists.
-                if data['icestats'].get('source') == None:
-                    return 'not live...'
+                if data["icestats"].get("source") == None:
+                    return "not live..."
                 # more than one stream on server.
-                if isinstance(data['icestats']['source'], (list)):
-                    for stream in data['icestats']['source']:
-                        stream_mount = stream['listenurl'].split('/')[-1]
+                if isinstance(data["icestats"]["source"], (list)):
+                    for stream in data["icestats"]["source"]:
+                        stream_mount = stream["listenurl"].split("/")[-1]
                         if stream_mount == mount:
-                            return stream['listeners']
+                            return stream["listeners"]
                 # if only one stream on server.
                 else:
-                    if data['icestats']['source']['listenurl'].split('/')[-1] == mount:
-                        return data['icestats']['source']['listeners']
-            return 'error...'
-        elif request.path == '/inter_station_ctrl/start':
+                    if data["icestats"]["source"]["listenurl"].split("/")[-1] == mount:
+                        return data["icestats"]["source"]["listeners"]
+            return "error..."
+        elif request.path == "/inter_station_ctrl/start":
             obplayer.httpadmin.httpadmin.inter_station_ctrl_toggle(True)
-        elif request.path == '/inter_station_ctrl/stop':
+        elif request.path == "/inter_station_ctrl/stop":
             obplayer.httpadmin.httpadmin.inter_station_ctrl_toggle(False)
-        elif request.path == '/inter_station_ctrl/is_live':
+        elif request.path == "/inter_station_ctrl/is_live":
             return obplayer.httpadmin.httpadmin.inter_station_ctrl_is_live()
 
-
     def handle_websocket(self, conn, path):
-        if path != '/stream':
+        if path != "/stream":
             return
 
         self.websockets.append(conn)
@@ -172,47 +185,51 @@ class ObLiveAssist (httpserver.ObHTTPServer):
 
                 if opcode == httpserver.WS_OP_TEXT:
                     msg = json.loads(msg)
-                    if msg['type'] == 'negotiate':
-                        #print(repr(msg))
+                    if msg["type"] == "negotiate":
+                        # print(repr(msg))
                         if not conn.microphone:
-                            conn.microphone = microphone.ObLiveAssistMicrophone(conn, msg['mode'], msg)
+                            conn.microphone = microphone.ObLiveAssistMicrophone(
+                                conn, msg["mode"], msg
+                            )
                             conn.microphone.start()
                             self.send_mic_status(conn)
                         else:
-                            pass #conn.microphone.change_format(msg['rate'], msg['encoding'])
+                            pass  # conn.microphone.change_format(msg['rate'], msg['encoding'])
 
-                    elif msg['type'] == 'mute':
+                    elif msg["type"] == "mute":
                         if conn.microphone:
                             conn.microphone.toggle_mute()
                         self.send_mic_status(conn)
 
-                    elif msg['type'] == 'volume':
+                    elif msg["type"] == "volume":
                         if conn.microphone:
-                            conn.microphone.change_volume(msg['volume'])
+                            conn.microphone.change_volume(msg["volume"])
                         self.send_mic_status(conn)
 
                 elif opcode == httpserver.WS_OP_BIN:
-                    #obplayer.Log.log("websocket recv: " + str(len(msg)) + " " + repr(msg[:20]) + "...", 'debug')
-                    #conn.websocket_write_message(httpserver.WS_OP_BIN, ''.join(chr(random.getrandbits(8)) for i in range(len(msg))))
-                    #conn.websocket_write_message(opcode, msg)
+                    # obplayer.Log.log("websocket recv: " + str(len(msg)) + " " + repr(msg[:20]) + "...", 'debug')
+                    # conn.websocket_write_message(httpserver.WS_OP_BIN, ''.join(chr(random.getrandbits(8)) for i in range(len(msg))))
+                    # conn.websocket_write_message(opcode, msg)
                     if not conn.microphone:
-                        obplayer.Log.log("websocket audio stream not negotiated", 'error')
+                        obplayer.Log.log(
+                            "websocket audio stream not negotiated", "error"
+                        )
                     elif type(msg) == bytearray:
                         conn.microphone.queue_data(msg)
-                    #conn.websocket_write_message(httpserver.WS_OP_BIN, data)
+                    # conn.websocket_write_message(httpserver.WS_OP_BIN, data)
 
             except OSError as e:
-                obplayer.Log.log("OSError: " + str(e), 'error')
+                obplayer.Log.log("OSError: " + str(e), "error")
                 break
 
             except httpserver.WebSocketError as e:
-                obplayer.Log.log(str(e), 'error')
+                obplayer.Log.log(str(e), "error")
                 break
 
             except Exception as e:
-                obplayer.Log.log(traceback.format_exc(), 'error')
+                obplayer.Log.log(traceback.format_exc(), "error")
 
-        obplayer.Log.log("websocket connection closed", 'liveassist')
+        obplayer.Log.log("websocket connection closed", "liveassist")
         if conn.microphone:
             conn.microphone.quit()
         self.websockets.remove(conn)
@@ -223,5 +240,5 @@ class ObLiveAssist (httpserver.ObHTTPServer):
         msg = conn.microphone.get_volume()
         if not msg:
             return
-        msg['type'] = 'mic-status'
+        msg["type"] = "mic-status"
         conn.websocket_write_message(httpserver.WS_OP_TEXT, json.dumps(msg))

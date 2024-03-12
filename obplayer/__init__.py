@@ -20,7 +20,7 @@ You should have received a copy of the GNU Affero General Public License
 along with OpenBroadcaster Player.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __future__ import absolute_import 
+from __future__ import absolute_import
 
 from obplayer.task import ObThread
 from obplayer.log import ObLog
@@ -35,6 +35,6 @@ Config = None
 Gui = None
 Main = None
 
+
 def main():
     ObMainApp().start()
-

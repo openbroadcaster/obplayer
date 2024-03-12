@@ -26,7 +26,8 @@ import os
 import traceback
 
 import gi
-gi.require_version('Gst', '1.0')
+
+gi.require_version("Gst", "1.0")
 from gi.repository import GObject, Gst, GstVideo, GstController
 
 from .base import ObGstPipeline
@@ -50,9 +51,9 @@ class ObBreakPipeline (ObGstPipeline):
 """
 
 
-class ObBreakPipeline (ObGstPipeline):
-    min_class = [ 'audio' ]
-    max_class = [ 'audio', 'visual' ]
+class ObBreakPipeline(ObGstPipeline):
+    min_class = ["audio"]
+    max_class = ["audio", "visual"]
 
     def __init__(self, name, player):
         ObGstPipeline.__init__(self, name)
@@ -62,35 +63,39 @@ class ObBreakPipeline (ObGstPipeline):
 
         self.pipeline = Gst.Pipeline(name)
 
-        self.audiotestsrc = Gst.ElementFactory.make('audiotestsrc', name + '-audiotestsrc')
-        self.audiotestsrc.set_property('wave', 4)       # silence
-        self.audiotestsrc.set_property('is-live', True)
+        self.audiotestsrc = Gst.ElementFactory.make(
+            "audiotestsrc", name + "-audiotestsrc"
+        )
+        self.audiotestsrc.set_property("wave", 4)  # silence
+        self.audiotestsrc.set_property("is-live", True)
         self.pipeline.add(self.audiotestsrc)
 
-        self.videotestsrc = Gst.ElementFactory.make('videotestsrc', name + '-videotestsrc')
-        self.videotestsrc.set_property('pattern', 2)       # black screen
-        self.videotestsrc.set_property('is-live', True)
+        self.videotestsrc = Gst.ElementFactory.make(
+            "videotestsrc", name + "-videotestsrc"
+        )
+        self.videotestsrc.set_property("pattern", 2)  # black screen
+        self.videotestsrc.set_property("is-live", True)
         self.pipeline.add(self.videotestsrc)
 
-        self.fakesinks = { }
-        for output in [ 'audio', 'visual' ]:
-            self.fakesinks[output] = Gst.ElementFactory.make('fakesink')
-            #self.add_pad(Gst.GhostPad.new('src_' + output, self.audiotestsrc.get_static_pad('src')))
+        self.fakesinks = {}
+        for output in ["audio", "visual"]:
+            self.fakesinks[output] = Gst.ElementFactory.make("fakesink")
+            # self.add_pad(Gst.GhostPad.new('src_' + output, self.audiotestsrc.get_static_pad('src')))
 
-        self.set_property('audio-sink', self.fakesinks['audio'])
-        self.set_property('video-sink', self.fakesinks['visual'])
+        self.set_property("audio-sink", self.fakesinks["audio"])
+        self.set_property("video-sink", self.fakesinks["visual"])
 
         self.register_signals()
 
     def set_property(self, property, value):
-        if property == 'audio-sink':
+        if property == "audio-sink":
             if self.audiosink:
                 self.pipeline.remove(self.audiosink)
             self.audiosink = value
             if self.audiosink:
                 self.pipeline.add(self.audiosink)
                 self.audiotestsrc.link(self.audiosink)
-        elif property == 'video-sink':
+        elif property == "video-sink":
             if self.videosink:
                 self.pipeline.remove(self.videosink)
             self.videosink = value
@@ -100,25 +105,23 @@ class ObBreakPipeline (ObGstPipeline):
 
     def patch(self, mode):
         self.wait_state(Gst.State.NULL)
-        if 'audio' in mode:
-            self.set_property('audio-sink', self.player.outputs['audio'].get_bin())
-        if 'visual' in mode:
-            self.set_property('video-sink', self.player.outputs['visual'].get_bin())
+        if "audio" in mode:
+            self.set_property("audio-sink", self.player.outputs["audio"].get_bin())
+        if "visual" in mode:
+            self.set_property("video-sink", self.player.outputs["visual"].get_bin())
         ObGstPipeline.patch(self, mode)
         self.wait_state(Gst.State.PLAYING)
-        if obplayer.Config.setting('gst_init_callback'):
-            os.system(obplayer.Config.setting('gst_init_callback'))
+        if obplayer.Config.setting("gst_init_callback"):
+            os.system(obplayer.Config.setting("gst_init_callback"))
 
     def unpatch(self, mode):
         self.wait_state(Gst.State.NULL)
-        if 'audio' in mode:
-            self.set_property('audio-sink', self.fakesinks['audio'])
-        if 'visual' in mode:
-            self.set_property('video-sink', self.fakesinks['visual'])
+        if "audio" in mode:
+            self.set_property("audio-sink", self.fakesinks["audio"])
+        if "visual" in mode:
+            self.set_property("video-sink", self.fakesinks["visual"])
         ObGstPipeline.unpatch(self, mode)
         if len(self.mode) > 0:
             self.wait_state(Gst.State.PLAYING)
-            if obplayer.Config.setting('gst_init_callback'):
-                os.system(obplayer.Config.setting('gst_init_callback'))
-
-
+            if obplayer.Config.setting("gst_init_callback"):
+                os.system(obplayer.Config.setting("gst_init_callback"))

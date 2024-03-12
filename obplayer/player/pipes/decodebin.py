@@ -27,50 +27,58 @@ import time
 import traceback
 
 import gi
-gi.require_version('Gst', '1.0')
+
+gi.require_version("Gst", "1.0")
 from gi.repository import GObject, Gst, GstVideo, GstController
 
 from .base import ObGstPipeline
 
 
-class ObPlayBinPipeline (ObGstPipeline):
-    min_class = [ 'audio', 'visual' ]
-    max_class = [ 'audio', 'visual' ]
+class ObPlayBinPipeline(ObGstPipeline):
+    min_class = ["audio", "visual"]
+    max_class = ["audio", "visual"]
 
     def __init__(self, name, player, audiovis=False):
         ObGstPipeline.__init__(self, name)
         self.player = player
         self.play_start_time = 0
-        self.pipeline = Gst.ElementFactory.make('playbin', name)
+        self.pipeline = Gst.ElementFactory.make("playbin", name)
         # TODO this is false for testing
-        #self.pipeline.set_property('force-aspect-ratio', False)
-        self.pipeline.set_property('force-aspect-ratio', True)
+        # self.pipeline.set_property('force-aspect-ratio', False)
+        self.pipeline.set_property("force-aspect-ratio", True)
 
         if audiovis is True:
-            self.audiovis = Gst.ElementFactory.make('libvisual_jess', name + '-visualizer')
-            self.pipeline.set_property('flags', self.pipeline.get_property('flags') | 0x00000008)
-            self.pipeline.set_property('vis-plugin', self.audiovis)
+            self.audiovis = Gst.ElementFactory.make(
+                "libvisual_jess", name + "-visualizer"
+            )
+            self.pipeline.set_property(
+                "flags", self.pipeline.get_property("flags") | 0x00000008
+            )
+            self.pipeline.set_property("vis-plugin", self.audiovis)
 
-        self.fakesinks = { }
-        for output in list(self.player.outputs.keys()) + [ 'audio', 'visual' ]:
-            self.fakesinks[output] = Gst.ElementFactory.make('fakesink')
+        self.fakesinks = {}
+        for output in list(self.player.outputs.keys()) + ["audio", "visual"]:
+            self.fakesinks[output] = Gst.ElementFactory.make("fakesink")
 
-        self.pipeline.set_property('audio-sink', self.fakesinks['audio'])
-        self.pipeline.set_property('video-sink', self.fakesinks['visual'])
+        self.pipeline.set_property("audio-sink", self.fakesinks["audio"])
+        self.pipeline.set_property("video-sink", self.fakesinks["visual"])
 
         self.register_signals()
-        #self.pipeline.connect("about-to-finish", self.about_to_finish_handler)
+        # self.pipeline.connect("about-to-finish", self.about_to_finish_handler)
 
     def patch(self, mode):
-        obplayer.Log.log(self.name + ": patching " + mode, 'debug')
+        obplayer.Log.log(self.name + ": patching " + mode, "debug")
 
         (change, state, pending) = self.pipeline.get_state(0)
         self.wait_state(Gst.State.NULL)
 
-        for output in mode.split('/'):
+        for output in mode.split("/"):
             if output not in self.mode:
-                #print self.name + " -- Connecting " + output
-                self.pipeline.set_property('audio-sink' if output == 'audio' else 'video-sink', self.player.outputs[output].get_bin())
+                # print self.name + " -- Connecting " + output
+                self.pipeline.set_property(
+                    "audio-sink" if output == "audio" else "video-sink",
+                    self.player.outputs[output].get_bin(),
+                )
                 self.mode.add(output)
 
         if state == Gst.State.PLAYING:
@@ -78,17 +86,20 @@ class ObPlayBinPipeline (ObGstPipeline):
             self.wait_state(Gst.State.PLAYING)
 
     def unpatch(self, mode):
-        obplayer.Log.log(self.name + ": unpatching " + mode, 'debug')
+        obplayer.Log.log(self.name + ": unpatching " + mode, "debug")
 
         (change, state, pending) = self.pipeline.get_state(0)
         self.wait_state(Gst.State.NULL)
 
-        for output in mode.split('/'):
+        for output in mode.split("/"):
             if output in self.mode:
-                #print self.name + " -- Disconnecting " + output
-                self.pipeline.set_property('audio-sink' if output == 'audio' else 'video-sink', self.fakesinks[output])
-                #parent = self.player.outputs[output].get_bin().get_parent()
-                #if parent:
+                # print self.name + " -- Disconnecting " + output
+                self.pipeline.set_property(
+                    "audio-sink" if output == "audio" else "video-sink",
+                    self.fakesinks[output],
+                )
+                # parent = self.player.outputs[output].get_bin().get_parent()
+                # if parent:
                 #    parent.remove(self.player.outputs[output].get_bin())
                 self.mode.discard(output)
 
@@ -97,35 +108,44 @@ class ObPlayBinPipeline (ObGstPipeline):
             self.wait_state(Gst.State.PLAYING)
 
     def set_request(self, req):
-        self.play_start_time = req['start_time']
-        #self.pipeline.set_property('uri', Gst.filename_to_uri(req['file_location'] + '/' + req['filename']))
-        self.pipeline.set_property('uri', req['uri'])
+        self.play_start_time = req["start_time"]
+        # self.pipeline.set_property('uri', Gst.filename_to_uri(req['file_location'] + '/' + req['filename']))
+        self.pipeline.set_property("uri", req["uri"])
         self.seek_pause()
 
     def seek_pause(self):
-        self.player.outputs['mixer'].main_off()
+        self.player.outputs["mixer"].main_off()
         # Set pipeline to paused state
         self.wait_state(Gst.State.PAUSED)
 
-        if obplayer.Config.setting('gst_init_callback'):
-            os.system(obplayer.Config.setting('gst_init_callback'))
+        if obplayer.Config.setting("gst_init_callback"):
+            os.system(obplayer.Config.setting("gst_init_callback"))
 
         if self.play_start_time <= 0:
             self.play_start_time = time.time()
 
         offset = time.time() - self.play_start_time
         if offset != 0:
-            if self.pipeline.seek_simple(Gst.Format.TIME, Gst.SeekFlags.FLUSH, offset * Gst.SECOND) == False:
-                obplayer.Log.log('unable to seek on this track', 'error')
-            if(offset > 0.25):
-                obplayer.Log.log('resuming track at ' + str(offset) + ' seconds.', 'player')
+            if (
+                self.pipeline.seek_simple(
+                    Gst.Format.TIME, Gst.SeekFlags.FLUSH, offset * Gst.SECOND
+                )
+                == False
+            ):
+                obplayer.Log.log("unable to seek on this track", "error")
+            if offset > 0.25:
+                obplayer.Log.log(
+                    "resuming track at " + str(offset) + " seconds.", "player"
+                )
             self.wait_state(Gst.State.PAUSED)
 
-        self.player.outputs['mixer'].main_on()
+        self.player.outputs["mixer"].main_on()
 
-class ObAudioPlayBinPipeline (ObPlayBinPipeline):
-    min_class = [ 'audio' ]
-    max_class = [ 'audio', 'visual' ]
+
+class ObAudioPlayBinPipeline(ObPlayBinPipeline):
+    min_class = ["audio"]
+    max_class = ["audio", "visual"]
+
 
 """
 class ObAudioPlayBinPipeline (ObGstPipeline):

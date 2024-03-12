@@ -26,23 +26,26 @@ import serial
 import traceback
 
 
-class SerialTrigger (object):
+class SerialTrigger(object):
     def __init__(self):
-        self.trigger_serial = obplayer.Config.setting('alerts_trigger_serial')
-        self.trigger_serial_file = obplayer.Config.setting('alerts_trigger_serial_file')
+        self.trigger_serial = obplayer.Config.setting("alerts_trigger_serial")
+        self.trigger_serial_file = obplayer.Config.setting("alerts_trigger_serial_file")
         self.trigger_serial_fd = None
         self.initialize()
 
     def initialize(self):
         try:
-            obplayer.Log.log("initializing serial trigger on port " + self.trigger_serial_file, 'alerts')
+            obplayer.Log.log(
+                "initializing serial trigger on port " + self.trigger_serial_file,
+                "alerts",
+            )
 
-            #serial_fd = serial.Serial(self.trigger_serial_file, baudrate=9600)
-            #serial_fd.setDTR(False)
-            #serial_fd.close()
+            # serial_fd = serial.Serial(self.trigger_serial_file, baudrate=9600)
+            # serial_fd.setDTR(False)
+            # serial_fd.close()
         except:
-            obplayer.Log.log("failed to initalize serial trigger", 'alerts')
-            obplayer.Log.log(traceback.format_exc(), 'error')
+            obplayer.Log.log("failed to initalize serial trigger", "alerts")
+            obplayer.Log.log(traceback.format_exc(), "error")
 
     def alert_cycle_init(self):
         pass
@@ -52,23 +55,34 @@ class SerialTrigger (object):
 
     def alert_cycle_start(self):
         try:
-            obplayer.Log.log("asserted DTR on serial port " + self.trigger_serial_file, 'alerts')
+            obplayer.Log.log(
+                "asserted DTR on serial port " + self.trigger_serial_file, "alerts"
+            )
             if self.trigger_serial_fd:
                 self.trigger_serial_fd.close()
-            self.trigger_serial_fd = serial.Serial(self.trigger_serial_file, baudrate=9600)
+            self.trigger_serial_fd = serial.Serial(
+                self.trigger_serial_file, baudrate=9600
+            )
             self.trigger_serial_fd.setDTR(True)
         except:
-            obplayer.Log.log("failed to assert DTR on serial port " + self.trigger_serial_file, 'alerts')
-            obplayer.Log.log(traceback.format_exc(), 'error')
+            obplayer.Log.log(
+                "failed to assert DTR on serial port " + self.trigger_serial_file,
+                "alerts",
+            )
+            obplayer.Log.log(traceback.format_exc(), "error")
 
     def alert_cycle_stop(self):
         try:
-            obplayer.Log.log("resetting DTR on serial port " + self.trigger_serial_file, 'alerts')
+            obplayer.Log.log(
+                "resetting DTR on serial port " + self.trigger_serial_file, "alerts"
+            )
             if self.trigger_serial_fd:
                 self.trigger_serial_fd.setDTR(False)
                 self.trigger_serial_fd.close()
                 self.trigger_serial_fd = None
         except:
-            obplayer.Log.log("failed to assert DTR on serial port " + self.trigger_serial_file, 'alerts')
-            obplayer.Log.log(traceback.format_exc(), 'error')
-
+            obplayer.Log.log(
+                "failed to assert DTR on serial port " + self.trigger_serial_file,
+                "alerts",
+            )
+            obplayer.Log.log(traceback.format_exc(), "error")

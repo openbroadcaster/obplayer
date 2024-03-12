@@ -28,37 +28,44 @@ import threading
 import traceback
 
 import gi
-gi.require_version('Gst', '1.0')
+
+gi.require_version("Gst", "1.0")
 from gi.repository import GObject, Gst
 
 from .base import ObGstStreamer
 
 
 output_settings = {
-    '240p': (426, 240),
-    '360p': (640, 360),
-    '480p': (854, 480),
-    '720p': (1280, 720),
-    '1080p': (1920, 1080),
+    "240p": (426, 240),
+    "360p": (640, 360),
+    "480p": (854, 480),
+    "720p": (1280, 720),
+    "1080p": (1920, 1080),
 }
 
-class ObRTMPStreamer (ObGstStreamer):
-    def __init__(self):
-        ObGstStreamer.__init__(self, 'rtmp')
 
-        self.mode = output_settings[obplayer.Config.setting('streamer_rtmp_mode')]
+class ObRTMPStreamer(ObGstStreamer):
+    def __init__(self):
+        ObGstStreamer.__init__(self, "rtmp")
+
+        self.mode = output_settings[obplayer.Config.setting("streamer_rtmp_mode")]
 
         obplayer.Player.add_inter_tap(self.name)
 
-        self.audiopipe = [ ]
+        self.audiopipe = []
 
-        self.audiosrc = Gst.ElementFactory.make('interpipesrc')
-        self.audiosrc.set_property('stream-sync', 'restart-ts')
-        self.audiosrc.set_property('is-live', True)
-        self.audiosrc.set_property('listen-to', 'interpipe-output')
-        self.audiosrc.set_property('allow-renegotiation', True)
-        self.audiosrc.set_property('format', 'time')
-        self.audiosrc.set_property('caps', Gst.Caps.from_string("audio/x-raw,format=S16LE,rate=44100,layout=interleaved,channels=2"))
+        self.audiosrc = Gst.ElementFactory.make("interpipesrc")
+        self.audiosrc.set_property("stream-sync", "restart-ts")
+        self.audiosrc.set_property("is-live", True)
+        self.audiosrc.set_property("listen-to", "interpipe-output")
+        self.audiosrc.set_property("allow-renegotiation", True)
+        self.audiosrc.set_property("format", "time")
+        self.audiosrc.set_property(
+            "caps",
+            Gst.Caps.from_string(
+                "audio/x-raw,format=S16LE,rate=44100,layout=interleaved,channels=2"
+            ),
+        )
         self.audiopipe.append(self.audiosrc)
 
         """
@@ -82,31 +89,34 @@ class ObRTMPStreamer (ObGstStreamer):
         self.audiopipe.append(Gst.ElementFactory.make("audioconvert"))
         self.audiopipe.append(Gst.ElementFactory.make("audioresample"))
 
-        caps = Gst.ElementFactory.make('capsfilter')
-        #caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100"))
-        caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=48000"))
+        caps = Gst.ElementFactory.make("capsfilter")
+        # caps.set_property('caps', Gst.Caps.from_string("audio/x-raw,channels=2,rate=44100"))
+        caps.set_property(
+            "caps", Gst.Caps.from_string("audio/x-raw,channels=2,rate=48000")
+        )
         self.audiopipe.append(caps)
 
         self.encoder = Gst.ElementFactory.make("voaacenc")
-        self.encoder.set_property("bitrate", obplayer.Config.setting('streamer_rtmp_audio_bitrate'))
-        #self.encoder = Gst.ElementFactory.make("lamemp3enc")
-        #self.encoder = Gst.ElementFactory.make("opusenc")
-        #self.encoder = Gst.ElementFactory.make("vorbisenc")
+        self.encoder.set_property(
+            "bitrate", obplayer.Config.setting("streamer_rtmp_audio_bitrate")
+        )
+        # self.encoder = Gst.ElementFactory.make("lamemp3enc")
+        # self.encoder = Gst.ElementFactory.make("opusenc")
+        # self.encoder = Gst.ElementFactory.make("vorbisenc")
         self.audiopipe.append(self.encoder)
 
         self.audiopipe.append(Gst.ElementFactory.make("queue2"))
 
         self.build_pipeline(self.audiopipe)
 
+        self.videopipe = []
 
-        self.videopipe = [ ]
-
-        self.intervideosrc = Gst.ElementFactory.make('intervideosrc')
-        self.intervideosrc.set_property('channel', self.name + ':video')
+        self.intervideosrc = Gst.ElementFactory.make("intervideosrc")
+        self.intervideosrc.set_property("channel", self.name + ":video")
         self.videopipe.append(self.intervideosrc)
 
-        #self.videopipe.append(Gst.ElementFactory.make("videotestsrc"))
-        #self.videopipe[-1].set_property('is-live', True)
+        # self.videopipe.append(Gst.ElementFactory.make("videotestsrc"))
+        # self.videopipe[-1].set_property('is-live', True)
 
         self.videopipe.append(Gst.ElementFactory.make("queue2"))
 
@@ -114,72 +124,93 @@ class ObRTMPStreamer (ObGstStreamer):
         self.videopipe.append(Gst.ElementFactory.make("videoconvert"))
         self.videopipe.append(Gst.ElementFactory.make("videoscale"))
 
-        caps = Gst.ElementFactory.make('capsfilter', "videocapsfilter")
+        caps = Gst.ElementFactory.make("capsfilter", "videocapsfilter")
 
         # Convert the value to the internal gstreamer value.
         # The input frame rates are stored as 23, 29, 59. These actually mean
         # 24.976, 29.97, and 59.94 FPS.
 
-        gst_framerate = str(obplayer.Config.setting('streamer_rtmp_framerate')) + "/1"
+        gst_framerate = str(obplayer.Config.setting("streamer_rtmp_framerate")) + "/1"
 
-        if obplayer.Config.setting('streamer_rtmp_framerate') == "23":
+        if obplayer.Config.setting("streamer_rtmp_framerate") == "23":
             gst_framerate = "24000/1001"
-        elif obplayer.Config.setting('streamer_rtmp_framerate') == "29":
+        elif obplayer.Config.setting("streamer_rtmp_framerate") == "29":
             gst_framerate = "30000/1001"
-        elif obplayer.Config.setting('streamer_rtmp_framerate') == "59":
+        elif obplayer.Config.setting("streamer_rtmp_framerate") == "59":
             gst_framerate = "60000/1001"
 
-        caps.set_property('caps', Gst.Caps.from_string("video/x-raw,width={0},height={1},framerate={2},pixel-aspect-ratio=1/1".format(self.mode[0], self.mode[1], gst_framerate)))
+        caps.set_property(
+            "caps",
+            Gst.Caps.from_string(
+                "video/x-raw,width={0},height={1},framerate={2},pixel-aspect-ratio=1/1".format(
+                    self.mode[0], self.mode[1], gst_framerate
+                )
+            ),
+        )
         self.videopipe.append(caps)
 
-        #self.videopipe.append(Gst.ElementFactory.make("vp8enc"))
-        #self.videopipe.append(Gst.ElementFactory.make("vp9enc"))
-        #self.videopipe.append(Gst.ElementFactory.make("theoraenc"))
+        # self.videopipe.append(Gst.ElementFactory.make("vp8enc"))
+        # self.videopipe.append(Gst.ElementFactory.make("vp9enc"))
+        # self.videopipe.append(Gst.ElementFactory.make("theoraenc"))
         self.videopipe.append(Gst.ElementFactory.make("x264enc"))
 
-        self.videopipe[-1].set_property('bitrate', obplayer.Config.setting('streamer_rtmp_bitrate'))
-        self.videopipe[-1].set_property('key-int-max', int(obplayer.Config.setting('streamer_rtmp_framerate')[:-1]) * 2)
-        self.videopipe[-1].set_property('speed-preset', obplayer.Config.setting('streamer_rtmp_encoder_preset'))
-        self.videopipe[-1].set_property('tune', obplayer.Config.setting('streamer_rtmp_encoder_tune'))
-        self.videopipe[-1].set_property('psy-tune', obplayer.Config.setting('streamer_rtmp_encoder_psytune'))
-                
+        self.videopipe[-1].set_property(
+            "bitrate", obplayer.Config.setting("streamer_rtmp_bitrate")
+        )
+        self.videopipe[-1].set_property(
+            "key-int-max",
+            int(obplayer.Config.setting("streamer_rtmp_framerate")[:-1]) * 2,
+        )
+        self.videopipe[-1].set_property(
+            "speed-preset", obplayer.Config.setting("streamer_rtmp_encoder_preset")
+        )
+        self.videopipe[-1].set_property(
+            "tune", obplayer.Config.setting("streamer_rtmp_encoder_tune")
+        )
+        self.videopipe[-1].set_property(
+            "psy-tune", obplayer.Config.setting("streamer_rtmp_encoder_psytune")
+        )
+
         # ENCODER TWEAKS FOR LOW END MACHINES
-        #self.videopipe[-1].set_property('cabac', False)
-        #self.videopipe[-1].set_property('ref', 1)
-        #self.videopipe[-1].set_property('bframes', 0)
-        #self.videopipe[-1].set_property('mb-tree', 0)
-        #self.videopipe[-1].set_property('me', 'umh')
-        #self.videopipe[-1].set_property('subme', 2)
-        #self.videopipe[-1].set_property('sync-lookahead', 0)
-        #self.videopipe[-1].set_property('rc-lookahead', 0)
-        #self.videopipe[-1].set_property('trellis', 0)
-        #self.videopipe[-1].set_property('threads', 3)
-        #self.videopipe[-1].set_property('sliced-threads', True)
+        # self.videopipe[-1].set_property('cabac', False)
+        # self.videopipe[-1].set_property('ref', 1)
+        # self.videopipe[-1].set_property('bframes', 0)
+        # self.videopipe[-1].set_property('mb-tree', 0)
+        # self.videopipe[-1].set_property('me', 'umh')
+        # self.videopipe[-1].set_property('subme', 2)
+        # self.videopipe[-1].set_property('sync-lookahead', 0)
+        # self.videopipe[-1].set_property('rc-lookahead', 0)
+        # self.videopipe[-1].set_property('trellis', 0)
+        # self.videopipe[-1].set_property('threads', 3)
+        # self.videopipe[-1].set_property('sliced-threads', True)
 
         self.videopipe.append(Gst.ElementFactory.make("queue2"))
 
         self.build_pipeline(self.videopipe)
 
-
-        self.commonpipe = [ ]
+        self.commonpipe = []
 
         self.commonpipe.append(Gst.ElementFactory.make("flvmux"))
-        #self.commonpipe.append(Gst.ElementFactory.make("oggmux"))
-        #self.commonpipe.append(Gst.ElementFactory.make("webmmux"))
-        self.commonpipe[-1].set_property('streamable', True)
+        # self.commonpipe.append(Gst.ElementFactory.make("oggmux"))
+        # self.commonpipe.append(Gst.ElementFactory.make("webmmux"))
+        self.commonpipe[-1].set_property("streamable", True)
 
         self.commonpipe.append(Gst.ElementFactory.make("queue2"))
 
         self.commonpipe.append(Gst.ElementFactory.make("rtmpsink"))
 
-		# Flexible RTMP URL input handling
-        rtmp_str = obplayer.Config.setting('streamer_rtmp_url') + '/' + obplayer.Config.setting('streamer_rtmp_key')
+        # Flexible RTMP URL input handling
+        rtmp_str = (
+            obplayer.Config.setting("streamer_rtmp_url")
+            + "/"
+            + obplayer.Config.setting("streamer_rtmp_key")
+        )
 
-		# TODO: create regex function to make check ignore case
+        # TODO: create regex function to make check ignore case
         if rtmp_str.startswith("rtmp://") or rtmp_str.startswith("rtmps://"):
-            self.commonpipe[-1].set_property('location', rtmp_str)
+            self.commonpipe[-1].set_property("location", rtmp_str)
         else:
-            self.commonpipe[-1].set_property('location', 'rtmp://' + rtmp_str)
+            self.commonpipe[-1].set_property("location", "rtmp://" + rtmp_str)
 
         """
         self.shout2send = Gst.ElementFactory.make("shout2send", "shout2send")
@@ -197,12 +228,10 @@ class ObRTMPStreamer (ObGstStreamer):
         self.commonpipe.append(self.shout2send)
         """
 
-        #self.commonpipe.append(Gst.ElementFactory.make("filesink"))
-        #self.commonpipe[-1].set_property('location', "/home/trans/test.webm")
+        # self.commonpipe.append(Gst.ElementFactory.make("filesink"))
+        # self.commonpipe[-1].set_property('location', "/home/trans/test.webm")
 
         self.build_pipeline(self.commonpipe)
 
         self.audiopipe[-1].link(self.commonpipe[0])
         self.videopipe[-1].link(self.commonpipe[0])
-
-

@@ -40,19 +40,19 @@ class ObGui:
 
         else:
             global Gtk, Gdk, GdkX11, GdkPixbuf, cairo
-            gi.require_version('Gtk', '3.0')
-            gi.require_version('GdkX11', '3.0')
+            gi.require_version("Gtk", "3.0")
+            gi.require_version("GdkX11", "3.0")
             from gi.repository import Gtk, Gdk, GdkX11, GdkPixbuf, cairo
 
         builder = Gtk.Builder()
-        builder.add_from_file('obplayer/ui.glade')
+        builder.add_from_file("obplayer/ui.glade")
 
         # SET SOME COLORS
         gtk_black = Gdk.Color(0, 0, 0)
 
         # MAIN WINDOW
-        self.gui_window = builder.get_object('main_window')
-        self.gui_window.set_title('Openbroadcaster GTK Player')
+        self.gui_window = builder.get_object("main_window")
+        self.gui_window.set_title("Openbroadcaster GTK Player")
         self.gui_window.resize(640, 480)
         self.gui_window_fullscreen = False
 
@@ -60,8 +60,8 @@ class ObGui:
         self.gui_window.connect("key-press-event", self.key_press)
 
         # MISC WIDGETS
-        self.gui_toolbar = builder.get_object('toolbar')
-        self.gui_statusbar = builder.get_object('statusbar')
+        self.gui_toolbar = builder.get_object("toolbar")
+        self.gui_statusbar = builder.get_object("statusbar")
 
         def do_nothing(one, two):
             pass
@@ -77,14 +77,14 @@ class ObGui:
         self.gui_drawing_area.realize()
         """
 
-        self.gui_gst_area = builder.get_object('drawingarea_gst')
+        self.gui_gst_area = builder.get_object("drawingarea_gst")
         self.gui_gst_area_alpha = 1
         self.gui_gst_area.set_size_request(250, 250)
-        self.gui_gst_area.connect('draw', do_nothing)
+        self.gui_gst_area.connect("draw", do_nothing)
         self.gui_gst_area.add_events(Gdk.EventMask.POINTER_MOTION_MASK)
         self.gui_gst_area.modify_bg(Gtk.StateFlags.NORMAL, gtk_black)
         self.gui_gst_area.realize()
-        
+
         try:
             # Test for X11 session.
             self.gst_xid = self.gui_gst_area.get_window().get_xid()
@@ -164,7 +164,9 @@ class ObGui:
             self.gui_window.fullscreen()
             self.gui_window_fullscreen = True
             self.gui_toolbar.hide()
-            self.fullscreen_hide_pointer_id = GObject.timeout_add(1000, self.fullscreen_hide_pointer)
+            self.fullscreen_hide_pointer_id = GObject.timeout_add(
+                1000, self.fullscreen_hide_pointer
+            )
 
         else:
             self.gui_window.unfullscreen()
@@ -193,7 +195,9 @@ class ObGui:
             GObject.source_remove(self.fullscreen_hide_pointer_id)
 
         self.fullscreen_show_pointer()
-        self.fullscreen_hide_pointer_id = GObject.timeout_add(3000, self.fullscreen_hide_pointer)
+        self.fullscreen_hide_pointer_id = GObject.timeout_add(
+            3000, self.fullscreen_hide_pointer
+        )
 
         if event.y < 20:
             self.gui_toolbar.show()
@@ -290,4 +294,3 @@ class ObGui:
             self.gui_drawing_area.queue_draw()
         return True
     """
-

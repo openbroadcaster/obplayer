@@ -27,19 +27,28 @@ import time
 import obplayer
 
 from .scheduler import ObScheduler
-from .sync import ObSync, VersionUpdateThread, SyncShowsThread, SyncEmergThread, SyncMediaThread, SyncPlaylogThread, Sync_Alert_Media_Thread
+from .sync import (
+    ObSync,
+    VersionUpdateThread,
+    SyncShowsThread,
+    SyncEmergThread,
+    SyncMediaThread,
+    SyncPlaylogThread,
+    Sync_Alert_Media_Thread,
+)
 from .priority import ObPriorityBroadcaster
 from .data import ObRemoteData
 import threading
 
-#Sync = None
-#Scheduler = None
+# Sync = None
+# Scheduler = None
+
 
 def first_sync():
     obplayer.Sync.sync_shows(True)
     obplayer.Sync.sync_priority_broadcasts()
     obplayer.Sync.sync_media()
-    if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
+    if obplayer.Config.setting("alerts_broadcast_message_in_indigenous_languages"):
         obplayer.Sync.sync_alert_media()
 
     if obplayer.Scheduler.first_sync:
@@ -52,17 +61,19 @@ def first_sync():
 
     start_sync_threads()
 
+
 def start_sync_threads():
     # Start sync threads
     SyncShowsThread().start()
     SyncEmergThread().start()
     SyncMediaThread().start()
     SyncPlaylogThread().start()
-    if obplayer.Config.setting('alerts_broadcast_message_in_indigenous_languages'):
+    if obplayer.Config.setting("alerts_broadcast_message_in_indigenous_languages"):
         Sync_Alert_Media_Thread().start()
 
+
 def init():
-    #global Sync, Scheduler
+    # global Sync, Scheduler
 
     obplayer.Sync = ObSync()
     obplayer.Scheduler = ObScheduler(first_sync=True)
@@ -72,14 +83,14 @@ def init():
     # reset show/show_media tables, priority tables
     if obplayer.Config.args.reset:
         obplayer.Scheduler.first_sync = True
-        obplayer.Log.log('resetting show, media, and priority data', 'data')
-        obplayer.RemoteData.empty_table('shows')
-        obplayer.RemoteData.empty_table('shows_media')
-        obplayer.RemoteData.empty_table('shows_voicetracks')
-        obplayer.RemoteData.empty_table('groups')
-        obplayer.RemoteData.empty_table('group_items')
-        obplayer.RemoteData.empty_table('priority_broadcasts')
-        obplayer.RemoteData.empty_table('alert_media')
+        obplayer.Log.log("resetting show, media, and priority data", "data")
+        obplayer.RemoteData.empty_table("shows")
+        obplayer.RemoteData.empty_table("shows_media")
+        obplayer.RemoteData.empty_table("shows_voicetracks")
+        obplayer.RemoteData.empty_table("groups")
+        obplayer.RemoteData.empty_table("group_items")
+        obplayer.RemoteData.empty_table("priority_broadcasts")
+        obplayer.RemoteData.empty_table("alert_media")
     else:
         obplayer.Scheduler.first_sync = False
 
@@ -88,12 +99,13 @@ def init():
 
     # if resetting the databases, run our initial sync.  otherwise skip and setup other sync interval timers.
     if obplayer.Config.args.reset:
-        #obplayer.Scheduler.pause_show(syncing=True)
+        # obplayer.Scheduler.pause_show(syncing=True)
         threading.Thread(target=first_sync, args=()).start()
     else:
         start_sync_threads()
 
+
 def quit():
     # backup our main db to disk.
-    if hasattr(obplayer, 'RemoteData') and obplayer.Main.exit_code == 0:
+    if hasattr(obplayer, "RemoteData") and obplayer.Main.exit_code == 0:
         obplayer.RemoteData.backup()

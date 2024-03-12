@@ -25,14 +25,16 @@ import obplayer
 import time
 
 
-class ObPlaylogData (obplayer.ObData):
+class ObPlaylogData(obplayer.ObData):
 
     def __init__(self):
         obplayer.ObData.__init__(self)
-        self.db = self.open_db(self.datadir + '/playlog.db')
+        self.db = self.open_db(self.datadir + "/playlog.db")
 
-        if not self.table_exists('playlog'):
-            self.execute("CREATE TABLE playlog (id INTEGER PRIMARY KEY, media_id NUMERIC, artist TEXT, title TEXT, datetime NUMERIC, context TEXT, emerg_id NUMERIC, notes TEXT)")
+        if not self.table_exists("playlog"):
+            self.execute(
+                "CREATE TABLE playlog (id INTEGER PRIMARY KEY, media_id NUMERIC, artist TEXT, title TEXT, datetime NUMERIC, context TEXT, emerg_id NUMERIC, notes TEXT)"
+            )
 
     #
     # Add entry to play log.
@@ -45,26 +47,32 @@ class ObPlaylogData (obplayer.ObData):
     # emerg_id : if this is an priority broadcast, what is the priority broadcast id?
     # notes : any misc notes (in particular, offset if play is resumed part-way through).
     #
-    def add_entry(self, media_id, artist, title, datetime, context, notes=''):
-        if not obplayer.Config.setting('sync_playlog_enable'):
+    def add_entry(self, media_id, artist, title, datetime, context, notes=""):
+        if not obplayer.Config.setting("sync_playlog_enable"):
             return
 
         # TODO this is a hack until we can change things server-side
-        if context == 'alerts':
-            context = 'emerg'
-        elif context in [ 'scheduler', 'linein' ]:
-            context = 'show'
+        if context == "alerts":
+            context = "emerg"
+        elif context in ["scheduler", "linein"]:
+            context = "show"
         else:
-            context = 'fallback'
+            context = "fallback"
 
-        self.execute("INSERT INTO playlog VALUES (null, ?, ?, ?, ?, ?, ?, ?)", (media_id, artist, title, datetime, context, str(0), notes))
+        self.execute(
+            "INSERT INTO playlog VALUES (null, ?, ?, ?, ?, ?, ?, ?)",
+            (media_id, artist, title, datetime, context, str(0), notes),
+        )
         return self.db.last_insert_rowid()
 
     #
     # Get playlog from given timestamp (used for syncing with web app database)
     #
     def get_entries_since(self, timestamp):
-        return self.query("SELECT id,media_id,artist,title,datetime,context,emerg_id,notes from playlog WHERE datetime > " + str(timestamp))
+        return self.query(
+            "SELECT id,media_id,artist,title,datetime,context,emerg_id,notes from playlog WHERE datetime > "
+            + str(timestamp)
+        )
 
     #
     # Remove playlog entries since ID (used after a successful sync with web app database)
@@ -72,5 +80,3 @@ class ObPlaylogData (obplayer.ObData):
     def remove_entries_since(self, entryid):
         self.execute("DELETE from playlog WHERE id <= " + str(entryid))
         return True
-
-
