@@ -105,7 +105,7 @@ class ObData(object):
         return False
 
     def empty_table(self, table):
-        self.execute("DELETE from " + table)
+        self.execute("DELETE FROM " + table)
 
     def execute(self, query, bindings=None):
         return self.db.cursor().execute(query, bindings)

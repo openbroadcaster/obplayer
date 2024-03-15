@@ -341,7 +341,15 @@ class ObPlayer(object):
         request_pipe.start()
 
         if req["mixerstart"]:
-            self.outputs["mixer"].execute_instruction(req["mixerstart"])
+            # if mixerstart is string, normalize to array (first value is instruction, second is arguments)
+            if isinstance(req["mixerstart"], str):
+                req["mixerstart"] = [req["mixerstart"]]
+
+            instruction = req["mixerstart"][0]
+            arguments = req["mixerstart"][1] if len(req["mixerstart"]) > 1 else None
+
+            # handle request
+            self.outputs["mixer"].execute_instruction(instruction, arguments)
 
         if req["onstart"]:
             req["onstart"]()
@@ -376,7 +384,15 @@ class ObPlayer(object):
             outputs.Overlay.set_message("")
 
         if req["mixerend"]:
-            self.outputs["mixer"].execute_instruction(req["mixerend"])
+            # if mixerend is string, normalize to array (first value is instruction, second is arguments)
+            if isinstance(req["mixerend"], str):
+                req["mixerend"] = [req["mixerend"]]
+
+            instruction = req["mixerend"][0]
+            arguments = req["mixerend"][1] if len(req["mixerend"]) > 1 else None
+
+            # handle request
+            self.outputs["mixer"].execute_instruction(instruction, arguments)
 
         if req["onend"]:
             req["onend"]()

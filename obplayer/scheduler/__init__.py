@@ -78,21 +78,15 @@ def init():
     obplayer.Sync = ObSync()
     obplayer.Scheduler = ObScheduler(first_sync=True)
     obplayer.PriorityBroadcaster = ObPriorityBroadcaster()
-    obplayer.RemoteData = ObRemoteData()
 
-    # reset show/show_media tables, priority tables
     if obplayer.Config.args.reset:
         obplayer.Scheduler.first_sync = True
-        obplayer.Log.log("resetting show, media, and priority data", "data")
-        obplayer.RemoteData.empty_table("shows")
-        obplayer.RemoteData.empty_table("shows_media")
-        obplayer.RemoteData.empty_table("shows_voicetracks")
-        obplayer.RemoteData.empty_table("groups")
-        obplayer.RemoteData.empty_table("group_items")
-        obplayer.RemoteData.empty_table("priority_broadcasts")
-        obplayer.RemoteData.empty_table("alert_media")
+        obplayer.Log.log("resetting database", "data")
     else:
         obplayer.Scheduler.first_sync = False
+
+    # ObRemoteData init now handles reset
+    obplayer.RemoteData = ObRemoteData(obplayer.Config.args.reset)
 
     # report the player version number to the server if possible
     VersionUpdateThread().start()

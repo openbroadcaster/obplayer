@@ -29,13 +29,22 @@ import time
 
 class ObRemoteData(obplayer.ObData):
 
-    def __init__(self):
+    def __init__(self, reset=False):
         obplayer.ObData.__init__(self)
 
         # our main database, stored in memory.
         self.db = self.open_db(":memory:")
 
         self.verify_backup()
+
+        if(reset):
+            self.execute("DROP TABLE IF EXISTS shows")
+            self.execute("DROP TABLE IF EXISTS shows_media")
+            self.execute("DROP TABLE IF EXISTS shows_voicetracks")
+            self.execute("DROP TABLE IF EXISTS groups")
+            self.execute("DROP TABLE IF EXISTS group_items")
+            self.execute("DROP TABLE IF EXISTS priority_broadcasts")
+            self.execute("DROP TABLE IF EXISTS alert_media")
 
         if not self.table_exists("shows"):
             obplayer.Log.log("shows table not found, creating", "data")
@@ -97,7 +106,7 @@ class ObRemoteData(obplayer.ObData):
 
     def shows_create_table(self):
         self.execute(
-            "CREATE TABLE shows (id INTEGER PRIMARY KEY, show_id INTEGER, name TEXT, type TEXT, description TEXT, datetime NUMERIC UNIQUE, duration NUMERIC, last_updated NUMERIC)"
+            "CREATE TABLE shows (id INTEGER PRIMARY KEY, show_id INTEGER, name TEXT, type TEXT, description TEXT, datetime NUMERIC UNIQUE, duration NUMERIC, last_updated NUMERIC, last_track_fade NUMERIC)"
         )
         self.execute("CREATE UNIQUE INDEX datetime_index on shows (datetime)")
 

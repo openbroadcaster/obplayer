@@ -157,20 +157,45 @@ class ObAudioMixerBin(ObOutputBin):
         )
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
-    def main_fade_in(self):
+    def main_fade(self, arguments):
+
+        volume_element = self.pipeline.get_by_name("main-volume")
+        current_volume = volume_element.get_property("volume")
+        target_volume = arguments["volume"]
+        fade_time = arguments["time"]
+        fade_run_per_second = 20
+
+        # fade time is based on doing a full fade in/out.
+        fade_increment = fade_time / fade_run_per_second
+
+        # is this a fade in or fade out?
+        if current_volume < target_volume:
+            mode = "in"
+        else:
+            mode = "out"
 
         def run():
             self.main_fade_cancel = False
-            volume_element = self.pipeline.get_by_name("main-volume")
             current_volume = volume_element.get_property("volume")
 
-            while current_volume < 1.0:
-                if self.main_fade_cancel:
+            while True:
+                if (
+                    self.main_fade_cancel
+                    or (mode == "in" and current_volume >= target_volume)
+                    or (mode == "out" and current_volume <= target_volume)
+                ):
                     break
-                current_volume += 0.05
+
+                if mode == "in":
+                    current_volume += fade_increment
+                    current_volume = min(current_volume, target_volume)
+                else:
+                    current_volume -= fade_increment
+                    current_volume = max(current_volume, target_volume)
+
                 volume_element.set_property("volume", current_volume)
                 print("current volume: " + str(round(current_volume, 2)))
-                time.sleep(0.1)
+                time.sleep(1 / fade_run_per_second)
 
         # cancel any existing run
         if self.main_fade_thread is not None:
@@ -181,7 +206,7 @@ class ObAudioMixerBin(ObOutputBin):
         self.main_fade_thread = threading.Thread(target=run)
         self.main_fade_thread.start()
 
-    def execute_instruction(self, instruction):
+    def execute_instruction(self, instruction, arguments):
         obplayer.Log.log("mixer received instruction " + instruction, "debug")
         # TODO instruction should be more like "mixer_mode_alert" here? (confusing with above alert/on which are different)
         if instruction == "alert_on":
@@ -189,9 +214,11 @@ class ObAudioMixerBin(ObOutputBin):
         elif instruction == "alert_off":
             self.pipeline.get_by_name("main-volume").set_property("volume", 1.0)
         elif instruction == "voicetrack_on":
-            self.pipeline.get_by_name("main-volume").set_property("volume", 0.25)
+            self.main_fade({"volume": 0.25, "time": 0.5})
         elif instruction == "voicetrack_off":
-            self.main_fade_in()
+            self.main_fade({"volume": 1.0, "time": 2})
+        elif instruction == "main_fade":
+            self.main_fade(arguments)
         else:
             print("unknown mixer instruction: " + instruction)
 
