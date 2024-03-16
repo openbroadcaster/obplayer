@@ -37,7 +37,7 @@ class ObRemoteData(obplayer.ObData):
 
         self.verify_backup()
 
-        if(reset):
+        if reset:
             self.execute("DROP TABLE IF EXISTS shows")
             self.execute("DROP TABLE IF EXISTS shows_media")
             self.execute("DROP TABLE IF EXISTS shows_voicetracks")
@@ -232,7 +232,7 @@ class ObRemoteData(obplayer.ObData):
 
         # now add the show... (media not added here, but added by sync script)
         self.execute(
-            "INSERT or REPLACE into shows VALUES (null, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT or REPLACE into shows VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 show_id,
                 name,
@@ -241,6 +241,7 @@ class ObRemoteData(obplayer.ObData):
                 str(datetime),
                 duration,
                 str(last_updated),
+                0,  # last_track_fade
             ),
         )
         return self.db.last_insert_rowid()
