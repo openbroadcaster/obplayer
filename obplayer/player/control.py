@@ -685,7 +685,15 @@ class ObPlayerController(object):
     def get_request(self, present_time, media_class, allow_query=False):
         if self.hold_requests_flag is True:
             return None
+
+        # In the rest of this method's code, we may end up with requests that don't get cleared out.
+        # This ensures any requests that have already ended are cleared before we proceed.
+        # This fixes a scheduler bug where a request is added a second time (but shouldn't be).
+        # TODO: find out why scheduler request is added a second time (at least sometimes)?
+        self.remove_old_requests()
+
         index = self.find_current_request(present_time, media_class)
+
         if index is None and allow_query is True:
             self.call_player_request(present_time, media_class)
             index = self.find_current_request(
@@ -697,8 +705,14 @@ class ObPlayerController(object):
 
         with self.lock:
             req = self.queue[index]
+            # Remove request from queue since we're returning it for processing.
             self.queue = self.queue[index + 1 :]
         return req
+
+    def remove_old_requests(self):
+        with self.lock:
+            present_time = time.time()
+            self.queue = [req for req in self.queue if req["end_time"] > present_time]
 
     def find_current_request(self, present_time, media_class):
         output_list = media_class.split("/")
