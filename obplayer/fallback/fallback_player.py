@@ -51,6 +51,8 @@ class ObFallbackPlayer(obplayer.player.ObPlayerController):
         self.media_types.append("audio/flac")
         self.media_types.append("audio/mpeg")
         self.media_types.append("audio/ogg")
+        self.media_types.append("audio/x-wav")
+        self.media_types.append("audio/wav")
 
         # TODO we're always headless new so we never play images or video??
         # if obplayer.Config.headless == False:
@@ -123,6 +125,7 @@ class ObFallbackPlayer(obplayer.player.ObPlayerController):
 
     # the player is asking us what to play next
     def do_player_request(self, ctrl, present_time, media_class):
+
         if len(self.media) == 0:
             return False
 
