@@ -49,7 +49,7 @@ Alerts Tab
   alerts_trigger_serial_file_invalid: The RS-232 device filename does not appear to be valid.
 
   alerts_trigger_streamer: Trigger Icecast Stream on Alerts
-  alerts_trigger_streamer_tooltip: If checked, the streamer module (configured on the 'Streaming' tab) will be started when an alert cycle starts, and stopped when it completes.  Make sure to uncheck the 'Play Stream on Startup' option on the 'Streaming' tab so that it only doesn't automatically start when the program first starts.
+  alerts_trigger_streamer_tooltip: Please ensure the streaming module and first icecast stream are enabled, and "play streams at startup" is unchecked. See "streaming" tab.
 
   alerts_play_tests: Play Test Alerts
   alerts_play_tests_tooltip: Include alerts that are marked as a test.  These are not scheduled tests of the alert system, but internal system tests which are not normally played to the public.
