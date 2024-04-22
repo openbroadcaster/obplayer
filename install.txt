@@ -1,13 +1,17 @@
 Openbroadcaster - Player Installation Instructions
 
-1. See dependencies.txt for player dependencies
+1. Check dependencies.txt for player dependencies on Debian 10/Ubuntu 20.04 & above.
 
-2. Run bash "obplayer_check" or bash "obplayer_loop -f". "bash obplayer_check -h" for help
+2. Run "bash obplayer_check" or "bash obplayer_loop" or "bash obplayer_check -h" for assistance.
 
-3. Http admin panel http://<IP_of_Player_Device>:23233 default user = admin default password = admin
+3. The settings.db configuration file is generated on the first run in ~/.openbroadcaster.
 
-4. Configure tabbed menus
+4. Access the admin panel at http://<IP_of_Player_Device>:23233 with default credentials (user=admin, password=admin).
 
-5. Restart the player
+5. Configure tabbed menus as needed.
 
-More info at http://wiki.openbroadcaster.com/
+6. Restart the player to apply the changes.
+
+Note: Users must update their login passwords on their first login using the default credentials.
+
+For more detailed instructions, please refer to https://support.openbroadcaster.com/install
