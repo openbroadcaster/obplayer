@@ -496,8 +496,8 @@ To confirm that Alert messages are working correctly, select one of the four sam
 1. Simple Test. Generates an internal CAP formated message and plays using TTS
 1. Embedded Audio Test. Generates an internal CAP message and plays a supplied MP3 file instead of TTS.
 1. External Audio Test. Generates an internal CAP alert message, fetches and plays a test MP3 file from Pelmorex.
-1. Embedded Audio and Image Test. Generates an internal CAP test the displays a JPG image and plays audio recording. Requires 'Moderately Severe Alerts' to be enabled.
-
+1. Embedded Audio and Image Test. Generates an internal CAP test the displays a JPG image and plays audio recording.
+2. 
 Click `Inject` to add the message to the Active Alerts queue;  a 20 second countdown begins. If another incoming message is received, the countdown timer is rest at 20 seconds. Once the countdown reaches 0 secs, queued messages will play through the active audio output and can be observed in real time on the player’s main `Status Page` displaying the current state of the Player with live display of system events.
 
 __Pro Tip__ Try different text-to-speech voices when testing alerts, before placing on air. 
