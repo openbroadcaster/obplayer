@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Copyright 2012-2015 OpenBroadcaster, Inc.
+Copyright 2012-2024 OpenBroadcaster, Inc.
 
 This file is part of OpenBroadcaster Player.
 
@@ -61,73 +61,73 @@ class ObLog:
         # log_data = cgi.escape(log_data)
         for index, line in enumerate(log_data[start_index:], start_index):
             line = html.escape(line)
-            if re.search("\[error\]", line):
+            if re.search(r"\[error\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="error" style="color: {0}">{1}</span>'.format(
                         "#880000;", line, index
                     )
                 )
-            elif re.search("\[warning\]", line):
+            elif re.search(r"\[warning\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="debug" style="color: {0}">{1}</span>'.format(
                         "#888800;", line, index
                     )
                 )
-            elif re.search("\[priority\]", line):
+            elif re.search(r"\[priority\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="alert" style="color: {0}">{1}</span>'.format(
                         "#880088;", line, index
                     )
                 )
-            elif re.search("\[player\]", line):
+            elif re.search(r"\[player\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="player" style="color: {0}">{1}</span>'.format(
                         "#005500;", line, index
                     )
                 )
-            elif re.search("\[data\]", line):
+            elif re.search(r"\[data\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="sync" style="color: {0}">{1}</span>'.format(
                         "#333333;", line, index
                     )
                 )
-            elif re.search("\[scheduler\]", line):
+            elif re.search(r"\[scheduler\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="scheduler" style="color: {0}">{1}</span>'.format(
                         "#005555;", line, index
                     )
                 )
-            elif re.search("\[sync\]", line):
+            elif re.search(r"\[sync\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="sync" style="color: {0}">{1}</span>'.format(
                         "#000055;", line, index
                     )
                 )
-            elif re.search("\[sync download\]", line):
+            elif re.search(r"\[sync download\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="sync" style="color: {0}">{1}</span>'.format(
                         "#AA4400;", line, index
                     )
                 )
-            elif re.search("\[admin\]", line):
+            elif re.search(r"\[admin\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="debug" style="color: {0}">{1}</span>'.format(
                         "#333300;", line, index
                     )
                 )
-            elif re.search("\[live\]", line):
+            elif re.search(r"\[live\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="player" style="color: {0}">{1}</span>'.format(
                         "#333300;", line, index
                     )
                 )
-            elif re.search("\[alerts\]", line):
+            elif re.search(r"\[alerts\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="alert" style="color: {0}">{1}</span>'.format(
                         "#880088;", line, index
                     )
                 )
-            elif re.search("\[debug\]", line):
+            elif re.search(r"\[debug\]", line):
                 output.append(
                     '<span data-index="{2}" data-type="debug" style="color: {0}">{1}</span>'.format(
                         "#880088;", line, index

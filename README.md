@@ -27,6 +27,6 @@ OBPlayer can be run in a variety of configurations:
 OpenBroadcaster Player
 https://openbroadcaster.com/
 
-Copyright 2012-2018 OpenBroadcaster, Inc.
+Copyright 2012-2024 OpenBroadcaster, Inc.
 
 Licensed under GNU AGPLv3. See COPYING.
