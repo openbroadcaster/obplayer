@@ -607,7 +607,7 @@ class ObHTTPAdmin(httpserver.ObHTTPServer):
         output = []
         log_data = obplayer.Log.get_log()
         for line in log_data:
-            if re.search("\[alerts\]", line):
+            if re.search(r"\[alerts\]", line):
                 output.append(line)
         res = httpserver.Response()
         res.add_header("Content-Disposition", "attachment; filename=obalerts.txt")
