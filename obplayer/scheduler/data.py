@@ -118,7 +118,7 @@ class ObRemoteData(obplayer.ObData):
 
     def shows_voicetracks_create_table(self):
         self.execute(
-            "CREATE TABLE shows_voicetracks (id INTEGER PRIMARY KEY, local_show_id INTEGER, media_id INTEGER, order_num INTEGER, filename TEXT, offset NUMERIC, duration NUMERIC, media_type TEXT, file_hash TEXT, file_size INT, file_location TEXT, approved INT, archived INT)"
+            "CREATE TABLE shows_voicetracks (id INTEGER PRIMARY KEY, local_show_id INTEGER, media_id INTEGER, order_num INTEGER, filename TEXT, offset NUMERIC, duration NUMERIC, media_type TEXT, file_hash TEXT, file_size INT, file_location TEXT, approved INT, archived INT, volume NUMERIC, delay NUMERIC, fadeout NUMERIC, fadein NUMERIC)"
         )
         self.execute(
             "CREATE INDEX voicetracks_local_show_id_index on shows_voicetracks (local_show_id)"
@@ -366,7 +366,7 @@ class ObRemoteData(obplayer.ObData):
         return self.db.last_insert_rowid()
 
     def show_voicetrack_add(self, local_show_id, media_item):
-        query = "INSERT into shows_voicetracks VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        query = "INSERT into shows_voicetracks VALUES (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         bindings = (
             str(local_show_id),
             str(media_item["id"]),
@@ -380,6 +380,10 @@ class ObRemoteData(obplayer.ObData):
             media_item["file_location"],
             media_item["approved"],
             media_item["archived"],
+            media_item["volume"],
+            media_item["delay"],
+            media_item["fadeout"],
+            media_item["fadein"]
         )
 
         self.execute(query, bindings)
@@ -463,7 +467,6 @@ class ObRemoteData(obplayer.ObData):
 
     def get_media_info(self, media_id):
         for media in self.media_required():
-            print(media)
             if media["media_id"] == media_id:
                 return media
         return None
@@ -705,7 +708,7 @@ class ObRemoteData(obplayer.ObData):
 
     def get_show_voicetracks(self, local_show_id):
         rows = self.execute(
-            "SELECT filename,order_num,duration,media_type,media_id,file_location,offset,file_size from shows_voicetracks where local_show_id=? order by offset",
+            "SELECT filename,order_num,duration,media_type,media_id,file_location,offset,file_size,volume,delay,fadeout,fadein from shows_voicetracks where local_show_id=? order by offset",
             (str(local_show_id),),
         )
 
@@ -720,6 +723,10 @@ class ObRemoteData(obplayer.ObData):
             media_data["file_location"] = row[5]
             media_data["offset"] = float(row[6])
             media_data["file_size"] = row[7]
+            media_data["volume"] = float(row[8])
+            media_data["delay"] = float(row[9])
+            media_data["fadeout"] = float(row[10])
+            media_data["fadein"] = float(row[11])
 
             media.append(media_data)
 
