@@ -85,7 +85,7 @@ def xml_get_tag_value(node, tagName, default=""):
     return xml_get_text(child[0])
 
 
-def xml_get_media_item(node):
+def xml_get_media_item(node, voicetrack=False):
     media_item = {}
 
     media_item["id"] = xml_get_tag_value(node, "id", 0)
@@ -101,6 +101,12 @@ def xml_get_media_item(node):
     media_item["file_location"] = xml_get_tag_value(node, "location")
     media_item["approved"] = xml_get_tag_value(node, "approved")
     media_item["archived"] = xml_get_tag_value(node, "archived")
+
+    if(voicetrack):
+        media_item["volume"] = xml_get_tag_value(node, "volume")
+        media_item["delay"] = xml_get_tag_value(node, "delay")
+        media_item["fadein"] = xml_get_tag_value(node, "fadein")
+        media_item["fadeout"] = xml_get_tag_value(node, "fadeout")
 
     return media_item
 
@@ -505,7 +511,7 @@ class ObSync:
                         for voicetrack in xml_get_direct_children(
                             show_voicetracks, "item"
                         ):
-                            voicetrack_item = xml_get_media_item(voicetrack)
+                            voicetrack_item = xml_get_media_item(voicetrack, True)
                             obplayer.RemoteData.show_voicetrack_add(
                                 local_show_id, voicetrack_item
                             )
