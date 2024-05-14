@@ -158,7 +158,6 @@ class ObAudioMixerBin(ObOutputBin):
         self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
 
     def main_fade(self, arguments):
-
         volume_element = self.pipeline.get_by_name("main-volume")
         current_volume = volume_element.get_property("volume")
         target_volume = arguments["volume"]
@@ -214,9 +213,9 @@ class ObAudioMixerBin(ObOutputBin):
         elif instruction == "alert_off":
             self.pipeline.get_by_name("main-volume").set_property("volume", 1.0)
         elif instruction == "voicetrack_on":
-            self.main_fade({"volume": 0.25, "time": 0.5})
+            self.main_fade({"volume": arguments["volume"], "time": arguments["fade"]})
         elif instruction == "voicetrack_off":
-            self.main_fade({"volume": 1.0, "time": 2})
+            self.main_fade({"volume": 1.0, "time": arguments["fade"]})
         elif instruction == "main_fade":
             self.main_fade(arguments)
         else:

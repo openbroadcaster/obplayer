@@ -293,8 +293,8 @@ class ObShow(object):
                     artist="voicetrack",
                     title="voicetrack",
                     duration=voicetrack_media["duration"],
-                    mixerstart="voicetrack_on",
-                    mixerend="voicetrack_off",
+                    mixerstart=["voicetrack_on", {"fade": voicetrack_media["fadeout"], "volume": voicetrack_media["volume"]}],
+                    mixerend=["voicetrack_off", {"fade": voicetrack_media["fadein"]}],
                 )
 
             # if track does not end in time, use show end_time instead of track duration
