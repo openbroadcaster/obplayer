@@ -281,9 +281,10 @@ class ObShow(object):
 
         else:
             if voicetrack_media:
-                print("add request for voicetrack ", voicetrack_media)
+                duration_with_fade_time = voicetrack_media["duration"] + voicetrack_media["fadeout"]
+
                 self.voicetrack_ctrl.add_request(
-                    start_time=self.media_start_time,
+                    start_time=self.media_start_time + voicetrack_media["delay"],
                     media_type="voicetrack",
                     uri=obplayer.Sync.media_uri(
                         voicetrack_media["file_location"], voicetrack_media["filename"]
@@ -292,9 +293,10 @@ class ObShow(object):
                     order_num=voicetrack_media["order_num"],
                     artist="voicetrack",
                     title="voicetrack",
-                    duration=voicetrack_media["duration"],
+                    duration=duration_with_fade_time,
                     mixerstart=["voicetrack_on", {"fade": voicetrack_media["fadeout"], "volume": voicetrack_media["volume"]}],
                     mixerend=["voicetrack_off", {"fade": voicetrack_media["fadein"]}],
+                    padstart=voicetrack_media["fadeout"],
                 )
 
             # if track does not end in time, use show end_time instead of track duration

@@ -270,6 +270,10 @@ class ObPlayer(object):
         return None
 
     def execute_request(self, req, output_limit=None):
+
+        if(req["artist"]=="voicetrack"):
+            print('start request')
+
         self.audio_levels = None
         request_pipe = self.pipes[req["media_type"]]
 
@@ -335,11 +339,6 @@ class ObPlayer(object):
         # change the patches as needed
         self.repatch_outputs(patch_class, req["media_type"])
 
-        # set up and play the request
-        request_pipe.stop("by execute request")
-        request_pipe.set_request(req)
-        request_pipe.start()
-
         if req["mixerstart"]:
             # if mixerstart is string, normalize to array (first value is instruction, second is arguments)
             if isinstance(req["mixerstart"], str):
@@ -371,6 +370,26 @@ class ObPlayer(object):
             req["controller"].name,
             playlog_notes,
         )
+
+        # Create and start a new thread to run the delayed operations
+        thread = threading.Thread(target=self.execute_request_play, args=(request_pipe, req))
+        thread.start()
+
+        # self.execute_request_play(request_pipe, req)
+        # set up and play the request
+        #request_pipe.stop("by execute request")
+        #request_pipe.set_request(req)
+        #request_pipe.start()
+
+    def execute_request_play(self, request_pipe, req):
+        # Introduce a delay of 2 seconds
+        if(req["padstart"]):
+            time.sleep(req["padstart"])
+        
+        # set up and play the request
+        request_pipe.stop("by execute request")
+        request_pipe.set_request(req)
+        request_pipe.start()
 
     def stop_request(self, output):
         if self.requests[output] == None:
@@ -591,6 +610,7 @@ class ObPlayerController(object):
         onend=None,
         mixerstart=None,
         mixerend=None,
+        padstart=None
     ):
         if not self.enabled:
             return
@@ -630,6 +650,7 @@ class ObPlayerController(object):
             "onend": onend,
             "mixerstart": mixerstart,
             "mixerend": mixerend,
+            "padstart": padstart
         }
 
         self.insert_request(req)

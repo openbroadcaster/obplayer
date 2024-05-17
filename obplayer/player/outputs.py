@@ -163,9 +163,7 @@ class ObAudioMixerBin(ObOutputBin):
         target_volume = arguments["volume"]
         fade_time = arguments["time"]
         fade_run_per_second = 20
-
-        # fade time is based on doing a full fade in/out.
-        fade_increment = fade_time / fade_run_per_second
+        fade_increment = abs(current_volume - target_volume) / (fade_time * fade_run_per_second)
 
         # is this a fade in or fade out?
         if current_volume < target_volume:
@@ -193,7 +191,7 @@ class ObAudioMixerBin(ObOutputBin):
                     current_volume = max(current_volume, target_volume)
 
                 volume_element.set_property("volume", current_volume)
-                print("current volume: " + str(round(current_volume, 2)))
+                print("volume: " + str(round(current_volume, 2)))
                 time.sleep(1 / fade_run_per_second)
 
         # cancel any existing run
