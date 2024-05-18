@@ -163,7 +163,9 @@ class ObAudioMixerBin(ObOutputBin):
         target_volume = arguments["volume"]
         fade_time = arguments["time"]
         fade_run_per_second = 20
-        fade_increment = abs(current_volume - target_volume) / (fade_time * fade_run_per_second)
+        fade_increment = abs(current_volume - target_volume) / (
+            fade_time * fade_run_per_second
+        )
 
         # is this a fade in or fade out?
         if current_volume < target_volume:
@@ -612,7 +614,7 @@ class ObVideoOverlayBin(ObOutputBin):
         self.bin.add_pad(self.srcpad)
 
     def overlay_caps_changed(self, overlay, caps):
-        print('overlay caps changed')
+        print("overlay caps changed")
 
         # "from_caps" no longer available in GstVideo.VideoInfo, so we use "new_from_caps" instead.
         self.overlay_caps = GstVideo.VideoInfo.new_from_caps(caps)
@@ -622,10 +624,10 @@ class ObVideoOverlayBin(ObOutputBin):
 
     def overlay_draw(self, overlay, context, arg1, arg2):
 
-        print('overlay draw')
+        print("overlay draw")
 
-        #early return if not caps
-        if not hasattr(self, 'overlay_caps'):
+        # early return if not caps
+        if not hasattr(self, "overlay_caps"):
             return
 
         self.overlay.draw_overlay(

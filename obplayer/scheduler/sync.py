@@ -102,7 +102,7 @@ def xml_get_media_item(node, voicetrack=False):
     media_item["approved"] = xml_get_tag_value(node, "approved")
     media_item["archived"] = xml_get_tag_value(node, "archived")
 
-    if(voicetrack):
+    if voicetrack:
         media_item["volume"] = xml_get_tag_value(node, "volume")
         media_item["delay"] = xml_get_tag_value(node, "delay")
         media_item["fadein"] = xml_get_tag_value(node, "fadein")

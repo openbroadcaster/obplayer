@@ -383,7 +383,7 @@ class ObRemoteData(obplayer.ObData):
             media_item["volume"],
             media_item["delay"],
             media_item["fadeout"],
-            media_item["fadein"]
+            media_item["fadein"],
         )
 
         self.execute(query, bindings)

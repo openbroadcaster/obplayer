@@ -271,8 +271,8 @@ class ObPlayer(object):
 
     def execute_request(self, req, output_limit=None):
 
-        if(req["artist"]=="voicetrack"):
-            print('start request')
+        if req["artist"] == "voicetrack":
+            print("start request")
 
         self.audio_levels = None
         request_pipe = self.pipes[req["media_type"]]
@@ -372,20 +372,22 @@ class ObPlayer(object):
         )
 
         # Create and start a new thread to run the delayed operations
-        thread = threading.Thread(target=self.execute_request_play, args=(request_pipe, req))
+        thread = threading.Thread(
+            target=self.execute_request_play, args=(request_pipe, req)
+        )
         thread.start()
 
         # self.execute_request_play(request_pipe, req)
         # set up and play the request
-        #request_pipe.stop("by execute request")
-        #request_pipe.set_request(req)
-        #request_pipe.start()
+        # request_pipe.stop("by execute request")
+        # request_pipe.set_request(req)
+        # request_pipe.start()
 
     def execute_request_play(self, request_pipe, req):
         # Introduce a delay of 2 seconds
-        if(req["padstart"]):
+        if req["padstart"]:
             time.sleep(req["padstart"])
-        
+
         # set up and play the request
         request_pipe.stop("by execute request")
         request_pipe.set_request(req)
@@ -610,7 +612,7 @@ class ObPlayerController(object):
         onend=None,
         mixerstart=None,
         mixerend=None,
-        padstart=None
+        padstart=None,
     ):
         if not self.enabled:
             return
@@ -650,7 +652,7 @@ class ObPlayerController(object):
             "onend": onend,
             "mixerstart": mixerstart,
             "mixerend": mixerend,
-            "padstart": padstart
+            "padstart": padstart,
         }
 
         self.insert_request(req)

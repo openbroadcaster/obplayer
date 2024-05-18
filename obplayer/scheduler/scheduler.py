@@ -281,7 +281,9 @@ class ObShow(object):
 
         else:
             if voicetrack_media:
-                duration_with_fade_time = voicetrack_media["duration"] + voicetrack_media["fadeout"]
+                duration_with_fade_time = (
+                    voicetrack_media["duration"] + voicetrack_media["fadeout"]
+                )
 
                 self.voicetrack_ctrl.add_request(
                     start_time=self.media_start_time + voicetrack_media["delay"],
@@ -294,7 +296,13 @@ class ObShow(object):
                     artist="voicetrack",
                     title="voicetrack",
                     duration=duration_with_fade_time,
-                    mixerstart=["voicetrack_on", {"fade": voicetrack_media["fadeout"], "volume": voicetrack_media["volume"]}],
+                    mixerstart=[
+                        "voicetrack_on",
+                        {
+                            "fade": voicetrack_media["fadeout"],
+                            "volume": voicetrack_media["volume"],
+                        },
+                    ],
                     mixerend=["voicetrack_off", {"fade": voicetrack_media["fadein"]}],
                     padstart=voicetrack_media["fadeout"],
                 )
