@@ -1,0 +1,6 @@
+{
+    "recommendations": [
+        "ms-python.python",         // Python extension for VS Code
+        "ms-python.black-formatter" // Black formatter extension for VS Code
+    ]
+}
