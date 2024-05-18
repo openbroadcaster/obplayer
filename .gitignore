@@ -3,3 +3,5 @@
 *~
 *.pyc
 .vscode
+venv
+.venv
