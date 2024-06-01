@@ -615,7 +615,7 @@ class ObVideoOverlayBin(ObOutputBin):
 
     def overlay_caps_changed(self, overlay, caps):
         # "from_caps" no longer available in GstVideo.VideoInfo, so we use "new_from_caps" instead.
-        if hasattr(GstVideo.VideoInfo, 'new_from_caps'):
+        if hasattr(GstVideo.VideoInfo, "new_from_caps"):
             self.overlay_caps = GstVideo.VideoInfo.new_from_caps(caps)
 
         # fallback to old method
