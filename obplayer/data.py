@@ -648,12 +648,12 @@ class ObConfigData(ObData):
         self.add_setting("alerts_leadout_delay", "1", "int")
         self.add_setting(
             "alerts_naad_stream1",
-            "http://streaming1.naad-adna.pelmorex.com:8080",
+            "https://streaming1.naad-adna.pelmorex.com:8080",
             "text",
         )
         self.add_setting(
             "alerts_naad_stream2",
-            "http://streaming2.naad-adna.pelmorex.com:8080",
+            "https://streaming2.naad-adna.pelmorex.com:8080",
             "text",
         )
         self.add_setting(
