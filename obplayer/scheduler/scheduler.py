@@ -527,6 +527,12 @@ class ObScheduler:
         self.lock = threading.Lock()
         self.first_sync = first_sync
 
+        #self.fade_out_duration = 10.0 # default fade duration in seconds
+        self.fade_out_duration = float(obplayer.Config.setting('fade_duration', True))
+        self.fade_out_initiated = False # Used to prevent multiple fade outs
+        self.last_check_time = 0 # keep track of last time we check show
+        self.check_interval = 1.0 # Check at most once per second
+
         # print('add voicetrack controller')
         self.voicetrack_ctrl = obplayer.Player.create_controller(
             "voicetrack", priority=50, default_play_mode="overlap", allow_overlay=True
@@ -558,17 +564,55 @@ class ObScheduler:
         self.set_next_update()
 
     def set_next_update(self):
-        if (
-            self.present_show
-            and self.present_show.next_media_update < self.next_show_update
-        ):
-            self.ctrl.set_next_update(self.present_show.next_media_update)
+        if self.present_show:
+            # Calculate the fade-out start time
+            fade_start_time = self.present_show.end_time() - self.fade_out_duration
+            
+            # Set the next update to the earlier of:
+            # 1. The next media update in the show
+            # 2. The start of the fade-out
+            next_update_time = min(
+                self.present_show.next_media_update, 
+                fade_start_time
+            )
+            
+            self.ctrl.set_next_update(next_update_time)
         else:
             self.ctrl.set_next_update(self.next_show_update)
 
+    def end_show(self, present_time):
+        obplayer.Log.log(f"Test change fade duration from http: {self.fade_out_duration}", "scheduler")
+        # Fade out the volume when a show is ending
+        if not self.fade_out_initiated and self.fade_out_duration > 0:
+            if self.fade_out_duration < 0.5:
+                self.fade_out_duration = 0.5 # Ensure fade-out duration is at least 0.5 seconds to ensure smooth transition
+            obplayer.Log.log(f"fading out volume for {self.fade_out_duration} seconds", "scheduler")
+            obplayer.Player.outputs["mixer"].main_fade({
+                "volume": 0.0, # Fade to silence
+                "time": self.fade_out_duration - 0.5  # Fade duration set on Admin > Outputs > Show Fade Settings
+            })
+            self.fade_out_initiated = True
+
     def check_show(self, present_time):
+        # Check if enough time has passed since the last check
+        current_time = time.time()
+        if current_time - self.last_check_time < self.check_interval:
+            return
+
+        # Update the last check time
+        self.last_check_time = current_time
+
+        obplayer.Log.log("checking show", "scheduler")
+        # Check if we are approaching the show's end and need to start fading out
+        if (self.present_show and present_time >= (self.present_show.end_time() - self.fade_out_duration)):
+            self.end_show(present_time)
+
+        # If no show, or show is over.
         if self.present_show is None or present_time > self.next_show_update:
+            self.fade_out_initiated = False # Reset the fade-out flag
+            # find the next show
             self.present_show = ObShow.find_show(present_time)
+            # get the next show times
             next_show_times = obplayer.RemoteData.get_next_show_times(present_time)
 
             # no show, try again in 1min30secs.  (we add the 30 seconds to let the priority broadcaster update come through first, if applicable.
@@ -579,19 +623,26 @@ class ObScheduler:
                 obplayer.Sync.now_playing_update("", "", "", "", "")
 
                 # if next show starting in less than 90s, we need to update sooner.
-                self.next_show_update = present_time + 90
+                self.next_show_update = present_time + 90 
                 if (
                     next_show_times
                     and self.next_show_update > next_show_times["start_time"]
                 ):
-                    self.next_show_update = next_show_times["start_time"]
-
+                    self.next_show_update = next_show_times["start_time"] 
+            # show is over
             else:
                 self.present_show.ctrl = self.ctrl
                 self.present_show.voicetrack_ctrl = self.voicetrack_ctrl
                 obplayer.Log.log(
                     "loading show " + str(self.present_show.show_id()), "scheduler"
                 )
+
+                # Ensure volume is at 100%
+                obplayer.Log.log("Starting song - fade up over 0.5s", "scheduler")
+                obplayer.Player.outputs["mixer"].main_fade({
+                    "volume": 1.0, # Ensure volume is at 100%
+                    "time": 0.5  
+                })
 
                 # update now_playing data
                 obplayer.Sync.now_playing_update(
