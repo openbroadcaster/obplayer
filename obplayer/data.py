@@ -437,8 +437,6 @@ class ObConfigData(ObData):
 
         return None
 
-
-
     """
     def set(self, setting_name, setting_value):
         settings = {}
