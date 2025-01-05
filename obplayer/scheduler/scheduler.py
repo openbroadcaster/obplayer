@@ -578,10 +578,6 @@ class ObScheduler:
             self.ctrl.set_next_update(self.next_show_update)
 
     def end_show(self, present_time):
-        obplayer.Log.log(
-            f"Test change fade duration from http: {self.fade_out_duration}",
-            "scheduler",
-        )
         # Fade out the volume when a show is ending
         if not self.fade_out_initiated and self.fade_out_duration > 0:
             if self.fade_out_duration < 0.5:
@@ -607,7 +603,7 @@ class ObScheduler:
         # Update the last check time
         self.last_check_time = current_time
 
-        obplayer.Log.log("checking show", "scheduler")
+        # obplayer.Log.log("checking show", "scheduler")
         # Check if we are approaching the show's end and need to start fading out
         if self.present_show and present_time >= (
             self.present_show.end_time() - self.fade_out_duration
@@ -645,7 +641,7 @@ class ObScheduler:
                 )
 
                 # Ensure volume is at 100%
-                obplayer.Log.log("Starting song - fade up over 0.5s", "scheduler")
+                obplayer.Log.log("Starting show - fade up over 0.5s", "scheduler")
                 obplayer.Player.outputs["mixer"].main_fade(
                     {"volume": 1.0, "time": 0.5}  # Ensure volume is at 100%
                 )

@@ -450,7 +450,7 @@ class ObConfigData(ObData):
             "audio_caps",
             "audio/x-raw,channels=2,rate=44100,format=S16LE,layout=interleaved",
         )
-        self.add_setting("fade_duration", "10.0", "float")
+        self.add_setting("fade_duration", "5.0", "float")
         self.add_setting("audio_out_mode", "auto", "text")
         self.add_setting("audio_out_alsa_device", "default", "text")
         self.add_setting("audio_out_jack_name", "", "text")
