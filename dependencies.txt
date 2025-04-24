@@ -68,6 +68,8 @@ Include if using RS-232 trigger option in the alerts module:
 Include if sharing multiple OpenBroadcaster players with a local media library:
 
 - cifs-utils
+OR
+- autofs
 
 Command Line tool for PulseAudio:
 
