@@ -2,7 +2,7 @@ Dependencies for OpenBroadcaster Player.  This list may be incomplete.
 
 Dependencies are Debian/Ubuntu package names.
 
-- ntp
+- ntp, systemd-timesyncd, or another time synchronization daemon
 - python3
 - python3-pycurl
 - python3-openssl
@@ -66,11 +66,6 @@ Include if using RS-232 option in the alerts module:
 
 - python3-serial
 
-
-Include if sharing multiple OpenBroadcaster players with a local media library:
-
-- cifs-utils
-
 Include if using PulseAudio:
 
 - pip3 install pulsectl         (Note: pkg not included in apt-get; must be installed using pip3)
@@ -92,3 +87,4 @@ meson build --prefix=/usr
 ninja -C build
 sudo ninja -C build install
 
+There may be an error on the build install command related to gtkdoc. This can be safely ignored.
