@@ -135,7 +135,7 @@ class ObPlayBinPipeline(ObGstPipeline):
                 obplayer.Log.log("unable to seek on this track", "error")
             if offset > 0.25:
                 obplayer.Log.log(
-                    "resuming track at " + str(offset) + " seconds.", "player"
+                    "resuming track at " + str(round(offset, 3)) + " seconds.", "player"
                 )
             self.wait_state(Gst.State.PAUSED)
 
