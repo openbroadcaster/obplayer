@@ -177,9 +177,6 @@ class ObPlayer(object):
                 if restore:
                     self.restore_outputs()
 
-                # print(str(time.time()) + ": Current State (" + str(time.time()) + "): " + repr(self.request_update.is_set()) + " | " + (self.requests['audio']['filename'] if self.requests['audio'] is not None else "No astream") + " | " + (self.requests['visual']['filename'] if 'visual' in self.requests and self.requests['visual'] is not None else "No vstream"))
-                # test = time.time()
-
                 # get a list of output names sorted by the priority of the currently playing request
                 priority_list = sorted(
                     [
@@ -199,7 +196,6 @@ class ObPlayer(object):
 
                 req = None
                 while len(priority_list) > 0:
-                    # print(str(time.time()) + ": Trying to fill in outputs: " + repr(priority_list))
                     remaining_outputs = [pair[1] for pair in priority_list]
 
                     req = self.get_request(
@@ -228,9 +224,6 @@ class ObPlayer(object):
                         priority_list = [
                             pair for pair in priority_list if pair[1] not in class_list
                         ]
-
-                # print("----- It took: " + str(time.time() - test))
-                # print(str(time.time()) + ": Current State (" + str(time.time()) + "): " + repr(self.request_update.is_set()) + " | " + (self.requests['audio']['filename'] if self.requests['audio'] is not None else "No astream") + " | " + (self.requests['visual']['filename'] if 'visual' in self.requests and self.requests['visual'] is not None else "No vstream"))
 
                 # if the updated flag was set, then clear it
                 if self.request_update.is_set():

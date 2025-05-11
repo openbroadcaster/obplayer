@@ -69,22 +69,28 @@ class ObAudioMixerBin(ObOutputBin):
             audiotestsrc is-live=true wave=silence ! capsfilter name=capsfilter ! audioconvert ! queue ! interpipesink name=interpipe-none sync=true
         """
 
-        self.pipeline0 = Gst.parse_launch(silent_pipeline_str)
-        capsfilter = self.pipeline0.get_by_name("capsfilter")
+        self.pipeline_silent = Gst.parse_launch(silent_pipeline_str)
+        capsfilter = self.pipeline_silent.get_by_name("capsfilter")
         capsfilter.set_property(
             "caps", Gst.Caps.from_string(obplayer.Config.setting("audio_caps"))
         )
-        self.pipeline0.set_state(Gst.State.PLAYING)
+        self.pipeline_silent.set_state(Gst.State.PLAYING)
 
         # input section
+        # pipeline_str = """
+        #     interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-main ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! queue ! interpipesink name=interpipe-output sync=true
+        #     interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-voicetrack ! audioconvert ! mixer.
+        #     interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-alert ! audioconvert ! mixer.
+        # """
+
         pipeline_str = """
-            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-main ! volume volume=1.0 name=main-volume ! audioconvert ! audiomixer name=mixer ! queue ! interpipesink name=interpipe-output sync=true
-            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-voicetrack ! audioconvert ! mixer.
-            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-alert ! audioconvert ! mixer.
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-main ! volume volume=1.0 name="channel-main-volume" ! audioconvert ! audioresample ! audiomixer name=mixer-primary ! volume volume=1.0 name=mixer-primary-volume ! audioconvert ! audioresample ! audiomixer name=mixer-alert ! queue ! interpipesink name=interpipe-output sync=true
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-voicetrack ! volume volume=1.0 name="channel-voicetrack-volume" ! audioconvert ! audioresample ! mixer-primary.
+            interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-none format=time name=interpipesrc-alert ! audioconvert ! audioresample ! mixer-alert.
         """
 
-        self.pipeline = Gst.parse_launch(pipeline_str)
-        self.pipeline.set_state(Gst.State.PLAYING)
+        self.pipeline_main = Gst.parse_launch(pipeline_str)
+        self.pipeline_main.set_state(Gst.State.PLAYING)
 
         # output section
         audio_output = obplayer.Config.setting("audio_out_mode")
@@ -103,69 +109,71 @@ class ObAudioMixerBin(ObOutputBin):
         else:
             audiosink_str = "autoaudiosink"
 
-        pipeline2_str = (
+        pipeline_output_str = (
             "interpipesrc stream-sync=restart-ts is-live=true listen-to=interpipe-output format=time ! audioconvert ! queue ! "
             + audiosink_str
             + " name=audio-out-sink"
         )
 
-        self.pipeline2 = Gst.parse_launch(pipeline2_str)
+        self.pipeline_output = Gst.parse_launch(pipeline_output_str)
 
         if audio_output == "jack":
-            audiosink = self.pipeline2.get_by_name("audio-out-sink")
+            audiosink = self.pipeline_output.get_by_name("audio-out-sink")
             audiosink.set_property("connect", 0)
             jack_name = obplayer.Config.setting("audio_out_jack_name")
             audiosink.set_property(
                 "client-name", jack_name if jack_name else "obplayer"
             )
 
-        self.pipeline2.set_state(Gst.State.PLAYING)
+        self.pipeline_output.set_state(Gst.State.PLAYING)
 
     def main_on(self):
-        self.pipeline.get_by_name("interpipesrc-main").set_property(
+        self.pipeline_main.get_by_name("interpipesrc-main").set_property(
             "listen-to", "interpipe-main"
         )
-        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+        self.pipeline_main.get_state(Gst.CLOCK_TIME_NONE)
 
     def main_off(self):
-        self.pipeline.get_by_name("interpipesrc-main").set_property(
+        self.pipeline_main.get_by_name("interpipesrc-main").set_property(
             "listen-to", "interpipe-none"
         )
-        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+        self.pipeline_main.get_state(Gst.CLOCK_TIME_NONE)
 
     def voicetrack_on(self):
-        self.pipeline.get_by_name("interpipesrc-voicetrack").set_property(
+        self.pipeline_main.get_by_name("interpipesrc-voicetrack").set_property(
             "listen-to", "interpipe-voicetrack"
         )
-        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+        self.pipeline_main.get_state(Gst.CLOCK_TIME_NONE)
 
     def voicetrack_off(self):
-        self.pipeline.get_by_name("interpipesrc-voicetrack").set_property(
+        self.pipeline_main.get_by_name("interpipesrc-voicetrack").set_property(
             "listen-to", "interpipe-none"
         )
-        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+        self.pipeline_main.get_state(Gst.CLOCK_TIME_NONE)
 
     def alert_on(self):
-        self.pipeline.get_by_name("interpipesrc-alert").set_property(
+        self.pipeline_main.get_by_name("interpipesrc-alert").set_property(
             "listen-to", "interpipe-alert"
         )
-        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+        self.pipeline_main.get_state(Gst.CLOCK_TIME_NONE)
 
     def alert_off(self):
-        self.pipeline.get_by_name("interpipesrc-alert").set_property(
+        self.pipeline_main.get_by_name("interpipesrc-alert").set_property(
             "listen-to", "interpipe-none"
         )
-        self.pipeline.get_state(Gst.CLOCK_TIME_NONE)
+        self.pipeline_main.get_state(Gst.CLOCK_TIME_NONE)
 
     def main_fade(self, arguments):
-        volume_element = self.pipeline.get_by_name("main-volume")
+        volume_element = self.pipeline_main.get_by_name("channel-main-volume")
         current_volume = volume_element.get_property("volume")
         target_volume = arguments["volume"]
         fade_time = arguments["time"]
         fade_run_per_second = 20
-        fade_increment = abs(current_volume - target_volume) / (
-            fade_time * fade_run_per_second
-        )
+        # fade_increment = abs(current_volume - target_volume) / (
+        #     fade_time * fade_run_per_second
+        # )
+        print('fix me fade increment calculation')
+        fade_increment = 0.05 
 
         # is this a fade in or fade out?
         if current_volume < target_volume:
@@ -209,9 +217,9 @@ class ObAudioMixerBin(ObOutputBin):
         obplayer.Log.log("mixer received instruction " + instruction, "debug")
         # TODO instruction should be more like "mixer_mode_alert" here? (confusing with above alert/on which are different)
         if instruction == "alert_on":
-            self.pipeline.get_by_name("main-volume").set_property("volume", 0.0)
+            self.pipeline_main.get_by_name("mixer-primary-volume").set_property("volume", 0.0)
         elif instruction == "alert_off":
-            self.pipeline.get_by_name("main-volume").set_property("volume", 1.0)
+            self.pipeline_main.get_by_name("mixer-primary-volume").set_property("volume", 1.0)
         elif instruction == "voicetrack_on":
             self.main_fade({"volume": arguments["volume"], "time": arguments["fade"]})
         elif instruction == "voicetrack_off":

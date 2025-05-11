@@ -103,10 +103,11 @@ def xml_get_media_item(node, voicetrack=False):
     media_item["archived"] = xml_get_tag_value(node, "archived")
 
     if voicetrack:
-        media_item["volume"] = xml_get_tag_value(node, "volume")
-        media_item["delay"] = xml_get_tag_value(node, "delay")
-        media_item["fadein"] = xml_get_tag_value(node, "fadein")
-        media_item["fadeout"] = xml_get_tag_value(node, "fadeout")
+        voicetrack = xml_get_direct_children(node, "voicetrack")[0]
+        media_item["voicetrack_offset"] = xml_get_tag_value(voicetrack, "offset")
+        media_item["voicetrack_volume"] = xml_get_tag_value(voicetrack, "volume")
+        media_item["voicetrack_fadein"] = xml_get_tag_value(voicetrack, "fadein")
+        media_item["voicetrack_fadeout"] = xml_get_tag_value(voicetrack, "fadeout")
 
     return media_item
 
@@ -433,7 +434,7 @@ class ObSync:
             show_duration = xml_get_first_tag_value(show, "duration", 0)
             show_last_updated = xml_get_first_tag_value(show, "last_updated", 0)
             show_media = xml_get_direct_children(show, "media")[0]
-            show_voicetracks = xml_get_direct_children(show, "voicetrack")
+            show_voicetracks = xml_get_direct_children(show, "voicetracks")
 
             if len(show_voicetracks) > 0:
                 show_voicetracks = show_voicetracks[0]
@@ -513,7 +514,7 @@ class ObSync:
                         ):
                             voicetrack_item = xml_get_media_item(voicetrack, True)
                             obplayer.RemoteData.show_voicetrack_add(
-                                local_show_id, voicetrack_item
+                                local_show_id, show_id, voicetrack_item
                             )
 
                     if show_liveassist:
@@ -904,7 +905,6 @@ class ObSync:
     # uses media['file_location'], media['file_size'], media['filename'] to see if available media is the correct filesize.
     #
     def check_media(self, media, alert_mode=False, alert_language=None):
-
         if media["media_type"] not in ["audio", "video", "image"]:
             return True
         if alert_mode and alert_language != None:

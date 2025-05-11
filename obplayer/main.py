@@ -186,41 +186,6 @@ class ObMainApp:
             if obplayer.Config.setting("newsfeed_override_enabled"):
                 self.load_module("newsfeed_override")
 
-            #### TEST CODE ####
-
-            # time.sleep(2)
-
-            # alert = obplayer.alerts.parse_alert_file("/media/work/Projects/OpenBroadcaster/Information/2014-08 Pelmorex Tie-In/CAP Examples/2example_CAPCP_with_Embedded_Large_Audio_File(2).xml")
-            # alert = obplayer.alerts.parse_alert_file("/media/work/Projects/OpenBroadcaster/Information/2014-08 Pelmorex Tie-In/CAP Examples/4example_CAPCP_with_External_Large_Audio_File(2).xml")
-            # obplayer.alerts.Processor.dispatch(alert)
-
-            # ctrl = obplayer.Player.create_controller('testsource', 60, default_play_mode='overlap')
-            # ctrl.add_request(media_type='break', duration=40)
-            # ctrl.add_request(media_type='testsignal', duration=40)
-            # ctrl.add_request(media_type='video', uri="file:///home/trans/.openbroadcaster/fallback_media/110-Unknown-The_Return_Of_Doctor_X.ogg", duration=153)
-            # ctrl.add_request(media_type='audio', start_time=time.time() + 5, uri="file:///home/trans/.openbroadcaster/alerts/2014_12_01T00_13_00_00_00I2.49.0.1.124.b7fb9ec4.2014", duration=10)
-            # ctrl.add_request(media_type='video', uri="file:///home/trans/.openbroadcaster/fallback_media/110-Unknown-The_Return_Of_Doctor_X.ogg", duration=153)
-            # ctrl.add_request(media_type='image', start_time=time.time(), uri="file:///home/trans/.openbroadcaster/fallback_media/97-ctfn_potlatch-sdfsdg.svg", duration=5)
-            # ctrl.add_request(media_type='audio', start_time=time.time(), uri="file:///home/trans/.openbroadcaster/fallback_media/104-Lamb-Piste_6.mp3", duration=70)
-            # ctrl.add_request(media_type='audio', start_time=time.time(), uri="file:///home/trans/.openbroadcaster/alerts-backup/2014_07_08T10_09_38_05_00I473E9B47_D474_B3F1_9765_1AFED0761075-english.wav", duration=70)
-            # ctrl.add_request(media_type='video', start_time=time.time() + 2, uri="file:///home/trans/.openbroadcaster/fallback_media/109-Unknown-The_Pit_And_The_Pendulum.ogg", duration=153)
-            # ctrl.add_request(media_type='rtsp', start_time=time.time() + 2, uri="rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov", duration=153)
-            # ctrl.add_request(media_type='sdp', start_time=time.time() + 2, uri="file:///home/obsuser/xnode-rtsp.sdp", duration=3600)
-            # ctrl.add_request(media_type='sdp', start_time=time.time() + 2, uri="file:///media/work/OpenBroadcaster/Player/tools/local_streamer.sdp", duration=3600)
-            # ctrl.add_request(media_type='rtp', start_time=time.time() + 2, duration=3600)
-            # ctrl.add_request(media_type='rtsp', start_time=time.time() + 2, uri="rtsp://localhost:8554/by-id/1", duration=153)
-            # ctrl.add_request(media_type='rtspa', start_time=time.time() + 2, uri="rtsp://localhost:8554/by-id/1", duration=153)
-
-            # alertctrl = obplayer.Player.create_controller('testalert', 100, default_play_mode='overlap', allow_overlay=True)
-            # alertctrl.add_request(media_type='audio', start_time=time.time() + 7, uri=obplayer.Player.file_uri("obplayer/alerts/data", "attention-signal.ogg"), duration=4)
-            # alertctrl.add_request(media_type='audio', uri="file:///home/trans/.openbroadcaster/alerts/2014_12_01T00_13_00_00_00I2.49.0.1.124.b7fb9ec4.2014", duration=5)
-
-            # ctrl.add_request(media_type='rtp_2', start_time=time.time() + 2, duration=3600)
-
-            # ctrl.add_request(media_type='rtp_2', start_time=time.time() + 2, duration=3600)
-
-            #### END TEST CODE ####
-
             obplayer.Player.start_player()
             self.loop.run()
         except KeyboardInterrupt:

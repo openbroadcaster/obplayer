@@ -188,6 +188,10 @@ class ObShow(object):
 
         self.play_current(present_time)
 
+    def play_next_voicetrack(self, present_time):
+        self.play_current_voicetrack(present_time)
+
+
     def play_next(self, present_time, media_class=None):
         if self.is_paused() or self.playlist.is_finished():
             self.ctrl.stop_requests()
@@ -203,13 +207,18 @@ class ObShow(object):
 
         if self.ctrl.has_requests():
             return False
-        print("This is a bug...")
+        # TODO why was this here?
+        # print("This is a bug...")
         self.media_start_time = 0
 
         # NOTE this usually only happens when a media item fails to play, in which case we don't want to fill the
         # space with a pause, we want to let the fallback player take over
         # self.ctrl.stop_requests()
         # self.ctrl.add_request(media_type='break', end_time=self.end_time(), title = "break (filling spaces)")
+
+    def play_current_voicetrack(self, present_time):
+        voicetrack = self.playlist.current_voicetrack()
+        self.play_voicetrack(voicetrack, 0, present_time)
 
     def play_current(self, present_time):
         if self.is_paused():
@@ -220,7 +229,7 @@ class ObShow(object):
             return False
 
         media = self.playlist.current()
-        voicetrack_media = self.playlist.current_voicetrack()
+
         if not media or not obplayer.Sync.check_media(media):
             obplayer.Log.log(
                 (
@@ -242,7 +251,7 @@ class ObShow(object):
             return False
 
         offset = present_time - self.show_data["start_time"] - media["offset"]
-        self.play_media(media, offset, present_time, voicetrack_media)
+        self.play_media(media, offset, present_time)
         next_start = self.playlist.next_start()
         self.next_media_update = (
             self.start_time() + next_start if next_start else self.end_time()
@@ -250,7 +259,34 @@ class ObShow(object):
 
         return True
 
-    def play_media(self, media, offset, present_time, voicetrack_media=None):
+    def play_voicetrack(self, voicetrack_media, offset, present_time):
+        duration_with_fade_time = (
+            voicetrack_media["duration"] + voicetrack_media["fadeout"]
+        )
+
+        self.voicetrack_ctrl.add_request(
+            start_time=self.media_start_time + voicetrack_media["delay"],
+            media_type="voicetrack",
+            uri=obplayer.Sync.media_uri(
+                voicetrack_media["file_location"], voicetrack_media["filename"]
+            ),
+            media_id=voicetrack_media["media_id"],
+            order_num=voicetrack_media["order_num"],
+            artist="voicetrack",
+            title="voicetrack",
+            duration=duration_with_fade_time,
+            mixerstart=[
+                "voicetrack_on",
+                {
+                    "fade": voicetrack_media["fadeout"],
+                    "volume": voicetrack_media["volume"],
+                },
+            ],
+            mixerend=["voicetrack_off", {"fade": voicetrack_media["fadein"]}],
+            padstart=voicetrack_media["fadeout"],
+        )
+
+    def play_media(self, media, offset, present_time):
 
         self.now_playing = media
         self.pause_position = 0
@@ -280,33 +316,7 @@ class ObShow(object):
             )
 
         else:
-            if voicetrack_media:
-                duration_with_fade_time = (
-                    voicetrack_media["duration"] + voicetrack_media["fadeout"]
-                )
-
-                self.voicetrack_ctrl.add_request(
-                    start_time=self.media_start_time + voicetrack_media["delay"],
-                    media_type="voicetrack",
-                    uri=obplayer.Sync.media_uri(
-                        voicetrack_media["file_location"], voicetrack_media["filename"]
-                    ),
-                    media_id=voicetrack_media["media_id"],
-                    order_num=voicetrack_media["order_num"],
-                    artist="voicetrack",
-                    title="voicetrack",
-                    duration=duration_with_fade_time,
-                    mixerstart=[
-                        "voicetrack_on",
-                        {
-                            "fade": voicetrack_media["fadeout"],
-                            "volume": voicetrack_media["volume"],
-                        },
-                    ],
-                    mixerend=["voicetrack_off", {"fade": voicetrack_media["fadein"]}],
-                    padstart=voicetrack_media["fadeout"],
-                )
-
+            
             # if track does not end in time, use show end_time instead of track duration
             if (
                 self.end_time()
@@ -527,7 +537,6 @@ class ObScheduler:
         self.lock = threading.Lock()
         self.first_sync = first_sync
 
-        # print('add voicetrack controller')
         self.voicetrack_ctrl = obplayer.Player.create_controller(
             "voicetrack", priority=50, default_play_mode="overlap", allow_overlay=True
         )
@@ -535,11 +544,37 @@ class ObScheduler:
         self.ctrl = obplayer.Player.create_controller(
             "scheduler", priority=50, default_play_mode="overlap", allow_overlay=False
         )
+        
         self.ctrl.set_request_callback(self.do_player_request)
         self.ctrl.set_update_callback(self.do_player_update)
 
+        self.voicetrack_ctrl.set_request_callback(self.do_voicetrack_request)
+        self.voicetrack_ctrl.set_update_callback(self.do_voicetrack_update)
+
         self.present_show = None
         self.next_show_update = 0
+
+    # initial request?
+    def do_voicetrack_request(self, ctrl, present_time, media_class):
+        self.check_show(present_time)
+
+        if self.present_show is not None:
+            self.present_show.play_next_voicetrack(present_time)
+
+        self.set_voicetrack_update(present_time)
+
+    # update request after initial?
+    def do_voicetrack_update(self, ctrl, present_time):
+        self.check_show(present_time)
+
+        if self.present_show is not None:
+            self.present_show.play_next_voicetrack(present_time)
+
+        self.set_voicetrack_update(present_time)
+
+    def set_voicetrack_update(self, present_time):
+        print('fix voicetrack update time')
+        self.ctrl.set_next_update(present_time + 1)
 
     def do_player_request(self, ctrl, present_time, media_class):
         self.check_show(present_time)
@@ -615,10 +650,12 @@ class ObScheduler:
 
                 if self.present_show.playlist.is_finished():
                     if next_show_times != None:
+                        # TODO next_show_start may not be defined
                         obplayer.Log.log(
-                            "this show over. waiting for next show to start in "
-                            + str(self.next_show_start - present_time)
-                            + " seconds",
+                            "this show over. waiting for next show to start",
+                            # "this show over. waiting for next show to start in "
+                            # + str(self.next_show_start - present_time)
+                            # + " seconds",
                             "scheduler",
                         )
                     else:
