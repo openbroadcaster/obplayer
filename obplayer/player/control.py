@@ -264,8 +264,8 @@ class ObPlayer(object):
 
     def execute_request(self, req, output_limit=None):
 
-        if req["artist"] == "voicetrack":
-            print("start request")
+        # if req["artist"] == "voicetrack":
+        #     print("start request")
 
         self.audio_levels = None
         request_pipe = self.pipes[req["media_type"]]

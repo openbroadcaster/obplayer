@@ -164,16 +164,25 @@ class ObAudioMixerBin(ObOutputBin):
         self.pipeline_main.get_state(Gst.CLOCK_TIME_NONE)
 
     def main_fade(self, arguments):
+        # print("main_fade: " + str(arguments))
+
         volume_element = self.pipeline_main.get_by_name("channel-main-volume")
         current_volume = volume_element.get_property("volume")
         target_volume = arguments["volume"]
         fade_time = arguments["time"]
         fade_run_per_second = 20
-        # fade_increment = abs(current_volume - target_volume) / (
-        #     fade_time * fade_run_per_second
-        # )
-        print('fix me fade increment calculation')
-        fade_increment = 0.05 
+
+        obplayer.Log.log("main fade from " + str(round(current_volume * 100)) + "% to " + str(round(target_volume * 100)) + "% in " + str(fade_time) + "s", "debug")
+
+        # if fade time is zero, just set target volume
+        if fade_time == 0:
+            volume_element.set_property("volume", target_volume)
+            return
+
+        # calculate fade increment
+        fade_increment = abs(current_volume - target_volume) / (
+            fade_time * fade_run_per_second
+        )
 
         # is this a fade in or fade out?
         if current_volume < target_volume:
@@ -201,7 +210,7 @@ class ObAudioMixerBin(ObOutputBin):
                     current_volume = max(current_volume, target_volume)
 
                 volume_element.set_property("volume", current_volume)
-                print("volume: " + str(round(current_volume, 2)))
+                # print("volume: " + str(round(current_volume, 2)))
                 time.sleep(1 / fade_run_per_second)
 
         # cancel any existing run

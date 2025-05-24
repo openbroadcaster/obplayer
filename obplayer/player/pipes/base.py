@@ -177,7 +177,8 @@ class ObGstPipeline(object):
             )
 
         elif message.type == Gst.MessageType.BUFFERING:
-            print("Buffering Issue")
+            pass
+            # print("Buffering Issue")
             # percent = message.parse_buffering()
             # if percent < 100:
             #    self.pipeline.set_state(Gst.State.PAUSED)

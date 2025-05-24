@@ -497,7 +497,6 @@ class ObRemoteData(obplayer.ObData):
         ).split(","):
             for media_item in data[2][language]["alerts"]:
                 media_item["language"] = language
-                print(media_item)
                 self.alert_audio_addedit(
                     media_item["media_id"],
                     media_item["alert_name"].lower() + "." + media_item["media_format"],
@@ -728,8 +727,8 @@ class ObRemoteData(obplayer.ObData):
             media_data["file_location"] = row[5]
             media_data["offset"] = float(row[6])
             media_data["file_size"] = row[7]
-            media_data["volume"] = float(row[8] or 0)
-            media_data["delay"] = float(row[9] or 0)
+            media_data["delay"] = float(row[8] or 0)
+            media_data["volume"] = float(row[9] or 0)
             media_data["fadeout"] = float(row[10] or 0)
             media_data["fadein"] = float(row[11] or 0)
 
