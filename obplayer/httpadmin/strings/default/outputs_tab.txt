@@ -3,10 +3,6 @@ Outputs Tab
 
   Outputs: Outputs
 
-  Show Fade Settings: Show Fade Settings
-  fade_duration: Fade out duration
-  fade_duration_tooltip: How long to fade out a show in seconds before starting the next show.  Set 0 to disable.
-
   Audio Output Settings: Audio Output Settings
 
   audio_out_mode: Audio Output Mode

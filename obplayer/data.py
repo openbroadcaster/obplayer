@@ -425,16 +425,6 @@ class ObConfigData(ObData):
         ):
             return "station_override_passwords_invalid"
 
-        if setting_name == "fade_duration":
-            try:
-                fade_value = float(setting_value)
-                if fade_value < 0:
-                    return "fade_duration_invalid"
-                if fade_value > 20:
-                    return "fade_duration_too_long"
-            except ValueError:
-                return "fade_duration_not_numeric"
-
         return None
 
     """
@@ -450,7 +440,6 @@ class ObConfigData(ObData):
             "audio_caps",
             "audio/x-raw,channels=2,rate=44100,format=S16LE,layout=interleaved",
         )
-        self.add_setting("fade_duration", "5.0", "float")
         self.add_setting("audio_out_mode", "auto", "text")
         self.add_setting("audio_out_alsa_device", "default", "text")
         self.add_setting("audio_out_jack_name", "", "text")
