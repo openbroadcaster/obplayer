@@ -358,15 +358,26 @@ class ObShow(object):
             fadeout = False
 
             # fade out if media is the last track or media ends at/after the show end time
-            if(fadeout_mode == "always" and self.end_time() and (self.playlist.is_last() or self.media_start_time + media["duration"] >= self.end_time())):
+            if (
+                fadeout_mode == "always"
+                and self.end_time()
+                and (
+                    self.playlist.is_last()
+                    or self.media_start_time + media["duration"] >= self.end_time()
+                )
+            ):
                 fadeout = True
 
             # fade out if media ends after the show end time
-            if(fadeout_mode == "auto" and self.end_time() and self.media_start_time + media["duration"] > self.end_time()):
+            if (
+                fadeout_mode == "auto"
+                and self.end_time()
+                and self.media_start_time + media["duration"] > self.end_time()
+            ):
                 fadeout = True
 
             # if track does not end in time, use show end_time instead of track duration
-            if (fadeout):
+            if fadeout:
                 self.fadeout = True
                 self.ctrl.add_request(
                     start_time=self.media_start_time,

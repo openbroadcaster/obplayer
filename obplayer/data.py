@@ -753,6 +753,11 @@ class ObConfigData(ObData):
     def list_settings(self, hidepasswords=False):
         result = {}
         for name, value in self.settings_cache.items():
-            if not hidepasswords or not name.endswith("_password"):
+            if (
+                not hidepasswords
+                or not name.endswith("_password")
+                and not name.endswith("_access_key")
+                and not name.endswith("_access_key_id")
+            ):
                 result[name] = value
         return result
