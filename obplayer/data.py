@@ -96,6 +96,14 @@ class ObData(object):
     def open_db(self, filename):
         return apsw.Connection(filename)
 
+    def get_password_suffixes(self):
+        # Update here to add more password suffixes
+        return [
+            "_password",
+            "_access_key",
+            "_access_key_id",
+        ]
+
     def table_exists(self, table):
         for row in self.execute(
             "SELECT name FROM sqlite_master WHERE type IN ('table','view') AND name = ? UNION ALL SELECT name FROM sqlite_temp_master WHERE type IN ('table','view') AND name = ?",
@@ -753,11 +761,7 @@ class ObConfigData(ObData):
     def list_settings(self, hidepasswords=False):
         result = {}
         for name, value in self.settings_cache.items():
-            password_suffixes = [
-                "_password",
-                "_access_key",
-                "_access_key_id",
-            ]
+            password_suffixes = self.get_password_suffixes()
             is_password_field = any(
                 name.endswith(suffix) for suffix in password_suffixes
             )
