@@ -28,6 +28,7 @@ import os.path
 import re
 import traceback
 import subprocess
+import json
 
 
 class ObData(object):
@@ -166,6 +167,8 @@ class ObConfigData(ObData):
         self.headless = False
         self.args = None
         self.version = open("VERSION").read().strip()
+        self.secrets_file = self.datadir + "/.secrets.json"
+
         srcpath = os.path.dirname(os.path.dirname(obplayer.__file__))
         branch = subprocess.Popen(
             'cd "{0}" && git branch'.format(srcpath), stdout=subprocess.PIPE, shell=True
@@ -191,10 +194,16 @@ class ObConfigData(ObData):
         self.settings_cache = {}
         self.settings_type = {}
 
+        # Load secrets from JSON
+        secrets = self.load_secrets_file()
+        secrets_migrated = False
+
         rows = self.query("SELECT name,value,type FROM 'settings'")
         for row in rows:
+            name = row["name"]
             value = row["value"]
             datatype = row["type"]
+
             if datatype == "int":
                 value = int(value)
             elif datatype == "float":
@@ -203,8 +212,39 @@ class ObConfigData(ObData):
                 value = bool(int(value))
             else:
                 value = str(value)
-            self.settings_cache[row["name"]] = value
-            self.settings_type[row["name"]] = datatype
+
+            # --- Migration Logic ---
+            # If this is a password field, check if it is real data in DB.
+            # If so, move to secrets and scrub DB.
+            password_suffixes = self.get_password_suffixes()
+            is_password_field = any(
+                name.endswith(suffix) for suffix in password_suffixes
+            )
+
+            if is_password_field:
+                # If value is not the placeholder, we need to migrate it
+                if value != "__SECRET__" and value != "":
+                    secrets[name] = value
+                    value = "__SECRET__"  # Scrub local variable
+                    # Update DB to placeholder immediately
+                    self.execute(
+                        'UPDATE settings set value="__SECRET__" where name="'
+                        + self.escape(name)
+                        + '"'
+                    )
+                    secrets_migrated = True
+
+                # If the secret exists in the JSON file, override the DB value (which should be placeholder)
+                if name in secrets:
+                    value = secrets[name]
+            # -----------------------
+
+            self.settings_cache[name] = value
+            self.settings_type[name] = datatype
+
+        # If we migrated old DB passwords to JSON, save the JSON file now
+        if secrets_migrated:
+            self.write_secrets_file(secrets)
 
         # keep track of settings as they have been edited.
         # they don't take effect until restart, but we want to keep track of them for subsequent edits.
@@ -212,6 +252,25 @@ class ObConfigData(ObData):
 
         if not self.setting("video_out_enable"):
             self.headless = True
+
+    def load_secrets_file(self):
+        if os.path.exists(self.secrets_file):
+            try:
+                with open(self.secrets_file, "r") as f:
+                    return json.load(f)
+            except (IOError, ValueError):
+                # File missing or corrupt JSON
+                return {}
+        return {}
+
+    def write_secrets_file(self, secrets_data):
+        try:
+            # Set permissions so only owner can read/write (600)
+            with open(self.secrets_file, "w") as f:
+                json.dump(secrets_data, f, indent=4, sort_keys=True)
+            os.chmod(self.secrets_file, 0o600)
+        except IOError:
+            print("Error writing to secrets file: " + self.secrets_file)
 
     def validate_settings(self, settings):
         for setting_name, setting_value in settings.items():
@@ -721,9 +780,23 @@ class ObConfigData(ObData):
         if len(check_setting):
             return
 
+        # If this is a default setting being added, and it's a password,
+        # we should put the actual value in secrets.json and a placeholder in DB
+        password_suffixes = self.get_password_suffixes()
+        is_password_field = any(name.endswith(suffix) for suffix in password_suffixes)
+
+        db_value = value
+        if is_password_field and value:
+            secrets = self.load_secrets_file()
+            # Only write to secrets if not already there (prevents overwriting existing user secrets with defaults)
+            if name not in secrets:
+                secrets[name] = value
+                self.write_secrets_file(secrets)
+            db_value = "__SECRET__"
+
         data = {}
         data["name"] = name
-        data["value"] = value
+        data["value"] = db_value
 
         if datatype != None:
             data["type"] = datatype
@@ -739,6 +812,11 @@ class ObConfigData(ObData):
 
     # save our settings into the database. update settings_edit_cache to handle subsequent edits.
     def save_settings(self, settings):
+
+        secrets = self.load_secrets_file()
+        secrets_updated = False
+        password_suffixes = self.get_password_suffixes()
+
         for name, value in settings.items():
             dataType = self.settings_type[name]
             if dataType == "int":
@@ -750,13 +828,27 @@ class ObConfigData(ObData):
             else:
                 self.settings_edit_cache[name] = str(value)
 
+            # Check if this is a secret
+            is_password_field = any(
+                name.endswith(suffix) for suffix in password_suffixes
+            )
+
+            db_value = value
+            if is_password_field:
+                secrets[name] = str(value)
+                secrets_updated = True
+                db_value = "__SECRET__"
+
             self.query(
                 'UPDATE settings set value="'
-                + self.escape(str(value))
+                + self.escape(str(db_value))
                 + '" where name="'
                 + self.escape(name)
                 + '"'
             )
+
+        if secrets_updated:
+            self.write_secrets_file(secrets)
 
     def list_settings(self, hidepasswords=False):
         result = {}
