@@ -376,7 +376,6 @@ class ObShow(object):
             ):
                 fadeout = True
 
-            # if track does not end in time, use show end_time instead of track duration
             if fadeout:
                 self.fadeout = True
                 self.ctrl.add_request(
@@ -397,18 +396,30 @@ class ObShow(object):
                 )
             else:
                 self.fadeout = False
-                self.ctrl.add_request(
-                    start_time=self.media_start_time,
-                    media_type=media["media_type"],
-                    uri=obplayer.Sync.media_uri(
-                        media["file_location"], media["filename"]
-                    ),
-                    media_id=media["media_id"],
-                    order_num=media["order_num"],
-                    artist=media["artist"],
-                    title=media["title"],
-                    duration=media["duration"],
-                )
+
+                # if track does not end in time, use show end_time instead of track duration
+                if self.end_time() and self.media_start_time + media['duration'] > self.end_time():
+                    self.ctrl.add_request(
+                        start_time = self.media_start_time,
+                        end_time = self.end_time(),
+                        media_type = media["media_type"],
+                        uri = obplayer.Sync.media_uri(media["file_location"], media["filename"]),
+                        media_id = media["media_id"],
+                        order_num = media["order_num"],
+                        artist = media["artist"],
+                        title = media["title"],
+                    )
+                else:
+                    self.ctrl.add_request(
+                        start_time = self.media_start_time,
+                        media_type = media["media_type"],
+                        uri = obplayer.Sync.media_uri(media["file_location"], media["filename"]),
+                        media_id = media["media_id"],
+                        order_num = media["order_num"],
+                        artist = media["artist"],
+                        title = media["title"],
+                        duration = media["duration"],
+                    )
 
             obplayer.Sync.now_playing_update(
                 self.show_data["show_id"],
