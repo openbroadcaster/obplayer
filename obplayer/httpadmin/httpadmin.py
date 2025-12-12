@@ -493,7 +493,12 @@ class ObHTTPAdmin(httpserver.ObHTTPServer):
                 )
 
         res = httpserver.Response()
-        res.add_header("Content-Disposition", "attachment; filename=obsettings.txt")
+        res.add_header(
+            "Content-Disposition",
+            "attachment; filename="
+            + re.sub(r"[^\w\d_-]", "_", self.title)
+            + " dashboard_settings.txt",
+        )
         res.send_content("text/plain", settings)
         return res
 
