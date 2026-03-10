@@ -51,9 +51,13 @@ class ObLog:
         self.debug = flag
 
     def clear_recent_msgs(self):
-        for item in self.recent_msgs:
-            if item["time"] != time.strftime("%H", time.gmtime()):
-                self.recent_msgs.remove(item)
+        # Calculate the current hour once
+        current_hour = time.strftime("%H", time.gmtime())
+
+        # Keep only the items that match the current hour
+        self.recent_msgs = [
+            item for item in self.recent_msgs if item["time"] == current_hour
+        ]
 
     def format_logs(self, start_index=0):
         output = []
