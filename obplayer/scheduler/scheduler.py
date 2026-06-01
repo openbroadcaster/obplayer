@@ -228,17 +228,16 @@ class ObShow(object):
         self.play_current(present_time)
 
     def play_next(self, present_time, media_class=None):
+        # try advancing to the current track (must be done before checking is_finished since this is what advances the track position)
+        if self.playlist.advance_to_current(present_time - self.start_time()):
+            self.play_current(present_time)
+
         if self.is_paused() or self.playlist.is_finished():
             self.ctrl.stop_requests()
             self.ctrl.add_request(
                 media_type="break", end_time=self.end_time(), title="show paused break"
             )
             return False
-
-        # self.ctrl.stop_requests()
-        # if present_time >= self.next_media_update - 2:
-        if self.playlist.advance_to_current(present_time - self.start_time()):
-            self.play_current(present_time)
 
         if self.ctrl.has_requests():
             return False
