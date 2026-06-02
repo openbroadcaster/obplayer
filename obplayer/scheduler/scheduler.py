@@ -519,6 +519,9 @@ class ObLiveAssistShow(ObShow):
         self.play_current(present_time)
 
     def play_next(self, present_time, media_class=None):
+        # increment before if finished
+        self.playlist.increment()
+
         if self.is_paused() or self.playlist.is_finished():
             self.ctrl.stop_requests()
             self.ctrl.add_request(
@@ -528,8 +531,8 @@ class ObLiveAssistShow(ObShow):
 
         if self.ctrl.has_requests():
             return False
+
         # TODO can you insert a break if the previous track failed to play?
-        self.playlist.increment()
         self.play_current(present_time)
 
     def play_current(self, present_time):
@@ -578,17 +581,8 @@ class ObLiveAssistShow(ObShow):
 
 class ObAdvancedShow(ObShow):
     def play_next(self, present_time, media_class=None):
-        if self.is_paused() or self.playlist.is_finished():
-            self.ctrl.stop_requests()
-            self.ctrl.add_request(
-                media_type="break",
-                end_time=self.end_time(),
-                title="show finished break",
-            )
-            self.next_media_update = self.end_time()
-            return False
-
-        # TODO there is a problem with the first play
+        # TODO there is a problem with the first play (is this still an issue?)
+        # increment (advance to current) before checking if finished
         if media_class == "visual":
             if self.playlist.advance_to_current(
                 present_time - self.start_time(), "image"
@@ -602,6 +596,16 @@ class ObAdvancedShow(ObShow):
         else:
             if self.playlist.advance_to_current(present_time - self.start_time()):
                 self.play_current(present_time)
+
+        if self.is_paused() or self.playlist.is_finished():
+            self.ctrl.stop_requests()
+            self.ctrl.add_request(
+                media_type="break",
+                end_time=self.end_time(),
+                title="show finished break",
+            )
+            self.next_media_update = self.end_time()
+            return False
 
 
 class ObScheduler:
