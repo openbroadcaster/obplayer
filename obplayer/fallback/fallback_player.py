@@ -68,6 +68,15 @@ class ObFallbackPlayer(obplayer.player.ObPlayerController):
         self.play_index = 0
         self.image_duration = 15.0
 
+        # wall-clock time a queued request last ended *naturally* (set via onend, which
+        # does not fire on preemption); used to tell a fresh re-engagement (a real gap
+        # after a show) apart from continuing the fallback rotation.
+        self.last_request_end = 0
+        self.booted = False
+        self.engage_delay = 1.0
+        # longer hold on the very first engagement (player boot) to let everything init.
+        self.boot_engage_delay = 5.0
+
         m = magic.open(magic.MAGIC_MIME)
         m.load()
 
@@ -120,14 +129,40 @@ class ObFallbackPlayer(obplayer.player.ObPlayerController):
         # shuffle the list
         random.shuffle(self.media)
 
-        self.ctrl = obplayer.Player.create_controller("fallback", priority=25)
+        # allow_requeue=False so that we can add a gap each time fallback player is re-engaged
+        self.ctrl = obplayer.Player.create_controller(
+            "fallback", priority=25, allow_requeue=False
+        )
         self.ctrl.set_request_callback(self.do_player_request)
+
+    # called when a queued request ends naturally (the player does not call this on
+    # preemption). Records the real end time so a request that was cut short early
+    # leaves last_request_end in the past, correctly triggering the engage delay.
+    def mark_request_end(self):
+        self.last_request_end = time.time()
 
     # the player is asking us what to play next
     def do_player_request(self, ctrl, present_time, media_class):
 
         if len(self.media) == 0:
             return False
+
+        # If we're re-engaging after a gap (a show just ended, or a higher-priority
+        # source dropped out) rather than continuing the rotation, hold silence for a
+        # moment first so the next show or an override can take over without a fallback
+        # blip. Mid-rotation track changes have present_time ~= last_request_end, so
+        # they skip this and play back-to-back.
+        if present_time - self.last_request_end > 0.5:
+            # use the longer hold on the very first engagement (player boot).
+            delay = self.engage_delay if self.booted else self.boot_engage_delay
+            self.booted = True
+            ctrl.add_request(
+                media_type="break",
+                duration=delay,
+                title="fallback engage delay",
+                onend=self.mark_request_end,
+            )
+            return True
 
         if self.play_index >= len(self.media):
             self.play_index = 0
@@ -142,6 +177,7 @@ class ObFallbackPlayer(obplayer.player.ObPlayerController):
             order_num=self.play_index,
             artist="unknown",
             title=unicode(self.media[self.play_index][1]),
+            onend=self.mark_request_end,
         )
 
         self.play_index = self.play_index + 1
