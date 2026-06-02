@@ -41,7 +41,7 @@ import requests
 import subprocess
 
 
-MIN_SERVER_VERSION = "4.1.1-20150507"
+MIN_SERVER_VERSION = "5.4.0-20260124"
 
 
 if sys.version.startswith("3"):
