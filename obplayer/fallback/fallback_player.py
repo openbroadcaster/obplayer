@@ -75,7 +75,7 @@ class ObFallbackPlayer(obplayer.player.ObPlayerController):
         self.booted = False
         self.engage_delay = 1.0
         # longer hold on the very first engagement (player boot) to let everything init.
-        self.boot_engage_delay = 5.0
+        self.boot_engage_delay = 10.0
 
         m = magic.open(magic.MAGIC_MIME)
         m.load()
