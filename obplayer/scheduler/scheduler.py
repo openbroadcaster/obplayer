@@ -519,9 +519,6 @@ class ObLiveAssistShow(ObShow):
         self.play_current(present_time)
 
     def play_next(self, present_time, media_class=None):
-        # increment before if finished
-        self.playlist.increment()
-
         if self.is_paused() or self.playlist.is_finished():
             self.ctrl.stop_requests()
             self.ctrl.add_request(
@@ -530,6 +527,15 @@ class ObLiveAssistShow(ObShow):
             return False
 
         if self.ctrl.has_requests():
+            return False
+
+        # increment before checking if finished (otherwise finished is never detected)
+        self.playlist.increment()
+        if self.playlist.is_finished():
+            self.ctrl.stop_requests()
+            self.ctrl.add_request(
+                media_type="break", end_time=self.end_time(), title="show paused break"
+            )
             return False
 
         # TODO can you insert a break if the previous track failed to play?
